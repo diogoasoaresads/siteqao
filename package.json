@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "build": "npx prisma db push && node seed.js && cd admin-app && npm install && npm run build",
+    "build": "npx prisma db push && npx prisma generate && node seed.js && cd admin-app && npm install && npm run build",
     "seed": "node seed.js"
   },
   "repository": {
