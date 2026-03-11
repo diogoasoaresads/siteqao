@@ -173,6 +173,37 @@ router.put('/settings/whatsapp', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar Widget' });
     }
 });
+// Público: Dinâmico para Configs Globais (A gente injeta internamente, mas essa rota GET pode ser útil no admin)
+router.get('/settings/scripts', authenticateToken, async (req, res) => {
+    try {
+        let settings = await prisma.siteSettings.findFirst();
+        if (!settings) {
+            settings = await prisma.siteSettings.create({ data: {} });
+        }
+        res.json(settings);
+    } catch (e) {
+        res.status(500).json({ error: 'Erro ao carregar scripts' });
+    }
+});
+
+// Admin Privado: Editar configs Scripts
+router.put('/settings/scripts', authenticateToken, async (req, res) => {
+    try {
+        const data = req.body;
+        let settings = await prisma.siteSettings.findFirst();
+        if (!settings) {
+            settings = await prisma.siteSettings.create({ data });
+        } else {
+            settings = await prisma.siteSettings.update({
+                where: { id: settings.id },
+                data
+            });
+        }
+        res.json(settings);
+    } catch (e) {
+        res.status(500).json({ error: 'Erro ao salvar scripts' });
+    }
+});
 
 /* --- ADMIN DASHBOARD ANALYTICS --- */
 router.get('/dashboard', authenticateToken, async (req, res) => {

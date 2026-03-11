@@ -28,6 +28,17 @@ model Lead {
   updatedAt        DateTime @updatedAt
 }
 
+model SiteSettings {
+  id                    String   @id @default(uuid())
+  google_tag_manager_id String?
+  google_analytics_id   String?
+  google_ads_id         String?
+  meta_pixel_id         String?
+  script_head           String?
+  script_body           String?
+  updatedAt             DateTime @updatedAt
+}
+
 model WhatsappSettings {
   id              String   @id @default(uuid())
   numero_whatsapp String   @default("5511999999999")
