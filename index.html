@@ -3,267 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QAO | Agência de Growth 360</title>
-    <meta name="description" content="Aceleramos o crescimento da sua empresa com estratégias de Growth 360 orientadas por dados e tecnologia avançada.">
-    <!-- Google Fonts -->
+    <title>QAO | Assessoria em Growth Marketing Orientada a Dados</title>
+    
+    <!-- SEO Master Tags -->
+    <meta name="description" content="Assessoria em Growth Marketing para empresas B2B. Implementamos sistemas previsíveis de aquisição com Google Ads, CRM, automação e dados para transformar marketing em receita.">
+    <meta name="keywords" content="Growth Marketing, Consultoria de Growth, Google Ads para empresas, Automação de marketing, Geração de leads, Assessoria de Growth">
+    <meta name="author" content="QAO Assessoria">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph for Social Media -->
+    <meta property="og:title" content="QAO | Crescimento Previsível Orientado a Dados">
+    <meta property="og:description" content="Implementamos sistemas de aquisição para transformar seu marketing em receita real.">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts: Inter (Clean, Premium, highly readable) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Background Elements -->
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
-    <div class="grid-overlay"></div>
-
-    <!-- Header / Navbar -->
+    
+    <!-- Header Minimalista e Focado em Conversão -->
     <header class="navbar" id="navbar">
         <div class="container nav-container">
-            <a href="#" class="logo">
-                <span class="logo-text">QAO<span class="accent">.</span></span>
+            <a href="/" class="logo">
+                QAO<span class="accent-dot">.</span>
             </a>
             <nav class="nav-links">
-                <a href="#home" class="nav-link">Home</a>
-                <a href="#metodo" class="nav-link">Método 360</a>
+                <a href="#metodo" class="nav-link">Método</a>
+                <a href="#cases" class="nav-link">Cases</a>
                 <a href="#servicos" class="nav-link">Serviços</a>
-                <a href="#resultados" class="nav-link">Resultados</a>
-                <a href="#contato" class="btn btn-primary nav-cta">Falar com Especialista</a>
+                <a href="/diagnostico-marketing" class="btn btn-primary nav-cta">Agendar Diagnóstico</a>
             </nav>
-            <button class="mobile-menu-btn" aria-label="Menu">
+            <button class="mobile-menu-btn" aria-label="Abrir Menu">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </header>
 
-    <!-- Mobile Menu Overlay -->
+    <!-- Menu Mobile Overly -->
     <div class="mobile-menu-overlay">
         <div class="mobile-menu-content">
             <button class="close-menu-btn"><i class="fas fa-times"></i></button>
-            <a href="#home" class="mobile-link">Home</a>
-            <a href="#metodo" class="mobile-link">Método 360</a>
+            <a href="#metodo" class="mobile-link">Método</a>
+            <a href="#cases" class="mobile-link">Cases</a>
             <a href="#servicos" class="mobile-link">Serviços</a>
-            <a href="#resultados" class="mobile-link">Resultados</a>
-            <a href="#contato" class="btn btn-primary">Começar Agora</a>
+            <a href="/diagnostico-marketing" class="btn btn-primary w-full text-center">Agendar Diagnóstico</a>
+            <a href="#" class="btn btn-whatsapp w-full text-center mt-4"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a>
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container hero-container">
+    <!-- 1. HERO SECTION -->
+    <section class="hero">
+        <div class="container">
             <div class="hero-content reveal">
-                <div class="badge">Agência de Growth 360</div>
-                <h1 class="hero-title">Escale seu negócio com <span class="gradient-text">Máquinas de Vendas</span> Previsíveis</h1>
-                <p class="hero-subtitle">Não fazemos apenas marketing. Construímos ecossistemas completos de aquisição, retenção e monetização baseados em dados e tecnologia avançada.</p>
+                <div class="badge fade-in">Assessoria em Growth Marketing</div>
+                <h1 class="hero-title">Crescimento previsível para empresas que precisam <span class="text-highlight">gerar mais leads e vendas.</span></h1>
+                <p class="hero-subtitle">Implementamos sistemas de aquisição com Google Ads, CRM, automação e dados para transformar marketing em receita real.</p>
+                
                 <div class="hero-actions">
-                    <a href="#contato" class="btn btn-primary btn-lg">Agendar Diagnóstico Gratuito</a>
-                    <a href="#metodo" class="btn btn-outline btn-lg"><i class="fas fa-play"></i> Como Funciona</a>
+                    <a href="/diagnostico-marketing" class="btn btn-primary btn-lg">Agendar diagnóstico gratuito</a>
+                    <a href="#" class="btn btn-whatsapp btn-lg"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">+300%</span>
-                        <span class="stat-label">ROI Médio</span>
+
+                <div class="hero-social-proof">
+                    <div class="proof-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span><strong>+20M</strong> em mídia gerenciada</span>
                     </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">R$ 50M+</span>
-                        <span class="stat-label">Gerados</span>
+                    <div class="proof-divider"></div>
+                    <div class="proof-item">
+                        <i class="fas fa-users"></i>
+                        <span><strong>+350 mil</strong> leads gerados</span>
                     </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">Data</span>
-                        <span class="stat-label">Driven</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-visual reveal-right">
-                <div class="glass-card visual-card">
-                    <div class="card-header">
-                        <div class="dots"><span></span><span></span><span></span></div>
-                        <div class="card-title-sm">Performance.exe</div>
-                    </div>
-                    <div class="chart-container">
-                        <!-- Abstract chart visual built with CSS -->
-                        <div class="chart-bar" style="height: 30%"></div>
-                        <div class="chart-bar" style="height: 50%"></div>
-                        <div class="chart-bar" style="height: 40%"></div>
-                        <div class="chart-bar" style="height: 70%"></div>
-                        <div class="chart-bar" style="height: 60%"></div>
-                        <div class="chart-bar" style="height: 90%; background: var(--accent-gradient)">
-                            <div class="chart-tooltip">Growth!</div>
-                        </div>
-                    </div>
-                    <div class="metric-row">
-                        <div class="metric">
-                            <i class="fas fa-arrow-up" style="color: var(--success)"></i>
-                            <span>Conversão +142%</span>
-                        </div>
+                    <div class="proof-divider"></div>
+                    <div class="proof-item">
+                        <i class="fab fa-google"></i>
+                        <span>Google <strong>Partner</strong></span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Método Section -->
-    <section id="metodo" class="section">
+    <!-- 2. SEÇÃO DE PROVA VISUAL -->
+    <section class="section metrics-section">
+        <div class="container">
+            <div class="section-header text-center reveal">
+                <h2 class="section-title">Resultados que geram <br>crescimento real</h2>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card reveal delay-1">
+                    <div class="metric-number">+350k</div>
+                    <div class="metric-label">Leads <br>Gerados</div>
+                </div>
+                <div class="metric-card reveal delay-2">
+                    <div class="metric-number">+20M</div>
+                    <div class="metric-label">Em Mídia <br>Gerenciada</div>
+                </div>
+                <div class="metric-card reveal delay-3">
+                    <div class="metric-number">+500M</div>
+                    <div class="metric-label">Em Receita <br>Influenciada</div>
+                </div>
+                <div class="metric-card reveal delay-4">
+                    <div class="metric-number">7 Anos</div>
+                    <div class="metric-label">De Experiência no Mercado</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. POSICIONAMENTO IMPACTANTE -->
+    <section class="section positioning-section bg-contrast">
+        <div class="container text-center reveal">
+            <h2 class="huge-title text-muted">Não somos uma agência de marketing.</h2>
+            <h2 class="huge-title mt-4">Somos uma assessoria de Growth <span class="text-highlight">orientada a dados.</span></h2>
+            <p class="section-desc centered mt-6">Diferente do mercado tradicional focado em métricas de vaidade, <strong>nosso único foco é criar sistemas previsíveis de aquisição e crescimento</strong>. Se não vira pipeline ou venda, não fazemos.</p>
+        </div>
+    </section>
+
+    <!-- 3. MÉTODO GROWTH360 -->
+    <section id="metodo" class="section method-section">
         <div class="container">
             <div class="section-header reveal">
-                <span class="section-subtitle">O Framework</span>
-                <h2 class="section-title">Nosso Método <span class="gradient-text">Growth 360</span></h2>
-                <p class="section-desc">Atuamos em todos os pontos de contato do funil para garantir que nenhum lead seja desperdiçado e toda oportunidade seja maximizada.</p>
+                <span class="badge">O Processo</span>
+                <h2 class="section-title">Método Growth 360</h2>
+                <p class="section-desc">Uma engenharia de ponta a ponta para maximizar cada etapa do seu funil comercial.</p>
             </div>
-            <div class="process-grid">
-                <div class="process-card glass-card reveal delay-1">
-                    <div class="process-icon">
-                        <i class="fas fa-search-dollar"></i>
+            
+            <div class="method-timeline">
+                <div class="method-step reveal delay-1">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Aquisição</h3>
+                        <p>Google Ads, Meta Ads e SEO configurados tecnicamente para atrair a demanda com maior intenção de compra do seu mercado.</p>
                     </div>
-                    <h3>1. Aquisição</h3>
-                    <p>Tráfego pago avançado, SEO técnico e estratégias outbound para encher seu pipeline com leads qualificados.</p>
                 </div>
-                <div class="process-card glass-card reveal delay-2">
-                    <div class="process-icon">
-                        <i class="fas fa-filter"></i>
+                <!-- Connector Line handled in CSS -->
+                
+                <div class="method-step reveal delay-2">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Conversão</h3>
+                        <p>Landing Pages de altíssima performance e CRO (Otimização de Conversão) para transformar cliques caros em leads qualificados.</p>
                     </div>
-                    <h3>2. Ativação</h3>
-                    <p>CRO (Otimização de Conversão), Landing Pages de alta performance e automação de marketing inteligente.</p>
                 </div>
-                <div class="process-card glass-card reveal delay-3">
-                    <div class="process-icon">
-                        <i class="fas fa-chart-line"></i>
+                
+                <div class="method-step reveal delay-3">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Automação</h3>
+                        <p>Integração profunda de CRM, réguas de e-mail e botes de WhatsApp para acelerar o tempo de resposta e qualificar oportunidades.</p>
                     </div>
-                    <h3>3. Retenção & Receita</h3>
-                    <p>Estratégias de LTV, réguas de relacionamento, up-sell/cross-sell e análise preditiva de churn.</p>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Serviços Section -->
-    <section id="servicos" class="section bg-darker">
-        <div class="container">
-            <div class="grid-2">
-                <div class="services-content reveal">
-                    <span class="section-subtitle">O que entregamos</span>
-                    <h2 class="section-title">Tecnologia e Marketing <br>andando Juntos</h2>
-                    <p class="section-desc">Nosso time multidisciplinar combina engenharia de dados com copywriting persuasivo e design de interface impecável.</p>
-                    
-                    <ul class="feature-list">
-                        <li><i class="fas fa-check-circle"></i> Dashboards em Tempo Real (PowerBI/Looker)</li>
-                        <li><i class="fas fa-check-circle"></i> Implementação de Tracking Avançado (GTM, API Conversões)</li>
-                        <li><i class="fas fa-check-circle"></i> Automações Complexas (Make/Zapier/N8N)</li>
-                        <li><i class="fas fa-check-circle"></i> Desenvolvimento Web de Alta Performance</li>
-                    </ul>
+                <div class="method-step reveal delay-4">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Inteligência</h3>
+                        <p>Dashboards de BI em tempo real. Visão cristalina do CAC, LTV e ROI sobre o investimento total em marketing estruturado em dados.</p>
+                    </div>
                 </div>
-                <div class="services-cards">
-                    <div class="service-item glass-card reveal delay-1">
-                        <div class="service-header">
-                            <i class="fab fa-meta"></i>
-                            <h4>Tráfego Pago</h4>
-                        </div>
-                        <p>Gestão de anúncios orientada a ROI no Meta, Google, LinkedIn e TikTok Ads.</p>
-                    </div>
-                    <div class="service-item glass-card reveal delay-2" style="transform: translateX(-20px);">
-                        <div class="service-header">
-                            <i class="fas fa-laptop-code"></i>
-                            <h4>Dev & Web Design</h4>
-                        </div>
-                        <p>Plataformas incrivelmente rápidas, responsivas e voltadas para conversão.</p>
-                    </div>
-                    <div class="service-item glass-card reveal delay-3">
-                        <div class="service-header">
-                            <i class="fas fa-database"></i>
-                            <h4>Data Analytics</h4>
-                        </div>
-                        <p>Decisões baseadas em números reais, não em "achismos" ou métricas de vaidade.</p>
+
+                <div class="method-step reveal delay-5">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Escala</h3>
+                        <p>Testes A/B contínuos e Growth Loops implementados para baixar o custo por aquisição e aumentar a lucratividade geral do negócio.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA / Contato Section -->
-    <section id="contato" class="section cta-section">
+    <!-- 4. CASES SIMPLIFICADOS -->
+    <section id="cases" class="section cases-section bg-contrast">
         <div class="container">
-            <div class="cta-box glass-card reveal">
-                <div class="cta-content">
-                    <h2>Pronto para escalar sua operação?</h2>
-                    <p>Agende uma consultoria gratuita de 30 minutos com nossos especialistas em Growth. Vamos analisar seu funil atual e desenhar um plano de ação.</p>
+            <div class="section-header text-center reveal">
+                <span class="badge">Estudos de Caso</span>
+                <h2 class="section-title">A matemática por trás dos resultados</h2>
+            </div>
+            
+            <div class="cases-row">
+                <!-- Case 1 -->
+                <div class="case-card reveal delay-1">
+                    <div class="case-header">
+                        <h4>Empresa B2B Tech</h4>
+                        <span class="case-tag">Geração de Leads</span>
+                    </div>
+                    <div class="case-problem">
+                        <strong>Problema:</strong> Custo de aquisição insustentável e leads não qualificados.
+                    </div>
+                    <div class="case-strategy">
+                        <strong>Estratégia:</strong> Reestruturação de Google Ads e introdução de MQL/SQL Scoring via CRM.
+                    </div>
+                    <div class="case-comparison">
+                        <div class="before">
+                            <span>Antes</span>
+                            <strong>CPL: R$ 120</strong>
+                        </div>
+                        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="after">
+                            <span>Depois</span>
+                            <strong>CPL: R$ 38</strong>
+                        </div>
+                    </div>
+                    <div class="case-result">
+                        <i class="fas fa-chart-pie text-highlight"></i>
+                        <span><strong>+212%</strong> de oportunidades geradas no comercial</span>
+                    </div>
                 </div>
-                <div class="cta-form-container">
-                    <form id="contact-form" class="tech-form">
-                        <div class="form-group">
-                            <input type="text" id="name" placeholder="Seu Nome" required>
+
+                <!-- Case 2 -->
+                <div class="case-card reveal delay-2">
+                    <div class="case-header">
+                        <h4>Consultoria Empresarial</h4>
+                        <span class="case-tag">Vendas High-Ticket</span>
+                    </div>
+                    <div class="case-problem">
+                        <strong>Problema:</strong> Ciclo de vendas longo e taxa de comparecimento em reunião baixa.
+                    </div>
+                    <div class="case-strategy">
+                        <strong>Estratégia:</strong> Funil de automação no WhatsApp + Nutrição Inteligente de Leads.
+                    </div>
+                    <div class="case-comparison">
+                        <div class="before">
+                            <span>Antes</span>
+                            <strong>Show-up: 30%</strong>
                         </div>
-                        <div class="form-group">
-                            <input type="email" id="email" placeholder="E-mail Corporativo" required>
+                        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="after">
+                            <span>Depois</span>
+                            <strong>Show-up: 85%</strong>
                         </div>
-                        <div class="form-group">
-                            <input type="url" id="website" placeholder="Site da Empresa">
+                    </div>
+                    <div class="case-result">
+                        <i class="fas fa-chart-pie text-highlight"></i>
+                        <span><strong>+150%</strong> de reuniões efetivadas por mês</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6 reveal">
+                <a href="/diagnostico-marketing" class="btn btn-outline">Quero resultados assim no meu negócio</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. SERVIÇOS -->
+    <section id="servicos" class="section services-section">
+        <div class="container">
+            <div class="gw-grid">
+                <div class="gw-content reveal">
+                    <h2 class="section-title">Expertise cirúrgica no que importa.</h2>
+                    <p class="section-desc mb-6">Não fazemos de tudo. Fazemos aquilo que tem o maior impacto direto no faturamento e previsibilidade de caixa da sua empresa.</p>
+                    <a href="/diagnostico-marketing" class="btn btn-primary d-desktop-inline">Diagnóstico Gratuito <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="services-list reveal delay-2">
+                    <div class="service-row">
+                        <i class="fas fa-check"></i>
+                        <div class="service-info">
+                            <h4>Growth Marketing</h4>
+                            <p>Estratégia completa orientada a dados.</p>
                         </div>
-                        <div class="form-group">
-                            <select id="revenue" required>
-                                <option value="" disabled selected>Faturamento Mensal</option>
-                                <option value="ate-50k">Até R$ 50.000</option>
-                                <option value="50k-100k">R$ 50k - R$ 100k</option>
-                                <option value="100k-500k">R$ 100k - R$ 500k</option>
-                                <option value="500k+">Acima de R$ 500k</option>
-                            </select>
+                    </div>
+                    <div class="service-row">
+                        <i class="fas fa-check"></i>
+                        <div class="service-info">
+                            <h4>Google & Meta Ads</h4>
+                            <p>Mídia paga de alta intenção e ROI.</p>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <span>Solicitar Diagnóstico</span>
-                            <i class="fas fa-rocket"></i>
-                        </button>
-                    </form>
+                    </div>
+                    <div class="service-row">
+                        <i class="fas fa-check"></i>
+                        <div class="service-info">
+                            <h4>CRM e Automação</h4>
+                            <p>Máquina de vendas e follow-up.</p>
+                        </div>
+                    </div>
+                    <div class="service-row">
+                        <i class="fas fa-check"></i>
+                        <div class="service-info">
+                            <h4>Estratégia de Aquisição</h4>
+                            <p>Estudo de canais e CAC sustentável.</p>
+                        </div>
+                    </div>
+                    <div class="service-row">
+                        <i class="fas fa-check"></i>
+                        <div class="service-info">
+                            <h4>Estruturação de Funil</h4>
+                            <p>Construção ponta a ponta da conversão.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- 7. CTA FINAL -->
+    <section class="section cta-final bg-primary-gradient">
+        <div class="container text-center reveal">
+            <h2 class="section-title text-white">Pronto para crescer com <br>estratégia e previsibilidade?</h2>
+            <p class="section-desc centered text-light-dim mt-4 mb-8">Deixe o achismo de lado. Analisaremos seu atual cenário e desenharemos um plano de ação pautado em dados de mercado reais.</p>
+            
+            <div class="cta-flex-actions">
+                <a href="/diagnostico-marketing" class="btn btn-primary btn-xl shadow-glow">Agendar diagnóstico <i class="fas fa-calendar-alt ml-2"></i></a>
+                <a href="#" class="btn btn-whatsapp-outline btn-xl">Falar no WhatsApp <i class="fab fa-whatsapp ml-2"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER CLEAN -->
+    <footer class="footer bg-contrast">
         <div class="container">
-            <div class="footer-grid">
+            <div class="footer-top">
                 <div class="footer-brand">
-                    <div class="logo">QAO<span class="accent">.</span></div>
-                    <p>Agência de Growth 360 e Tecnologia. Transformando tráfego em receita previsível através de dados e engenharia.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-github"></i></a>
-                    </div>
+                    <div class="logo">QAO<span class="accent-dot">.</span></div>
+                    <p class="text-sm mt-3">Assessoria em Growth Marketing orientada a dados para empresas focadas em escala.</p>
                 </div>
-                <div class="footer-links">
-                    <h4>Soluções</h4>
-                    <a href="#">Tráfego Pago</a>
-                    <a href="#">Desenvolvimento Web</a>
-                    <a href="#">CRO & SEO</a>
-                    <a href="#">Data Analytics</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Agência</h4>
-                    <a href="#">Sobre Nós</a>
-                    <a href="#">Cases de Sucesso</a>
-                    <a href="#">Carreiras</a>
-                    <a href="#">Contato</a>
-                </div>
-                <div class="footer-contact">
-                    <h4>Fale Conosco</h4>
-                    <p><i class="fas fa-envelope"></i> hello@qao.com.br</p>
-                    <p><i class="fas fa-map-marker-alt"></i> São Paulo, SP - Brasil</p>
+                <!-- Mini Sitemap for SEO -->
+                <div class="footer-nav">
+                    <a href="#metodo">Método</a>
+                    <a href="#cases">Cases</a>
+                    <a href="#servicos">Serviços</a>
+                    <a href="/diagnostico-marketing">Diagnóstico</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 QAO Agência de Growth. Todos os direitos reservados.</p>
-                <div class="footer-legal">
-                    <a href="#">Privacidade</a>
-                    <a href="#">Termos</a>
-                </div>
+                <p>&copy; 2026 QAO Assessoria em Growth. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- Core Interactions -->
+    <script src="js/main.js" defer></script>
 </body>
 </html>

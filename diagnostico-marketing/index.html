@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Gratuito | QAO Assessoria em Growth</title>
+    
+    <meta name="description" content="Agende um diagnóstico gratuito de marketing corporativo. Analisaremos seu funil, mídia, conversão e daremos recomendações estratégicas.">
+    <meta name="robots" content="noindex, follow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Using the same stylesheet for variables and globals -->
+    <link rel="stylesheet" href="../css/styles.css">
+    
+    <style>
+        /* Specific adjustments for Landing Page */
+        .lp-header {
+            padding: 32px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+        }
+        
+        .lp-hero {
+            padding: 80px 0;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+        }
+
+        .lp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: flex-start;
+        }
+        
+        .lp-value-prop {
+            padding-right: 40px;
+        }
+
+        .lp-list {
+            margin-top: 32px;
+            list-style: none;
+        }
+        .lp-list li {
+            position: relative;
+            padding-left: 36px;
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        .lp-list li::before {
+            content: '\f058'; /* fa-check-circle */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--accent-green);
+            font-size: 1.4rem;
+        }
+        
+        @media (max-width: 992px) {
+            .lp-grid { grid-template-columns: 1fr; }
+            .lp-value-prop { padding-right: 0; margin-bottom: 40px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- LP Minimal Header (No Navigation) -->
+    <header class="lp-header">
+        <div class="container">
+            <a href="/" class="logo" style="font-size: 2rem;">
+                QAO<span class="accent-dot">.</span>
+            </a>
+            <p class="text-sm text-secondary mt-3">Assessoria em Growth Marketing Data-Driven</p>
+        </div>
+    </header>
+
+    <section class="lp-hero">
+        <div class="container">
+            <div class="lp-grid">
+                
+                <!-- Benefícios -->
+                <div class="lp-value-prop reveal">
+                    <span class="badge">Sessão Estratégica</span>
+                    <h1 class="hero-title mt-4" style="font-size: clamp(2.5rem, 4vw, 3.5rem);">Diagnóstico de Growth <br><span class="text-highlight">Gratuito</span></h1>
+                    <p class="section-desc mt-4">Nossos especialistas em aquisição digital dedicarão 30 minutos para analisar exatamente onde seu funil está perdendo dinheiro e como escalar.</p>
+                    
+                    <h3 class="mt-6 mb-4">O que você receberá nesta sessão:</h3>
+                    <ul class="lp-list">
+                        <li><strong>Análise de Funil:</strong> Descubra vazamentos de receita e pontos de atrito no comercial.</li>
+                        <li><strong>Análise de Mídia:</strong> Auditoria rápida das suas campanhas de Google e Meta Ads.</li>
+                        <li><strong>Análise de Conversão:</strong> Oportunidades de CRO no seu site ou Landing Page atual.</li>
+                        <li><strong>Recomendações Estratégicas:</strong> Plano de ação pautado em dados de mercado.</li>
+                    </ul>
+
+                    <div class="mt-8 p-4 bg-contrast rounded" style="border-radius: 8px; border-left: 4px solid var(--accent-green);">
+                        <p class="text-sm text-secondary"><em>"Nossa filosofia é simples: se não conseguimos traçar um caminho claro para o ROI, nós avisamos imediatamente. Sem falsas promessas."</em></p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Conversão -->
+                <div class="diag-form reveal delay-2">
+                    <h3 class="mb-6" style="font-size: 1.5rem;">Preencha para agendarmos</h3>
+                    
+                    <form id="diagnosticoForm" onsubmit="event.preventDefault(); alert('Em um ambiente real, este formulário vai para o seu CRM ou E-mail!');">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" class="form-control" placeholder="Ex: João Silva" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="empresa">Nome da Empresa</label>
+                            <input type="text" id="empresa" class="form-control" placeholder="Sua empresa" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">E-mail Corporativo</label>
+                            <input type="email" id="email" class="form-control" placeholder="joao@empresa.com.br" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="faturamento">Faturamento Mensal Estimado</label>
+                            <select id="faturamento" class="form-control" required>
+                                <option value="" disabled selected>Selecione uma faixa</option>
+                                <option value="ate-50k">Até R$ 50.000</option>
+                                <option value="50-150k">R$ 50.000 a R$ 150.000</option>
+                                <option value="150-500k">R$ 150.000 a R$ 500.000</option>
+                                <option value="mais-500k">Acima de R$ 500.000</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="desafio">Qual é o seu maior desafio hoje?</label>
+                            <textarea id="desafio" class="form-control" rows="3" placeholder="Ex: Custo por lead muito alto no Google Ads..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-xl w-full mb-4">
+                            Solicitar Diagnóstico <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+
+                        <div class="text-center text-muted" style="margin: 20px 0;">OU</div>
+
+                        <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20agendar%20um%20diagnóstico%20de%20Growth!" class="btn btn-whatsapp btn-xl w-full text-center" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Falar direto no WhatsApp
+                        </a>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Essential Scripts -->
+    <script>
+        // Trigger reveal animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const revealElements = document.querySelectorAll('.reveal');
+            setTimeout(() => {
+                revealElements.forEach(el => el.classList.add('active'));
+            }, 100);
+        });
+    </script>
+</body>
+</html>
