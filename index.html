@@ -39,6 +39,14 @@
     
     <!-- Core CSS (Premium Minimal Theme) -->
     <link rel="stylesheet" href="css/styles.css?v=2">
+    
+    <!-- Dark Mode Init -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 </head>
 <body>
     
@@ -60,9 +68,15 @@
                 <a href="#servicos" class="nav-link">Serviços</a>
                 <a href="/diagnostico-marketing" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Agendar Diagnóstico</a>
             </nav>
-            <button class="mobile-menu-btn" aria-label="Abrir Menu">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button class="theme-toggle" aria-label="Alternar Tema" style="background: none; border: none; font-size: 1.25rem; color: var(--text-primary); cursor: pointer; display: flex;">
+                    <i class="fas fa-moon theme-icon-moon"></i>
+                    <i class="fas fa-sun theme-icon-sun" style="display: none;"></i>
+                </button>
+                <button class="mobile-menu-btn" aria-label="Abrir Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -306,6 +320,34 @@
             if(mobileBtn) mobileBtn.addEventListener('click', toggleMenu);
             if(closeBtn) closeBtn.addEventListener('click', toggleMenu);
             links.forEach(l => l.addEventListener('click', toggleMenu));
+
+            // Theme Toggle Logic
+            const themeToggleBtn = document.querySelector('.theme-toggle');
+            const themeIconMoon = document.querySelector('.theme-icon-moon');
+            const themeIconSun = document.querySelector('.theme-icon-sun');
+
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIconMoon.style.display = 'none';
+                    themeIconSun.style.display = 'block';
+                } else {
+                    themeIconMoon.style.display = 'block';
+                    themeIconSun.style.display = 'none';
+                }
+            }
+
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeIcon(currentTheme);
+
+            if(themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    let theme = document.documentElement.getAttribute('data-theme');
+                    let newTheme = theme === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+            }
         });
     </script>
 </body>
