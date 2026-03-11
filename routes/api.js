@@ -4,6 +4,9 @@ const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+if (!process.env.DATABASE_URL) {
+    process.env.DATABASE_URL = 'file:./dev.db';
+}
 const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET || 'qao_growth_secret_sD89s9aD8';
 

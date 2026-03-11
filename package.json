@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/diogoasoaresads/siteqao#readme",
   "dependencies": {
-    "@prisma/client": "^7.4.2",
+    "@prisma/client": "^6.4.1",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -34,6 +34,6 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "prisma": "^7.4.2"
+    "prisma": "^6.4.1"
   }
 }
