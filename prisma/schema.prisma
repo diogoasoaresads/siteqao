@@ -1,0 +1,39 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Lead {
+  id               String   @id @default(uuid())
+  nome             String
+  telefone         String
+  email            String
+  empresa          String
+  mensagem         String?
+  origem_da_pagina String?
+  status           String   @default("novo")
+  responsavel      String?
+  observacoes      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model WhatsappSettings {
+  id              String   @id @default(uuid())
+  numero_whatsapp String   @default("5511999999999")
+  texto_botao     String   @default("Falar no WhatsApp")
+  mensagem_padrao String   @default("Olá! Vim pelo site da QAO e gostaria de entender como vocês podem ajudar minha empresa a crescer.")
+  botao_ativo     Boolean  @default(true)
+  posicao_botao   String   @default("direita")
+  updatedAt       DateTime @updatedAt
+}

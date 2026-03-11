@@ -174,7 +174,7 @@
                     <h3 class="mb-4" style="font-size: 1.5rem;">Preencha para agendarmos</h3>
                     <p class="text-secondary mb-6" style="font-size: 0.95rem;">Responda abaixo para que possamos nos preparar para sua reunião.</p>
                     
-                    <form id="diagnosticoForm" onsubmit="event.preventDefault(); alert('Em um ambiente real, este formulário vai para o seu CRM ou Hubspot!');">
+                    <form id="diagnosticoForm" class="mt-2">
                         <div class="form-group">
                             <label for="nome">Nome Completo</label>
                             <input type="text" id="nome" class="form-input" placeholder="Ex: João Silva" required>
@@ -224,7 +224,7 @@
 
     <!-- Theme Toggle Logic -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const themeToggleBtn = document.querySelector('.theme-toggle');
             const themeIconMoon = document.querySelector('.theme-icon-moon');
             const themeIconSun = document.querySelector('.theme-icon-sun');
@@ -252,6 +252,80 @@
                     localStorage.setItem('theme', newTheme);
                     updateThemeIcon(newTheme);
                 });
+            }
+
+            // Lead Capture Form Logic
+            const form = document.getElementById('diagnosticoForm');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.querySelector('button[type="submit"]');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = 'Enviando...';
+                    btn.disabled = true;
+
+                    const data = {
+                        nome: document.getElementById('nome').value,
+                        empresa: document.getElementById('empresa').value,
+                        email: document.getElementById('email').value,
+                        faturamento: document.getElementById('faturamento').value,
+                        desafio: document.getElementById('desafio').value,
+                        telefone: 'N/A', // Assuming NO phone field in LP, we fallback
+                        origem_da_pagina: 'LP Diagnóstico'
+                    };
+
+                    try {
+                        const req = await fetch('/api/leads', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(data)
+                        });
+                        if (req.ok) {
+                            alert('Solicitação enviada com sucesso! Em breve nossa equipe entrará em contato para agendar seu diagnóstico.');
+                            e.target.reset();
+                        } else {
+                            alert('Erro ao enviar, por favor confira as informações.');
+                        }
+                    } catch (err) {
+                        alert('Falha na comunicação com o servidor.');
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            // Dynamic WhatsApp Widget
+            try {
+                const res = await fetch('/api/settings/whatsapp');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.ativo) {
+                        const waBtn = document.createElement('a');
+                        waBtn.href = `https://wa.me/${data.numero}?text=${encodeURIComponent(data.mensagem)}`;
+                        waBtn.target = '_blank';
+                        waBtn.innerHTML = '<i class="fab fa-whatsapp" style="font-size: 24px; color: #fff;"></i>';
+                        waBtn.style.position = 'fixed';
+                        waBtn.style.bottom = '20px';
+                        if (data.posicao === 'esquerda') waBtn.style.left = '20px';
+                        else waBtn.style.right = '20px';
+                        waBtn.style.backgroundColor = '#25D366';
+                        waBtn.style.width = '60px';
+                        waBtn.style.height = '60px';
+                        waBtn.style.borderRadius = '50%';
+                        waBtn.style.display = 'flex';
+                        waBtn.style.justifyContent = 'center';
+                        waBtn.style.alignItems = 'center';
+                        waBtn.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+                        waBtn.style.zIndex = '9999';
+                        waBtn.style.transition = 'transform 0.3s ease';
+                        waBtn.onmouseover = () => waBtn.style.transform = 'scale(1.1)';
+                        waBtn.onmouseout = () => waBtn.style.transform = 'scale(1)';
+                        document.body.appendChild(waBtn);
+                    }
+                }
+            } catch (e) {
+                console.error("WhatsApp settings failed to load.");
             }
         });
     </script>

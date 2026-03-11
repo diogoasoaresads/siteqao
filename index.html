@@ -295,7 +295,7 @@
 
     <!-- Essential Scripts: Basic Navbar Scroll & Mobile Menu -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Navbar Scrolled State
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', () => {
@@ -347,6 +347,39 @@
                     localStorage.setItem('theme', newTheme);
                     updateThemeIcon(newTheme);
                 });
+            }
+
+            // Dynamic WhatsApp Widget
+            try {
+                const res = await fetch('/api/settings/whatsapp');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.ativo) {
+                        const waBtn = document.createElement('a');
+                        waBtn.href = `https://wa.me/${data.numero}?text=${encodeURIComponent(data.mensagem)}`;
+                        waBtn.target = '_blank';
+                        waBtn.innerHTML = '<i class="fab fa-whatsapp" style="font-size: 24px; color: #fff;"></i>';
+                        waBtn.style.position = 'fixed';
+                        waBtn.style.bottom = '20px';
+                        if (data.posicao === 'esquerda') waBtn.style.left = '20px';
+                        else waBtn.style.right = '20px';
+                        waBtn.style.backgroundColor = '#25D366';
+                        waBtn.style.width = '60px';
+                        waBtn.style.height = '60px';
+                        waBtn.style.borderRadius = '50%';
+                        waBtn.style.display = 'flex';
+                        waBtn.style.justifyContent = 'center';
+                        waBtn.style.alignItems = 'center';
+                        waBtn.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+                        waBtn.style.zIndex = '9999';
+                        waBtn.style.transition = 'transform 0.3s ease';
+                        waBtn.onmouseover = () => waBtn.style.transform = 'scale(1.1)';
+                        waBtn.onmouseout = () => waBtn.style.transform = 'scale(1)';
+                        document.body.appendChild(waBtn);
+                    }
+                }
+            } catch (e) {
+                console.error("WhatsApp settings failed to load.");
             }
         });
     </script>
