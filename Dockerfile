@@ -15,8 +15,8 @@ COPY . .
 RUN npm run build
 
 # 5. Configurações de Deploy Easypanel
-EXPOSE 80
-ENV PORT=80
+EXPOSE 3000
+ENV PORT=3000
 
 # 6. Inicializa o Backend
 CMD ["npm", "start"]
