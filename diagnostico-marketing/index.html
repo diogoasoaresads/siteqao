@@ -259,6 +259,9 @@
                             body: JSON.stringify(data)
                         });
                         if (req.ok) {
+                            if(typeof window.qaoTrackLead === 'function') {
+                                window.qaoTrackLead('LP Diagnóstico');
+                            }
                             alert('Solicitação enviada com sucesso! Em breve nossa equipe entrará em contato para agendar seu diagnóstico.');
                             e.target.reset();
                         } else {
@@ -346,6 +349,9 @@
                                             origem_da_pagina: 'Botão WhatsApp LP'
                                         })
                                     });
+                                    if(typeof window.qaoTrackLead === 'function') {
+                                        window.qaoTrackLead('Botão WhatsApp LP');
+                                    }
                                 } catch(err) {
                                     console.error("Erro ao salvar lead do WhatsApp");
                                 } finally {
@@ -379,5 +385,6 @@
             }
         });
     </script>
+    <script src="/js/tracking.js"></script>
 </body>
 </html>

@@ -400,6 +400,9 @@
                                             origem_da_pagina: 'Botão WhatsApp'
                                         })
                                     });
+                                    if(typeof window.qaoTrackLead === 'function') {
+                                        window.qaoTrackLead('Botão WhatsApp');
+                                    }
                                 } catch(err) {
                                     console.error("Erro ao salvar lead do WhatsApp");
                                 } finally {
@@ -433,5 +436,6 @@
             }
         });
     </script>
+    <script src="js/tracking.js"></script>
 </body>
 </html>
