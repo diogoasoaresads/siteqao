@@ -1,6 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function LeadDrawer({ lead, isOpen, onClose }) {
+  const [observacoes, setObservacoes] = useState('');
+  const [salvando, setSalvando] = useState(false);
+
+  useEffect(() => {
+    if (lead) {
+      setObservacoes(lead.observacoes || '');
+    }
+  }, [lead]);
+
+  const handleSalvarObservacoes = async () => {
+    if (!lead) return;
+    setSalvando(true);
+    try {
+      await fetch(`/api/leads/${lead.id}/observacoes`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ observacoes })
+      });
+      setTimeout(() => setSalvando(false), 600);
+    } catch(e) {
+      console.error("Falha ao salvar nota", e);
+      setSalvando(false);
+    }
+  };
   if (!isOpen || !lead) return null;
 
   const formatDate = (dateString) => {
@@ -108,6 +132,30 @@ export default function LeadDrawer({ lead, isOpen, onClose }) {
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Respostas do Formulário</h3>
                 <div className="bg-white border rounded-lg p-4 text-sm text-gray-700 whitespace-pre-wrap leading-relaxed shadow-sm">
                     {lead.mensagem || 'Nenhuma mensagem ou dados detalhados preenchidos por este lead.'}
+                </div>
+              </div>
+
+              {/* Anotações CRM */}
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Anotações Internas (CRM)</h3>
+                <div className="bg-white border border-gray-200 rounded-lg p-3 text-sm shadow-sm flex flex-col gap-2">
+                    <textarea 
+                      className="w-full text-sm text-gray-700 p-2 border border-transparent hover:border-gray-200 rounded-md focus:ring-1 focus:ring-black focus:border-black outline-none resize-none transition-all" 
+                      rows={4}
+                      placeholder="Adicione comentários sobre as reuniões, objeções de venda, ou perfil..."
+                      value={observacoes}
+                      onChange={(e) => setObservacoes(e.target.value)}
+                    ></textarea>
+                    <div className="flex justify-end">
+                      <button 
+                        type="button" 
+                        onClick={handleSalvarObservacoes}
+                        disabled={salvando}
+                        className="bg-black text-white text-xs font-medium px-4 py-2 rounded disabled:opacity-50 hover:bg-gray-800 transition-colors"
+                      >
+                        {salvando ? 'Salvando...' : 'Salvar Nota'}
+                      </button>
+                    </div>
                 </div>
               </div>
 
