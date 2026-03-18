@@ -161,7 +161,7 @@ app.get('/diagnostico-marketing', (req, res) => {
 
 // Admin App (React SPA Built)
 app.use('/admin', express.static(path.join(__dirname, 'admin-app/dist')));
-app.get('/admin/*', (req, res) => {
+app.get(/^\/admin/, (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-app/dist/index.html'));
 });
 
