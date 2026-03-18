@@ -90,14 +90,18 @@ const sendNotificationWebhook = async (lead) => {
                 headers['apikey'] = settings.api_whatsapp_token;
             }
 
+            const numeroLimpo = settings.telefone_notificacao.replace(/\D/g, '');
+            
             await fetch(settings.api_whatsapp_url, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({
-                    number: settings.telefone_notificacao,
-                    phone: settings.telefone_notificacao,
+                    number: numeroLimpo,
+                    phone: numeroLimpo,
                     message: message,
-                    text: message
+                    text: message,
+                    textMessage: { text: message },
+                    options: { delay: 1200, presence: 'composing' }
                 })
             });
             console.log("[Notification] Webhook do WhatsApp acionado.");
