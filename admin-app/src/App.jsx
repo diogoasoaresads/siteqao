@@ -7,6 +7,7 @@ import Leads from './pages/Leads';
 import Pipeline from './pages/Pipeline';
 import Settings from './pages/Settings';
 import SettingsScripts from './pages/SettingsScripts';
+import SettingsNotifications from './pages/SettingsNotifications';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/pipeline" element={<Pipeline />} />
           <Route path="/settings/whatsapp" element={<Settings />} />
           <Route path="/settings/scripts" element={<SettingsScripts />} />
+          <Route path="/settings/notifications" element={<SettingsNotifications />} />
         </Route>
         
         <Route path="*" element={<Navigate to="/" replace />} />

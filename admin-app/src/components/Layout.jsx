@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Trello, Settings, Code, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Trello, Settings, Code, LogOut, BellRing } from 'lucide-react';
 
 export default function Layout() {
   const location = useLocation();
@@ -15,7 +15,8 @@ export default function Layout() {
     { path: '/leads', icon: Users, label: 'Leads' },
     { path: '/pipeline', icon: Trello, label: 'Pipeline' },
     { path: '/settings/whatsapp', icon: Settings, label: 'WhatsApp' },
-    { path: '/settings/scripts', icon: Code, label: 'Scripts e Tags' }
+    { path: '/settings/scripts', icon: Code, label: 'Scripts e Tags' },
+    { path: '/settings/notifications', icon: BellRing, label: 'Notificações' }
   ];
 
   return (

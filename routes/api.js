@@ -56,6 +56,57 @@ router.get('/me', authenticateToken, async (req, res) => {
 });
 
 /* --- LEADS (PUBLIC & PRIVATE) --- */
+const sendNotificationWebhook = async (lead) => {
+    try {
+        const settings = await prisma.siteSettings.findFirst();
+        if (!settings) return;
+
+        if (settings.notificacao_email && settings.smtp_host && settings.smtp_user && settings.destinatario_email) {
+            const nodemailer = require('nodemailer');
+            // Hostgator, Hostinger e maioria = TLS 465/587
+            const port = parseInt(settings.smtp_port) || 465;
+            const transporter = nodemailer.createTransport({
+                host: settings.smtp_host,
+                port: port,
+                secure: port === 465,
+                auth: { user: settings.smtp_user, pass: settings.smtp_pass }
+            });
+            await transporter.sendMail({
+                from: `"QAO Notificações" <${settings.smtp_user}>`,
+                to: settings.destinatario_email,
+                subject: `🔥 Novo Lead Capturado: ${lead.nome} (${lead.origem_da_pagina || 'Indefinida'})`,
+                text: `Temos um novo contato no funil QAO!\n\nNome: ${lead.nome}\nTelefone: ${lead.telefone}\nEmail: ${lead.email || 'N/A'}\nEmpresa: ${lead.empresa || 'N/A'}\nOrigem: ${lead.origem_da_pagina || 'Indefinida'}\nMensagem: ${lead.mensagem || 'N/A'}\n\nAcesse o seu painel de Admin para acompanhar e mover o card deste lead.`
+            });
+            console.log("[Notification] E-mail de Status eviado.");
+        }
+
+        if (settings.notificacao_whatsapp && settings.api_whatsapp_url && settings.telefone_notificacao) {
+            const message = `*🎯 NOVO LEAD CAPTURADO!*\n\n*Nome:* ${lead.nome}\n*Whats:* ${lead.telefone}\n*Empresa:* ${lead.empresa || 'N/A'}\n*Origem:* ${lead.origem_da_pagina || 'Indefinida'}\n\nAbra o painel admin para gerenciar.`;
+            
+            // Aceita formatos de N8N, Evolution ou Z-API mesclando as keys 'number', 'phone', 'text' e 'message' no payload e auth
+            const headers = { 'Content-Type': 'application/json' };
+            if(settings.api_whatsapp_token) {
+                headers['Authorization'] = `Bearer ${settings.api_whatsapp_token}`;
+                headers['apikey'] = settings.api_whatsapp_token;
+            }
+
+            await fetch(settings.api_whatsapp_url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    number: settings.telefone_notificacao,
+                    phone: settings.telefone_notificacao,
+                    message: message,
+                    text: message
+                })
+            });
+            console.log("[Notification] Webhook do WhatsApp acionado.");
+        }
+    } catch(err) {
+        console.error("[Notification Error] Falha ao despachar webhook assíncrono:", err);
+    }
+};
+
 // Público: Submissão de leads via LP
 router.post('/leads', async (req, res) => {
     try {
@@ -70,6 +121,10 @@ router.post('/leads', async (req, res) => {
         const lead = await prisma.lead.create({
             data: { nome, telefone, email, empresa, mensagem, origem_da_pagina }
         });
+
+        // Dispara assincronamente as notificações sem travar o response da View
+        sendNotificationWebhook(lead);
+
         res.status(201).json({ message: 'Lead capturado! Logo entraremos em contato.', leadId: lead.id });
     } catch (e) {
         console.error("Erro lead:", e);

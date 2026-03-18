@@ -37,6 +37,16 @@ model SiteSettings {
   meta_pixel_id         String?
   script_head           String?
   script_body           String?
+  notificacao_email     Boolean  @default(false)
+  notificacao_whatsapp  Boolean  @default(false)
+  smtp_host             String?
+  smtp_port             String?
+  smtp_user             String?
+  smtp_pass             String?
+  destinatario_email    String?
+  api_whatsapp_url      String?
+  api_whatsapp_token    String?
+  telefone_notificacao  String?
   updatedAt             DateTime @updatedAt
 }
 
