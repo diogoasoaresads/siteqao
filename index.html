@@ -333,10 +333,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data.ativo) {
-                        const waBtn = document.createElement('a');
-                        waBtn.href = 'javascript:void(0)';
-                        waBtn.onclick = (e) => {
-                            e.preventDefault();
+                        window.openWhatsappModal = function(originName = 'Botão WhatsApp') {
                             const overlay = document.createElement('div');
                             overlay.style.position = 'fixed';
                             overlay.style.top = '0'; overlay.style.left = '0';
@@ -397,11 +394,11 @@
                                             telefone,
                                             email: 'N/A',
                                             empresa: 'N/A',
-                                            origem_da_pagina: 'Botão WhatsApp'
+                                            origem_da_pagina: originName
                                         })
                                     });
                                     if(typeof window.qaoTrackLead === 'function') {
-                                        window.qaoTrackLead('Botão WhatsApp');
+                                        window.qaoTrackLead(originName);
                                     }
                                 } catch(err) {
                                     console.error("Erro ao salvar lead do WhatsApp");
@@ -410,6 +407,13 @@
                                     window.open(`https://wa.me/${data.numero}?text=${encodeURIComponent(data.mensagem)}`, '_blank');
                                 }
                             };
+                        };
+
+                        const waBtn = document.createElement('a');
+                        waBtn.href = 'javascript:void(0)';
+                        waBtn.onclick = (e) => {
+                            e.preventDefault();
+                            window.openWhatsappModal('Botão WhatsApp Flutuante');
                         };
                         waBtn.innerHTML = '<i class="fab fa-whatsapp" style="font-size: 24px; color: #fff;"></i>';
                         waBtn.style.position = 'fixed';
@@ -429,6 +433,14 @@
                         waBtn.onmouseover = () => waBtn.style.transform = 'scale(1.1)';
                         waBtn.onmouseout = () => waBtn.style.transform = 'scale(1)';
                         document.body.appendChild(waBtn);
+
+                        // Atrelar Moda WhatsApp em todos os botões/links estáticos "wa.me"
+                        document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+                            link.onclick = (e) => {
+                                e.preventDefault();
+                                window.openWhatsappModal('Botão Estático WhatsApp (' + (link.innerText || 'Icone').trim() + ')');
+                            };
+                        });
                     }
                 }
             } catch (e) {
