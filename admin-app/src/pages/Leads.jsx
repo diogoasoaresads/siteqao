@@ -13,6 +13,7 @@ export default function Leads() {
 
   const fetchLeads = () => {
     fetch('/api/leads')
+      .then(res => res.json())
       .then(data => {
         if (data.error) { window.location.href = '/admin/login'; return; }
         if (Array.isArray(data)) setLeads(data);
