@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import LeadDrawer from '../components/LeadDrawer';
 
 export default function Leads() {
   const [leads, setLeads] = useState([]);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openDrawer = (lead) => {
+    setSelectedLead(lead);
+    setIsDrawerOpen(true);
+  };
 
   const fetchLeads = () => {
     fetch('/api/leads')
@@ -41,7 +49,7 @@ export default function Leads() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {leads.map(lead => (
-                <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={lead.id} onClick={() => openDrawer(lead)} className="hover:bg-gray-50 transition-colors cursor-pointer">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900">{lead.nome}</div>
                     <div className="text-sm text-gray-500">{lead.empresa}</div>
@@ -56,10 +64,8 @@ export default function Leads() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href={`https://wa.me/${lead.telefone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="text-emerald-600 hover:text-emerald-900 mr-4 font-semibold">
-                      WhatsApp
-                    </a>
-                    <button onClick={() => handleDelete(lead.id)} className="text-red-500 hover:text-red-700 font-semibold">Excluir</button>
+                    <button onClick={(e) => { e.stopPropagation(); openDrawer(lead); }} className="text-gray-500 hover:text-gray-900 mr-4 font-semibold">Detalhes</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleDelete(lead.id); }} className="text-red-500 hover:text-red-700 font-semibold">Excluir</button>
                   </td>
                 </tr>
               ))}
@@ -72,6 +78,12 @@ export default function Leads() {
           </table>
         </div>
       </div>
+
+      <LeadDrawer 
+        lead={selectedLead} 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+      />
     </div>
   );
 }

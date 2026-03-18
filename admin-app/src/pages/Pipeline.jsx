@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import LeadDrawer from '../components/LeadDrawer';
 
 const COLUMNS = [
   { id: 'novo', title: 'Novos Leads' },
@@ -12,6 +13,13 @@ const COLUMNS = [
 
 export default function Pipeline() {
   const [leads, setLeads] = useState([]);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openDrawer = (lead) => {
+    setSelectedLead(lead);
+    setIsDrawerOpen(true);
+  };
   
   const fetchLeads = () => {
     fetch('/api/leads')
@@ -75,7 +83,8 @@ export default function Pipeline() {
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={`bg-white p-4 rounded-lg border shadow-sm transition-all ${snapshot.isDragging ? 'shadow-xl border-black rotate-2 scale-105' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'}`}
+                                onClick={() => openDrawer(lead)}
+                                className={`bg-white p-4 rounded-lg border shadow-sm transition-all cursor-pointer ${snapshot.isDragging ? 'shadow-xl border-black rotate-2 scale-105' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'}`}
                               >
                                 <p className="font-semibold text-sm text-gray-900 mb-1 leading-tight">{lead.nome}</p>
                                 <p className="text-xs text-gray-500 mb-3 truncate">{lead.empresa}</p>
@@ -86,9 +95,9 @@ export default function Pipeline() {
 
                                 <div className="flex justify-between items-end">
                                   <span className="text-[10px] text-gray-400 font-medium tracking-wide">{lead.origem_da_pagina || 'Indefinida'}</span>
-                                  <a href={`https://wa.me/${lead.telefone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="text-xs font-semibold text-green-600 hover:underline">
-                                    WhatsApp
-                                  </a>
+                                  <button onClick={(e) => { e.stopPropagation(); openDrawer(lead); }} className="text-xs font-semibold text-blue-600 hover:underline">
+                                    Abrir Card
+                                  </button>
                                 </div>
                               </div>
                             )}
@@ -104,6 +113,12 @@ export default function Pipeline() {
           </div>
         </DragDropContext>
       </div>
+
+      <LeadDrawer 
+        lead={selectedLead} 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+      />
     </div>
   );
 }
