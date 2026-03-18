@@ -5,8 +5,10 @@ export default function Leads() {
 
   const fetchLeads = () => {
     fetch('/api/leads')
-      .then(res => res.json())
-      .then(setLeads)
+      .then(data => {
+        if (data.error) { window.location.href = '/admin/login'; return; }
+        if (Array.isArray(data)) setLeads(data);
+      })
       .catch(console.error);
   };
 
@@ -50,7 +52,7 @@ export default function Leads() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-                      {lead.status.replace('_', ' ').toUpperCase()}
+                      {(lead.status || 'novo').replace('_', ' ').toUpperCase()}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

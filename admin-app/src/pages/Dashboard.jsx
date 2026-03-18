@@ -6,7 +6,10 @@ export default function Dashboard() {
   useEffect(() => {
     fetch('/api/dashboard')
       .then(res => res.json())
-      .then(setData)
+      .then(d => {
+        if (d.error) { window.location.href = '/admin/login'; return; }
+        setData(d);
+      })
       .catch(console.error);
   }, []);
 
@@ -46,7 +49,7 @@ export default function Dashboard() {
                   <p className="font-medium text-gray-900">{lead.nome}</p>
                   <p className="text-sm text-gray-500">{lead.empresa} • {lead.origem_da_pagina}</p>
                </div>
-               <span className="px-3 py-1 rounded-full text-xs font-medium bg-black text-white">{lead.status.toUpperCase()}</span>
+               <span className="px-3 py-1 rounded-full text-xs font-medium bg-black text-white">{(lead.status || 'novo').toUpperCase()}</span>
             </div>
           ))}
         </div>

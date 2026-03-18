@@ -16,7 +16,10 @@ export default function Pipeline() {
   const fetchLeads = () => {
     fetch('/api/leads')
       .then(res => res.json())
-      .then(setLeads)
+      .then(data => {
+        if (data.error) { window.location.href = '/admin/login'; return; }
+        if (Array.isArray(data)) setLeads(data);
+      })
       .catch(console.error);
   };
   
