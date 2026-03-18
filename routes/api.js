@@ -90,21 +90,25 @@ const sendNotificationWebhook = async (lead) => {
                 headers['apikey'] = settings.api_whatsapp_token;
             }
 
-            const numeroLimpo = settings.telefone_notificacao.replace(/\D/g, '');
+            let numeroLimpo = settings.telefone_notificacao.replace(/\D/g, '');
+            // Se o usuário esqueceu o DDI do Brasil (55)
+            if (numeroLimpo.length === 10 || numeroLimpo.length === 11) {
+                numeroLimpo = '55' + numeroLimpo;
+            }
             
-            await fetch(settings.api_whatsapp_url, {
+            const reqWa = await fetch(settings.api_whatsapp_url, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({
                     number: numeroLimpo,
-                    phone: numeroLimpo,
-                    message: message,
-                    text: message,
+                    options: { delay: 1200, presence: 'composing' },
                     textMessage: { text: message },
-                    options: { delay: 1200, presence: 'composing' }
+                    text: message
                 })
             });
-            console.log("[Notification] Webhook do WhatsApp acionado.");
+            
+            const waResponse = await reqWa.text();
+            console.log("[Notification] Webhook WA Status:", reqWa.status, waResponse);
         }
     } catch(err) {
         console.error("[Notification Error] Falha ao despachar webhook assíncrono:", err);
