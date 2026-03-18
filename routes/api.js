@@ -10,6 +10,17 @@ if (!process.env.DATABASE_URL) {
 const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET || 'qao_growth_secret_sD89s9aD8';
 
+// Helper para gravação de log limpa no BD
+const logSystemEvent = async (level, source, message, details = null) => {
+    try {
+        await prisma.systemLog.create({
+            data: { level, source, message, details: details ? JSON.stringify(details) : null }
+        });
+    } catch(e) {
+        console.error("Critical falha ao gravar log no BD:", e);
+    }
+};
+
 // Middleware de autenticação
 const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
@@ -77,7 +88,7 @@ const sendNotificationWebhook = async (lead) => {
                 subject: `🔥 Novo Lead Capturado: ${lead.nome} (${lead.origem_da_pagina || 'Indefinida'})`,
                 text: `Temos um novo contato no funil QAO!\n\nNome: ${lead.nome}\nTelefone: ${lead.telefone}\nEmail: ${lead.email || 'N/A'}\nEmpresa: ${lead.empresa || 'N/A'}\nOrigem: ${lead.origem_da_pagina || 'Indefinida'}\nMensagem: ${lead.mensagem || 'N/A'}\n\nAcesse o seu painel de Admin para acompanhar e mover o card deste lead.`
             });
-            console.log("[Notification] E-mail de Status eviado.");
+            await logSystemEvent('success', 'email_notification', `E-mail enviado para o lead: ${lead.nome}`);
         }
 
         if (settings.notificacao_whatsapp && settings.api_whatsapp_url && settings.telefone_notificacao) {
@@ -108,10 +119,14 @@ const sendNotificationWebhook = async (lead) => {
             });
             
             const waResponse = await reqWa.text();
-            console.log("[Notification] Webhook WA Status:", reqWa.status, waResponse);
+            if (reqWa.ok) {
+                await logSystemEvent('success', 'webhook_evolution', `Webhook disparado com sucesso p/ o número ${numeroLimpo}`);
+            } else {
+                await logSystemEvent('error', 'webhook_evolution', `Evolution API recusou o pacote (HTTP ${reqWa.status})`, waResponse);
+            }
         }
     } catch(err) {
-        console.error("[Notification Error] Falha ao despachar webhook assíncrono:", err);
+        await logSystemEvent('error', 'webhook_evolution', `Falha total no request assíncrono`, err.message || err.toString());
     }
 };
 
@@ -132,10 +147,11 @@ router.post('/leads', async (req, res) => {
 
         // Dispara assincronamente as notificações sem travar o response da View
         sendNotificationWebhook(lead);
+        await logSystemEvent('info', 'lead_capture', `Novo lead recebido: ${nome} via ${origem_da_pagina || 'site'}`);
 
         res.status(201).json({ message: 'Lead capturado! Logo entraremos em contato.', leadId: lead.id });
     } catch (e) {
-        console.error("Erro lead:", e);
+        await logSystemEvent('error', 'lead_capture', `Erro ao cadastrar lead no BD`, e.message);
         res.status(500).json({ error: 'Erro ao processar captura do Lead' });
     }
 });
@@ -268,6 +284,19 @@ router.put('/settings/scripts', authenticateToken, async (req, res) => {
         res.json(settings);
     } catch (e) {
         res.status(500).json({ error: 'Erro ao salvar scripts' });
+    }
+});
+
+// Logs Endpoint
+router.get('/settings/logs', authenticateToken, async (req, res) => {
+    try {
+        const logs = await prisma.systemLog.findMany({
+            take: 30,
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(logs);
+    } catch (e) {
+        res.status(500).json({ error: 'Erro ao buscar auditoria' });
     }
 });
 

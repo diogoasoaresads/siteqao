@@ -59,3 +59,12 @@ model WhatsappSettings {
   posicao_botao   String   @default("direita")
   updatedAt       DateTime @updatedAt
 }
+
+model SystemLog {
+  id        String   @id @default(uuid())
+  level     String   @default("info") // info, warning, error, success
+  source    String   // Ex: webhook_evolution, lead_capture
+  message   String
+  details   String?
+  createdAt DateTime @default(now())
+}
