@@ -280,8 +280,78 @@
                     const data = await res.json();
                     if (data.ativo) {
                         const waBtn = document.createElement('a');
-                        waBtn.href = `https://wa.me/${data.numero}?text=${encodeURIComponent(data.mensagem)}`;
-                        waBtn.target = '_blank';
+                        waBtn.href = 'javascript:void(0)';
+                        waBtn.onclick = (e) => {
+                            e.preventDefault();
+                            const overlay = document.createElement('div');
+                            overlay.style.position = 'fixed';
+                            overlay.style.top = '0'; overlay.style.left = '0';
+                            overlay.style.width = '100vw'; overlay.style.height = '100vh';
+                            overlay.style.backgroundColor = 'rgba(0,0,0,0.6)';
+                            overlay.style.zIndex = '10000';
+                            overlay.style.display = 'flex';
+                            overlay.style.justifyContent = 'center';
+                            overlay.style.alignItems = 'center';
+                            overlay.style.backdropFilter = 'blur(4px)';
+                            
+                            const modal = document.createElement('div');
+                            modal.style.backgroundColor = '#fff';
+                            modal.style.padding = '24px';
+                            modal.style.borderRadius = '12px';
+                            modal.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+                            modal.style.width = '100%';
+                            modal.style.maxWidth = '360px';
+                            modal.style.margin = '0 16px';
+                            modal.style.position = 'relative';
+                            
+                            modal.innerHTML = `
+                                <button type="button" id="wa-modal-close" style="position:absolute; top:12px; right:16px; font-size:24px; font-weight:bold; color:#999; background:none; border:none; cursor:pointer;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</button>
+                                <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                                   <i class="fab fa-whatsapp" style="color: #25D366; font-size: 28px;"></i>
+                                   <h3 style="margin:0; font-size:18px; color:#111; font-family:Inter,sans-serif; font-weight:600;">Falar no WhatsApp</h3>
+                                </div>
+                                <p style="margin: 0 0 16px 0; font-size: 14px; color: #555; font-family:Inter,sans-serif;">Preencha seus dados para iniciarmos o atendimento.</p>
+                                <form id="wa-lead-form" style="display:flex; flex-direction:column; gap:12px; font-family:Inter,sans-serif;">
+                                   <input type="text" id="wa-nome" placeholder="Seu Nome" required style="width:100%; padding:12px 14px; border:1px solid #d1d5db; border-radius:6px; font-size:14px; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#111'" onblur="this.style.borderColor='#d1d5db'">
+                                   <input type="tel" id="wa-telefone" placeholder="Seu WhatsApp" required style="width:100%; padding:12px 14px; border:1px solid #d1d5db; border-radius:6px; font-size:14px; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#111'" onblur="this.style.borderColor='#d1d5db'">
+                                   <button type="submit" style="width:100%; padding:14px; background-color:#25D366; color:#fff; font-weight:bold; border:none; border-radius:6px; cursor:pointer; font-size:15px; margin-top:8px; transition:background-color 0.2s;" onmouseover="this.style.backgroundColor='#1fad53'" onmouseout="this.style.backgroundColor='#25D366'">Iniciar Conversa</button>
+                                </form>
+                            `;
+                            
+                            overlay.appendChild(modal);
+                            document.body.appendChild(overlay);
+
+                            document.getElementById('wa-modal-close').onclick = () => {
+                                document.body.removeChild(overlay);
+                            };
+
+                            const form = document.getElementById('wa-lead-form');
+                            form.onsubmit = async (ev) => {
+                                ev.preventDefault();
+                                const nome = document.getElementById('wa-nome').value;
+                                const telefone = document.getElementById('wa-telefone').value;
+                                const btn = form.querySelector('button');
+                                btn.innerText = 'Redirecionando...';
+                                btn.disabled = true;
+
+                                try {
+                                    await fetch('/api/leads', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({
+                                            nome,
+                                            telefone,
+                                            origem_da_pagina: 'Botão WhatsApp LP'
+                                        })
+                                    });
+                                } catch(err) {
+                                    console.error("Erro ao salvar lead do WhatsApp");
+                                } finally {
+                                    document.body.removeChild(overlay);
+                                    window.open(`https://wa.me/${data.numero}?text=${encodeURIComponent(data.mensagem)}`, '_blank');
+                                }
+                            };
+                        };
                         waBtn.innerHTML = '<i class="fab fa-whatsapp" style="font-size: 24px; color: #fff;"></i>';
                         waBtn.style.position = 'fixed';
                         waBtn.style.bottom = '20px';
