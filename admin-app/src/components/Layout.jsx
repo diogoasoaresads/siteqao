@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Trello, Settings, Code, LogOut, BellRing, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, Trello, Settings, Code, LogOut, BellRing, Activity, Briefcase, CheckSquare, Beaker, BarChart3, CreditCard, Puzzle } from 'lucide-react';
+
 
 export default function Layout() {
   const location = useLocation();
@@ -14,10 +15,16 @@ export default function Layout() {
     { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/leads', icon: Users, label: 'Leads' },
     { path: '/pipeline', icon: Trello, label: 'Pipeline' },
+    { path: '/clients', icon: Briefcase, label: 'Clientes' },
+    { path: '/backlog', icon: Beaker, label: 'Ideias e Experimentos' },
+    { path: '/tasks', icon: CheckSquare, label: 'Kanban de Tarefas' },
+    { path: '/metrics', icon: BarChart3, label: 'Métricas de Growth' },
+    { path: '/financial', icon: CreditCard, label: 'Financeiro' },
     { path: '/settings/whatsapp', icon: Settings, label: 'WhatsApp' },
     { path: '/settings/scripts', icon: Code, label: 'Scripts e Tags' },
     { path: '/settings/notifications', icon: BellRing, label: 'Notificações' },
-    { path: '/settings/logs', icon: Activity, label: 'Auditoria e Logs' }
+    { path: '/settings/logs', icon: Activity, label: 'Auditoria e Logs' },
+    { path: '/settings/integrations', icon: Puzzle, label: 'Integrações (PIX/NFS-e)' }
   ];
 
   return (

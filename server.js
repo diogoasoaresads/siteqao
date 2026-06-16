@@ -15,6 +15,7 @@ app.use(cookieParser());
 
 // Expose public static files explicitly so we don't leak backend data
 app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/diagnostico-marketing', express.static(path.join(__dirname, 'diagnostico-marketing')));
 
 // API Routes

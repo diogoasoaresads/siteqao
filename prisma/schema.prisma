@@ -1,6 +1,6 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -47,6 +47,23 @@ model SiteSettings {
   api_whatsapp_url      String?
   api_whatsapp_token    String?
   telefone_notificacao  String?
+
+  // Sicredi PIX
+  sicredi_client_id     String?
+  sicredi_client_secret String?
+  sicredi_chave_pix     String?
+  sicredi_certificado   String?
+  sicredi_chave_privada String?
+  sicredi_sandbox       Boolean  @default(true)
+
+  // Vila Velha NFS-e
+  nfe_cnpj_emissor        String?
+  nfe_inscricao_municipal String?
+  nfe_usuario_prefeitura  String?
+  nfe_senha_prefeitura    String?
+  nfe_token_integracao    String?
+  nfe_sandbox             Boolean  @default(true)
+
   updatedAt             DateTime @updatedAt
 }
 
@@ -68,3 +85,90 @@ model SystemLog {
   details   String?
   createdAt DateTime @default(now())
 }
+
+model Client {
+  id           String             @id @default(uuid())
+  nome         String
+  empresa      String
+  email        String?
+  telefone     String?
+  status       String             @default("ativo") // ativo, pausado, encerrado
+  valorMensal  Float              @default(0)       // Retainer mensal
+  budgetAds    Float              @default(0)       // Investimento em anúncios
+  observacoes  String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  experiments  GrowthExperiment[]
+  tasks        GrowthTask[]
+  metrics      ClientMetric[]
+  invoices     Invoice[]
+}
+
+model GrowthExperiment {
+  id             String       @id @default(uuid())
+  title          String
+  description    String?
+  status         String       @default("ideia") // ideia, backlog, em_teste, concluido, cancelado
+  impact         Int          @default(5)       // ICE - Impacto (1-10)
+  confidence     Int          @default(5)       // ICE - Confiança (1-10)
+  ease           Int          @default(5)       // ICE - Facilidade (1-10)
+  hypothesis     String?
+  metricToTrack  String?
+  results        String?
+  learnings      String?
+  clientId       String
+  client         Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  tasks          GrowthTask[]
+}
+
+model GrowthTask {
+  id           String            @id @default(uuid())
+  title        String
+  description  String?
+  status       String            @default("a_fazer") // a_fazer, em_andamento, revisao, concluido
+  priority     String            @default("media")   // baixa, media, alta
+  responsible  String?
+  dueDate      DateTime?
+  clientId     String
+  client       Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  experimentId String?
+  experiment   GrowthExperiment? @relation(fields: [experimentId], references: [id], onDelete: SetNull)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model ClientMetric {
+  id             String   @id @default(uuid())
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  periodo        String   // Formato YYYY-MM
+  faturamento    Float    @default(0)
+  investimentoAds Float   @default(0)
+  leadsGerados   Int      @default(0)
+  cac            Float    @default(0)
+  ltv            Float    @default(0)
+  roi            Float    @default(0)
+  taxaConversao  Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Invoice {
+  id           String    @id @default(uuid())
+  clientId     String
+  client       Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  valor        Float
+  periodo      String    // Formato YYYY-MM
+  vencimento   DateTime
+  status       String    @default("pendente") // pendente, pago, atrasado
+  pixCode      String?   // Copy-paste Pix key
+  nfeStatus    String    @default("nao_emitida") // nao_emitida, processando, emitida, erro
+  nfeNumero    String?
+  nfeUrl       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+

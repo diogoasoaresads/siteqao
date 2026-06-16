@@ -3,12 +3,36 @@ import React, { useState, useEffect } from 'react';
 export default function LeadDrawer({ lead, isOpen, onClose }) {
   const [observacoes, setObservacoes] = useState('');
   const [salvando, setSalvando] = useState(false);
+  const [promovendo, setPromovendo] = useState(false);
 
   useEffect(() => {
     if (lead) {
       setObservacoes(lead.observacoes || '');
     }
   }, [lead]);
+
+  const handlePromoteToClient = async () => {
+    if (!lead) return;
+    setPromovendo(true);
+    try {
+      const res = await fetch(`/api/leads/${lead.id}/promote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        alert('Lead promovido a Cliente com sucesso!');
+        onClose();
+        // Redireciona para a página de clientes
+        window.location.href = '/admin/clients';
+      } else {
+        alert('Erro ao promover lead.');
+      }
+    } catch (e) {
+      console.error("Falha ao promover lead", e);
+    } finally {
+      setPromovendo(false);
+    }
+  };
 
   const handleSalvarObservacoes = async () => {
     if (!lead) return;
@@ -89,10 +113,20 @@ export default function LeadDrawer({ lead, isOpen, onClose }) {
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               
               {/* Status Badge */}
-              <div>
+              <div className="flex justify-between items-center">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase tracking-wider ${getStatusColor(lead.status)}`}>
                     {(lead.status || 'novo').replace('_', ' ')}
                 </span>
+
+                {lead.status === 'fechado' && (
+                  <button
+                    onClick={handlePromoteToClient}
+                    disabled={promovendo}
+                    className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-xs disabled:opacity-50 cursor-pointer"
+                  >
+                    {promovendo ? 'Promovendo...' : '⚡ Converter em Cliente'}
+                  </button>
+                )}
               </div>
 
               {/* Contato Info */}

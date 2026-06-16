@@ -3,12 +3,53 @@
  * Inicializa e dispara eventos de conversão Baseados nos IDs do Banco de Dados
  */
 
-document.addEventListener('DOMContentLoaded', async () => {
+window.qaoTrackingSettings = window.qaoTrackingSettings || {};
+document.documentElement.dataset.qaoTracking = 'ready';
+window.qaoTrackLead = function(origemLabel = 'Formulário Geral') {
     try {
-        const res = await fetch('/api/settings/scripts');
+        const settings = window.qaoTrackingSettings || {};
+
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', 'conversion', {
+                'send_to': settings.google_ads_id ? `${settings.google_ads_id}/lead` : undefined,
+                'event_category': 'Leads',
+                'event_label': origemLabel
+            });
+
+            window.gtag('event', 'generate_lead', {
+                currency: "BRL",
+                value: 100.00
+            });
+        }
+
+        if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead', {
+                content_name: origemLabel,
+                currency: 'BRL',
+                value: 100.00
+            });
+        }
+
+        if (typeof window.dataLayer !== 'undefined') {
+            window.dataLayer.push({
+                'event': 'qao_lead_conversion',
+                'lead_source': origemLabel
+            });
+        }
+
+        console.log(`🎯 [Conversion Tracking Disparado]: ${origemLabel}`);
+    } catch (e) {
+        console.error('Falha ao acionar Pixels', e);
+    }
+};
+
+async function initQaoTracking() {
+    try {
+        const res = await fetch('/api/settings/tracking');
         if (!res.ok) return;
         
         const settings = await res.json();
+        window.qaoTrackingSettings = settings;
         
         // Inicializa Google Analytics/Ads (gtag.js) nativamente sem precisar de código inserido manualmente
         if (settings.google_analytics_id || settings.google_ads_id) {
@@ -44,48 +85,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('✅ [Tracking] Meta Pixel Initialized');
         }
 
-        // Handler Global para Conversão de Lead (Invocável via window)
-        window.qaoTrackLead = function(origemLabel = 'Formulário Geral') {
-            try {
-                // Tracking Universal Google
-                if (typeof window.gtag === 'function') {
-                    window.gtag('event', 'conversion', {
-                        'send_to': settings.google_ads_id ? `${settings.google_ads_id}/lead` : undefined, // Evento classico de Ads
-                        'event_category': 'Leads',
-                        'event_label': origemLabel
-                    });
-                    
-                    // GA4 Native Event
-                    window.gtag('event', 'generate_lead', {
-                        currency: "BRL",
-                        value: 100.00
-                    });
-                }
-                
-                // Tracking Meta Ads
-                if (typeof window.fbq === 'function') {
-                    window.fbq('track', 'Lead', {
-                        content_name: origemLabel,
-                        currency: 'BRL',
-                        value: 100.00
-                    });
-                }
-                
-                // Se o usuário injetou algum script GTM manual pelo painel
-                if (typeof window.dataLayer !== 'undefined') {
-                    window.dataLayer.push({
-                        'event': 'qao_lead_conversion',
-                        'lead_source': origemLabel
-                    });
-                }
-                
-                console.log(`🎯 [Conversion Tracking Disparado]: ${origemLabel}`);
-            } catch (e) {
-                console.error('Falha ao acionar Pixels', e);
-            }
-        };
-
     } catch (err) {
         console.error("QAO Tracking initialization failed:", err);
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initQaoTracking);
+} else {
+    initQaoTracking();
+}

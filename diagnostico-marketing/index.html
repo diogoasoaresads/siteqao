@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico Gratuito | QAO Assessoria em Growth</title>
+    <title>Diagnóstico Gratuito | QAO Growth Marketing com IA</title>
     
-    <meta name="description" content="Agende um diagnóstico gratuito de marketing corporativo. Analisaremos seu funil, mídia, conversão e daremos recomendações estratégicas.">
+    <meta name="description" content="Agende um diagnóstico gratuito de Growth Marketing com IA. Analisamos mídia, funil, CRM, automações e oportunidades para transformar leads em receita.">
     <meta name="robots" content="noindex, follow">
 
     <!-- Meta tags originais limpas -->
@@ -115,7 +115,7 @@
                     <span class="logo-icon"></span>
                     QAO
                 </a>
-                <p class="text-secondary mt-2" style="font-size: 0.9rem;">Assessoria em Growth Marketing Data-Driven</p>
+                <p class="text-secondary mt-2" style="font-size: 0.9rem;">Growth Marketing com IA aplicada</p>
             </div>
             <button class="theme-toggle" aria-label="Alternar Tema" style="background: none; border: none; font-size: 1.25rem; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
                 <i class="fas fa-moon theme-icon-moon"></i>
@@ -131,15 +131,15 @@
                 <!-- Benefícios -->
                 <div class="lp-value-prop fade-in-up">
                     <span class="badge">Sessão Estratégica</span>
-                    <h1 class="hero-title mt-4" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 16px;">Diagnóstico de Growth <br><span>Gratuito</span></h1>
-                    <p class="hero-subtitle mt-4">Nossos especialistas em aquisição digital dedicarão 30 minutos para analisar exatamente onde seu funil está perdendo dinheiro e como escalar.</p>
+                    <h1 class="hero-title mt-4" style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 16px;">Diagnóstico de Growth com IA <br><span>Gratuito</span></h1>
+                    <p class="hero-subtitle mt-4">Em 30 minutos, analisamos onde seu funil perde dinheiro e quais automações, agentes de IA e ajustes de mídia podem acelerar receita.</p>
                     
                     <h3 class="mt-8 mb-4">O que você receberá nesta sessão:</h3>
                     <ul class="lp-list">
-                        <li><strong>Análise de Funil:</strong> Descubra vazamentos de receita e pontos de atrito no comercial.</li>
-                        <li><strong>Análise de Mídia:</strong> Auditoria rápida das suas campanhas de Google e Meta Ads.</li>
-                        <li><strong>Análise de Conversão:</strong> Oportunidades de CRO no seu site ou Landing Page atual.</li>
-                        <li><strong>Recomendações Estratégicas:</strong> Plano de ação pautado em dados de mercado.</li>
+                        <li><strong>Análise de Funil:</strong> Vazamentos de receita, gargalos comerciais e pontos de perda de velocidade.</li>
+                        <li><strong>Análise de Mídia:</strong> Auditoria rápida de Google Ads, Meta Ads e sinais de intenção.</li>
+                        <li><strong>IA e Automação:</strong> Oportunidades para qualificar, responder e nutrir leads com mais eficiência.</li>
+                        <li><strong>Plano de Ação:</strong> Recomendações práticas para mídia, CRM, conversão e rotina comercial.</li>
                     </ul>
 
                     <div class="mt-8 p-4 bg-offset" style="border-radius: var(--radius-md); border-left: 4px solid var(--text-primary);">
@@ -150,7 +150,7 @@
                 <!-- Formulário de Conversão -->
                 <div class="diag-form fade-in-up delay-200">
                     <h3 class="mb-4" style="font-size: 1.5rem;">Preencha para agendarmos</h3>
-                    <p class="text-secondary mb-6" style="font-size: 0.95rem;">Responda abaixo para que possamos nos preparar para sua reunião.</p>
+                    <p class="text-secondary mb-6" style="font-size: 0.95rem;">Responda abaixo para avaliarmos seu funil antes da reunião.</p>
                     
                     <form id="diagnosticoForm" class="mt-2">
                         <div class="form-group">
@@ -181,7 +181,7 @@
 
                         <div class="form-group">
                             <label for="desafio">Qual é o seu maior desafio hoje?</label>
-                            <textarea id="desafio" class="form-input" rows="3" placeholder="Ex: Custo por lead muito alto no Google Ads..." style="resize: vertical;"></textarea>
+                            <textarea id="desafio" class="form-input" rows="3" placeholder="Ex: Leads chegam, mas demoram para ser qualificados..." style="resize: vertical;"></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-full mb-4 mt-2">
@@ -249,7 +249,7 @@
                         faturamento: document.getElementById('faturamento').value,
                         desafio: document.getElementById('desafio').value,
                         telefone: 'N/A', // Assuming NO phone field in LP, we fallback
-                        origem_da_pagina: 'LP Diagnóstico'
+                        origem_da_pagina: 'LP Diagnóstico Growth com IA'
                     };
 
                     try {
@@ -260,7 +260,7 @@
                         });
                         if (req.ok) {
                             if(typeof window.qaoTrackLead === 'function') {
-                                window.qaoTrackLead('LP Diagnóstico');
+                                window.qaoTrackLead('LP Diagnóstico Growth com IA');
                             }
                             alert('Solicitação enviada com sucesso! Em breve nossa equipe entrará em contato para agendar seu diagnóstico.');
                             e.target.reset();
@@ -393,6 +393,6 @@
             }
         });
     </script>
-    <script src="/js/tracking.js"></script>
+    <script src="/js/tracking.js?v=4"></script>
 </body>
 </html>
