@@ -101,6 +101,97 @@
             .lp-value-prop { padding-right: 0; margin-bottom: 40px; }
             .diag-form { padding: 32px 20px; }
         }
+
+        /* Multistep Form Styles */
+        .progress-bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            position: relative;
+            padding: 0 10px;
+        }
+        .progress-bar-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 2px;
+            background: var(--border-subtle);
+            width: 100%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        .progress-bar-fill {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 2px;
+            background: var(--text-primary);
+            width: 0%;
+            transform: translateY(-50%);
+            z-index: 2;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-main);
+            border: 2px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+        .progress-step.active {
+            border-color: var(--text-primary);
+            background: var(--text-primary);
+            color: var(--bg-main);
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+        .progress-step.completed {
+            border-color: var(--text-primary);
+            background: var(--text-primary);
+            color: var(--bg-main);
+        }
+        .form-step {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .form-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .form-navigation button {
+            flex: 1;
+        }
+        .step-title-container {
+            margin-bottom: 24px;
+        }
+        .step-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .step-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -147,53 +238,111 @@
                     </div>
                 </div>
 
-                <!-- Formulário de Conversão -->
-                <div class="diag-form fade-in-up delay-200">
-                    <h3 class="mb-4" style="font-size: 1.5rem;">Preencha para agendarmos</h3>
-                    <p class="text-secondary mb-6" style="font-size: 0.95rem;">Responda abaixo para avaliarmos seu funil antes da reunião.</p>
-                    
+                <!-- Formulário de Conversão Multistep -->
+                <div class="diag-form fade-in-up delay-200" id="formContainer">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-line"></div>
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                        <div class="progress-step active" data-step="1">1</div>
+                        <div class="progress-step" data-step="2">2</div>
+                        <div class="progress-step" data-step="3">3</div>
+                    </div>
+
                     <form id="diagnosticoForm" class="mt-2">
-                        <div class="form-group">
-                            <label for="nome">Nome Completo</label>
-                            <input type="text" id="nome" class="form-input" placeholder="Ex: João Silva" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="empresa">Nome da Empresa</label>
-                            <input type="text" id="empresa" class="form-input" placeholder="Sua empresa B2B" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">E-mail Corporativo</label>
-                            <input type="email" id="email" class="form-input" placeholder="joao@empresa.com.br" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="faturamento">Faturamento Mensal Estimado</label>
-                            <select id="faturamento" class="form-input" required>
-                                <option value="" disabled selected>Selecione uma faixa</option>
-                                <option value="ate-50k">Até R$ 50.000</option>
-                                <option value="50-150k">R$ 50.000 a R$ 150.000</option>
-                                <option value="150-500k">R$ 150.000 a R$ 500.000</option>
-                                <option value="mais-500k">Acima de R$ 500.000</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="desafio">Qual é o seu maior desafio hoje?</label>
-                            <textarea id="desafio" class="form-input" rows="3" placeholder="Ex: Leads chegam, mas demoram para ser qualificados..." style="resize: vertical;"></textarea>
+                        <!-- ETAPA 1: Dados de Contato -->
+                        <div class="form-step active" data-step="1">
+                            <div class="step-title-container">
+                                <h4 class="step-title">Dados de Contato</h4>
+                                <p class="step-subtitle">Primeiro, como podemos falar com você?</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="nome">Nome Completo</label>
+                                <input type="text" id="nome" class="form-input" placeholder="Ex: João Silva" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail Corporativo</label>
+                                <input type="email" id="email" class="form-input" placeholder="joao@empresa.com.br" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="telefone">WhatsApp (com DDD)</label>
+                                <input type="tel" id="telefone" class="form-input" placeholder="Ex: (11) 99999-9999" required>
+                            </div>
+                            <div class="form-navigation">
+                                <div></div> <!-- Spacer -->
+                                <button type="button" class="btn btn-primary" id="btnNext1">
+                                    Avançar <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-full mb-4 mt-2">
-                            Solicitar Diagnóstico <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
-                        </button>
+                        <!-- ETAPA 2: Dados da Empresa -->
+                        <div class="form-step" data-step="2">
+                            <div class="step-title-container">
+                                <h4 class="step-title">Sua Empresa</h4>
+                                <p class="step-subtitle">Conte-nos sobre o porte do seu negócio.</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="empresa">Nome da Empresa</label>
+                                <input type="text" id="empresa" class="form-input" placeholder="Sua empresa B2B" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="faturamento">Faturamento Mensal Estimado</label>
+                                <select id="faturamento" class="form-input" required>
+                                    <option value="" disabled selected>Selecione uma faixa</option>
+                                    <option value="ate-50k">Até R$ 50.000</option>
+                                    <option value="50-150k">R$ 50.000 a R$ 150.000</option>
+                                    <option value="150-500k">R$ 150.000 a R$ 500.000</option>
+                                    <option value="mais-500k">Acima de R$ 50.000</option>
+                                </select>
+                            </div>
+                            <div class="form-navigation">
+                                <button type="button" class="btn btn-outline" id="btnPrev2">
+                                    <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Voltar
+                                </button>
+                                <button type="button" class="btn btn-primary" id="btnNext2">
+                                    Avançar <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                        <div class="text-center text-secondary mb-4" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 24px 0;">OU</div>
+                        <!-- ETAPA 3: Desafios -->
+                        <div class="form-step" data-step="3">
+                            <div class="step-title-container">
+                                <h4 class="step-title">Seus Desafios</h4>
+                                <p class="step-subtitle">Última etapa! O que está travando seu crescimento?</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="desafio">Qual é o seu maior desafio de growth hoje?</label>
+                                <textarea id="desafio" class="form-input" rows="3" placeholder="Ex: Leads chegam, mas demoram para ser qualificados..." style="resize: vertical;" required></textarea>
+                            </div>
+                            <div class="form-navigation">
+                                <button type="button" class="btn btn-outline" id="btnPrev3">
+                                    <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Voltar
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="btnSubmit">
+                                    Enviar Solicitação <i class="fas fa-check" style="margin-left: 8px;"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                        <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20agendar%20um%20diagnóstico%20de%20Growth!" class="btn btn-outline btn-lg w-full" target="_blank">
+                        <div class="text-center text-secondary mb-4 mt-6" id="ouDivider" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">OU</div>
+
+                        <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20agendar%20um%20diagnóstico%20de%20Growth!" class="btn btn-outline btn-lg w-full" id="waDirectButton" target="_blank">
                             <i class="fab fa-whatsapp" style="margin-right: 8px; color: #25D366; font-size: 1.2rem;"></i> Falar direto no WhatsApp
                         </a>
                     </form>
+                </div>
+
+                <!-- Confirmação de Sucesso (Fica visível após enviar tudo) -->
+                <div class="diag-form fade-in-up" id="successContainer" style="display: none; text-align: center;">
+                    <div style="font-size: 3rem; color: #10B981; margin-bottom: 20px;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="mb-4" style="font-size: 1.6rem;">Solicitação Recebida!</h3>
+                    <p class="text-secondary mb-6" style="font-size: 1rem; line-height: 1.6;">
+                        Obrigado por responder nosso diagnóstico. Já analisamos as primeiras informações e entraremos em contato via WhatsApp nas próximas horas para agendarmos o seu diagnóstico gratuito.
+                    </p>
+                    <a href="/" class="btn btn-primary">Voltar para Home</a>
                 </div>
 
             </div>
@@ -232,46 +381,213 @@
                 });
             }
 
-            // Lead Capture Form Logic
+            // Lead Capture Form Logic (Multistep)
             const form = document.getElementById('diagnosticoForm');
-            if (form) {
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const btn = e.target.querySelector('button[type="submit"]');
-                    const originalText = btn.innerHTML;
-                    btn.innerHTML = 'Enviando...';
-                    btn.disabled = true;
+            const formContainer = document.getElementById('formContainer');
+            const successContainer = document.getElementById('successContainer');
+            const progressBarFill = document.getElementById('progressBarFill');
+            const steps = document.querySelectorAll('.form-step');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const ouDivider = document.getElementById('ouDivider');
+            const waDirectButton = document.getElementById('waDirectButton');
+            
+            let currentStep = 1;
+            let leadId = null;
+
+            function updateProgressBar() {
+                const percentage = ((currentStep - 1) / (steps.length - 1)) * 100;
+                if (progressBarFill) {
+                    progressBarFill.style.width = percentage + '%';
+                }
+
+                progressSteps.forEach((step, idx) => {
+                    if (idx < currentStep) {
+                        step.classList.add('active');
+                        if (idx < currentStep - 1) {
+                            step.classList.add('completed');
+                        } else {
+                            step.classList.remove('completed');
+                        }
+                    } else {
+                        step.classList.remove('active', 'completed');
+                    }
+                });
+
+                if (currentStep > 1) {
+                    if (ouDivider) ouDivider.style.display = 'none';
+                    if (waDirectButton) waDirectButton.style.display = 'none';
+                } else {
+                    if (ouDivider) ouDivider.style.display = 'block';
+                    if (waDirectButton) waDirectButton.style.display = 'block';
+                }
+            }
+
+            function goToStep(stepNumber) {
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                const nextStepEl = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+                if (nextStepEl) {
+                    nextStepEl.classList.add('active');
+                    currentStep = stepNumber;
+                    updateProgressBar();
+                }
+            }
+
+            // Etapa 1 -> Etapa 2 (Criação de Lead e envio de Nome/Email/Telefone)
+            const btnNext1 = document.getElementById('btnNext1');
+            if (btnNext1) {
+                btnNext1.addEventListener('click', async () => {
+                    const nome = document.getElementById('nome').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const telefone = document.getElementById('telefone').value.trim();
+
+                    if (!nome || !email || !telefone) {
+                        alert('Por favor, preencha todos os campos desta etapa.');
+                        return;
+                    }
+
+                    btnNext1.disabled = true;
+                    btnNext1.innerHTML = 'Carregando... <i class="fas fa-spinner fa-spin" style="margin-left: 8px;"></i>';
 
                     const data = {
-                        nome: document.getElementById('nome').value,
-                        empresa: document.getElementById('empresa').value,
-                        email: document.getElementById('email').value,
-                        faturamento: document.getElementById('faturamento').value,
-                        desafio: document.getElementById('desafio').value,
-                        telefone: 'N/A', // Assuming NO phone field in LP, we fallback
-                        origem_da_pagina: 'LP Diagnóstico Growth com IA'
+                        nome,
+                        email,
+                        telefone,
+                        origem_da_pagina: 'LP Diagnóstico Multistep'
                     };
 
                     try {
-                        const req = await fetch('/api/leads', {
-                            method: 'POST',
+                        let res, d;
+                        if (!leadId) {
+                            res = await fetch('/api/leads', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(data)
+                            });
+                            d = await res.json();
+                            if (res.ok && d.leadId) {
+                                leadId = d.leadId;
+                            }
+                        } else {
+                            res = await fetch(`/api/leads/${leadId}`, {
+                                method: 'PATCH',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(data)
+                            });
+                            d = await res.json();
+                        }
+
+                        if (res && res.ok) {
+                            goToStep(2);
+                        } else {
+                            alert(d.error || 'Erro ao salvar contato. Por favor, tente novamente.');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Falha ao se conectar com o servidor.');
+                    } finally {
+                        btnNext1.disabled = false;
+                        btnNext1.innerHTML = 'Avançar <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>';
+                    }
+                });
+            }
+
+            // Etapa 2 -> Etapa 3 (Envio de Empresa/Faturamento)
+            const btnNext2 = document.getElementById('btnNext2');
+            if (btnNext2) {
+                btnNext2.addEventListener('click', async () => {
+                    const empresa = document.getElementById('empresa').value.trim();
+                    const faturamento = document.getElementById('faturamento').value;
+
+                    if (!empresa || !faturamento) {
+                        alert('Por favor, preencha todos os campos desta etapa.');
+                        return;
+                    }
+
+                    btnNext2.disabled = true;
+                    btnNext2.innerHTML = 'Carregando... <i class="fas fa-spinner fa-spin" style="margin-left: 8px;"></i>';
+
+                    const data = {
+                        empresa,
+                        faturamento
+                    };
+
+                    try {
+                        const res = await fetch(`/api/leads/${leadId}`, {
+                            method: 'PATCH',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify(data)
                         });
-                        if (req.ok) {
-                            if(typeof window.qaoTrackLead === 'function') {
-                                window.qaoTrackLead('LP Diagnóstico Growth com IA');
-                            }
-                            alert('Solicitação enviada com sucesso! Em breve nossa equipe entrará em contato para agendar seu diagnóstico.');
-                            e.target.reset();
+                        const d = await res.json();
+                        if (res.ok) {
+                            goToStep(3);
                         } else {
-                            alert('Erro ao enviar, por favor confira as informações.');
+                            alert(d.error || 'Erro ao salvar informações da empresa.');
                         }
                     } catch (err) {
-                        alert('Falha na comunicação com o servidor.');
+                        console.error(err);
+                        alert('Falha ao se conectar com o servidor.');
                     } finally {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
+                        btnNext2.disabled = false;
+                        btnNext2.innerHTML = 'Avançar <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>';
+                    }
+                });
+            }
+
+            // Navegação de Voltar
+            const btnPrev2 = document.getElementById('btnPrev2');
+            if (btnPrev2) {
+                btnPrev2.addEventListener('click', () => goToStep(1));
+            }
+            const btnPrev3 = document.getElementById('btnPrev3');
+            if (btnPrev3) {
+                btnPrev3.addEventListener('click', () => goToStep(2));
+            }
+
+            // Envio Final (Submit do Formulário)
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const desafio = document.getElementById('desafio').value.trim();
+
+                    if (!desafio) {
+                        alert('Por favor, informe seu maior desafio.');
+                        return;
+                    }
+
+                    const btnSubmit = document.getElementById('btnSubmit');
+                    const originalText = btnSubmit.innerHTML;
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerHTML = 'Enviando... <i class="fas fa-spinner fa-spin" style="margin-left: 8px;"></i>';
+
+                    const data = {
+                        desafio
+                    };
+
+                    try {
+                        const res = await fetch(`/api/leads/${leadId}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(data)
+                        });
+                        const d = await res.json();
+                        if (res.ok) {
+                            if (typeof window.qaoTrackLead === 'function') {
+                                window.qaoTrackLead('LP Diagnóstico Multistep - Completo');
+                            }
+                            if (formContainer) formContainer.style.display = 'none';
+                            if (successContainer) successContainer.style.display = 'block';
+                        } else {
+                            alert(d.error || 'Erro ao enviar a última etapa.');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Falha ao se conectar com o servidor.');
+                    } finally {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = originalText;
                     }
                 });
             }

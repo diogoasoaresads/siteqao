@@ -156,6 +156,47 @@ router.post('/leads', async (req, res) => {
     }
 });
 
+// Público: Atualização parcial de lead para formulário multistep
+router.patch('/leads/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, telefone, email, empresa, faturamento, desafio } = req.body;
+
+        // Buscar lead existente
+        const lead = await prisma.lead.findUnique({ where: { id } });
+        if (!lead) {
+            return res.status(404).json({ error: 'Lead não encontrado' });
+        }
+
+        // Trata faturamento e desafio em "mensagem"
+        let novaMensagem = lead.mensagem || '';
+        if (faturamento || desafio) {
+            const partes = [];
+            if (faturamento) partes.push(`Faturamento: ${faturamento}`);
+            if (desafio) partes.push(`Desafio: ${desafio}`);
+            novaMensagem = partes.join('\n');
+        }
+
+        const updatedLead = await prisma.lead.update({
+            where: { id },
+            data: {
+                nome: nome !== undefined ? nome : lead.nome,
+                telefone: telefone !== undefined ? telefone : lead.telefone,
+                email: email !== undefined ? email : lead.email,
+                empresa: empresa !== undefined ? empresa : lead.empresa,
+                mensagem: novaMensagem || lead.mensagem
+            }
+        });
+
+        await logSystemEvent('info', 'lead_update', `Lead atualizado (multistep): ${updatedLead.nome} (${updatedLead.empresa || 'Sem empresa'})`);
+
+        res.json({ message: 'Lead atualizado com sucesso!', leadId: updatedLead.id });
+    } catch (e) {
+        await logSystemEvent('error', 'lead_update', `Erro ao atualizar lead (multistep) no BD`, e.message);
+        res.status(500).json({ error: 'Erro ao processar atualização do Lead' });
+    }
+});
+
 // Admin Privado: Listar todos
 router.get('/leads', authenticateToken, async (req, res) => {
     try {
