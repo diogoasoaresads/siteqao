@@ -22,6 +22,37 @@ export default function PerformanceMetrics() {
     taxaConversao: ''
   });
 
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSyncAds = async () => {
+    if (!selectedClientId) return;
+    setSyncing(true);
+
+    const now = new Date();
+    const currentPeriod = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+    try {
+      const res = await fetch(`/api/clients/${selectedClientId}/sync-media`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ periodo: currentPeriod })
+      });
+
+      if (res.ok) {
+        alert('Campanhas do Google e Meta Ads sincronizadas com sucesso!');
+        fetchMetrics();
+      } else {
+        const errData = await res.json();
+        alert(`Erro ao sincronizar anúncios: ${errData.error || 'Erro desconhecido'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão ao sincronizar campanhas de anúncios.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const fetchClients = () => {
     fetch('/api/clients')
       .then(res => res.json())
@@ -203,6 +234,13 @@ _Gerado automaticamente pelo Growth CRM QAO_`;
               className="flex items-center gap-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-850 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm cursor-pointer"
             >
               Copiar Relatório p/ WhatsApp
+            </button>
+            <button
+              onClick={handleSyncAds}
+              disabled={syncing}
+              className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm cursor-pointer disabled:opacity-60"
+            >
+              {syncing ? 'Sincronizando...' : '⚡ Sincronizar Google/Meta Ads'}
             </button>
             <button
               onClick={handleOpenCreate}

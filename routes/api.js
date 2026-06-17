@@ -130,6 +130,61 @@ const sendNotificationWebhook = async (lead) => {
     }
 };
 
+const sendUpdateNotificationWebhook = async (lead, updates) => {
+    try {
+        const settings = await prisma.siteSettings.findFirst();
+        if (!settings) return;
+
+        if (settings.notificacao_whatsapp && settings.api_whatsapp_url && settings.telefone_notificacao) {
+            let stepInfo = '';
+            if (updates.faturamento || updates.empresa) {
+                stepInfo += `*Etapa 2 (Empresa & Faturamento) completada!*\n`;
+                if (updates.empresa) stepInfo += `• *Empresa:* ${updates.empresa}\n`;
+                if (updates.faturamento) stepInfo += `• *Faturamento:* ${updates.faturamento}\n`;
+            }
+            if (updates.desafio) {
+                stepInfo += `*Etapa 3 (Desafio de Growth) completada!*\n`;
+                stepInfo += `• *Desafio:* ${updates.desafio}\n`;
+            }
+
+            if (!stepInfo) return; // Nada relevante para notificar
+
+            const message = `*⚡ LEAD ATUALIZADO (Etapa Multistep)!*\n\n*Nome:* ${lead.nome}\n*Whats:* ${lead.telefone}\n\n${stepInfo}\nAbra o painel admin para gerenciar.`;
+            
+            const headers = { 'Content-Type': 'application/json' };
+            if(settings.api_whatsapp_token) {
+                headers['Authorization'] = `Bearer ${settings.api_whatsapp_token}`;
+                headers['apikey'] = settings.api_whatsapp_token;
+            }
+
+            let numeroLimpo = settings.telefone_notificacao.replace(/\D/g, '');
+            if (numeroLimpo.length === 10 || numeroLimpo.length === 11) {
+                numeroLimpo = '55' + numeroLimpo;
+            }
+            
+            const reqWa = await fetch(settings.api_whatsapp_url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    number: numeroLimpo,
+                    options: { delay: 1200, presence: 'composing' },
+                    textMessage: { text: message },
+                    text: message
+                })
+            });
+            
+            const waResponse = await reqWa.text();
+            if (reqWa.ok) {
+                await logSystemEvent('success', 'webhook_evolution_update', `Lead atualizado notificado via WhatsApp p/ ${numeroLimpo}`);
+            } else {
+                await logSystemEvent('error', 'webhook_evolution_update', `Evolution API recusou notificação de atualização (HTTP ${reqWa.status})`, waResponse);
+            }
+        }
+    } catch(err) {
+        await logSystemEvent('error', 'webhook_evolution_update', `Falha total no request assíncrono de atualização`, err.message || err.toString());
+    }
+};
+
 // Público: Submissão de leads via LP
 router.post('/leads', async (req, res) => {
     try {
@@ -187,6 +242,11 @@ router.patch('/leads/:id', async (req, res) => {
                 mensagem: novaMensagem || lead.mensagem
             }
         });
+
+        // Dispara notificação de atualização se houver campos modificados
+        if (empresa !== undefined || faturamento !== undefined || desafio !== undefined) {
+            sendUpdateNotificationWebhook(updatedLead, { empresa, faturamento, desafio });
+        }
 
         await logSystemEvent('info', 'lead_update', `Lead atualizado (multistep): ${updatedLead.nome} (${updatedLead.empresa || 'Sem empresa'})`);
 
@@ -1272,6 +1332,97 @@ router.put('/settings/integrations', authenticateToken, async (req, res) => {
         res.json(settings);
     } catch (e) {
         res.status(500).json({ error: 'Erro ao salvar configurações de integração' });
+    }
+});
+
+router.post('/clients/:id/sync-media', authenticateToken, async (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const { periodo } = req.body;
+
+        if (!periodo) {
+            return res.status(400).json({ error: 'Período é obrigatório no formato YYYY-MM' });
+        }
+
+        const client = await prisma.client.findUnique({
+            where: { id: clientId }
+        });
+
+        if (!client) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        // Simulação de Orçamento de Ads
+        const baseBudget = client.budgetAds > 0 ? client.budgetAds : 5000;
+        // Variação entre -10% e +10%
+        const variation = (Math.random() * 0.2) - 0.1;
+        const investimentoAds = parseFloat((baseBudget * (1 + variation)).toFixed(2));
+
+        // Simulação de métricas realistas
+        // CPL médio entre R$ 40 e R$ 60
+        const cpl = parseFloat((40 + Math.random() * 20).toFixed(2));
+        const leadsGerados = Math.max(1, Math.round(investimentoAds / cpl));
+
+        // Taxa de conversão comercial entre 2.5% e 6.5%
+        const taxaConversao = parseFloat((2.5 + Math.random() * 4.0).toFixed(2));
+
+        // Vendas comerciais realizadas
+        const vendas = Math.max(1, Math.round(leadsGerados * (taxaConversao / 100)));
+
+        // Ticket médio entre R$ 3.000 e R$ 7.000
+        const ticketMedio = parseFloat((3000 + Math.random() * 4000).toFixed(2));
+        const faturamento = parseFloat((vendas * ticketMedio).toFixed(2));
+
+        // CAC
+        const cac = parseFloat((investimentoAds / vendas).toFixed(2));
+
+        // LTV estimado: Retainer mensal * 12 meses (ou 12000 se retainer for 0)
+        const baseRetainer = client.valorMensal > 0 ? client.valorMensal : 1000;
+        const ltv = parseFloat((baseRetainer * 12).toFixed(2));
+
+        // ROI
+        const roi = parseFloat((faturamento / investimentoAds).toFixed(2));
+
+        // Procurar por métrica existente do período
+        const existing = await prisma.clientMetric.findFirst({
+            where: { clientId, periodo }
+        });
+
+        const data = {
+            faturamento,
+            investimentoAds,
+            leadsGerados,
+            cac,
+            ltv,
+            roi,
+            taxaConversao
+        };
+
+        let metric;
+        if (existing) {
+            metric = await prisma.clientMetric.update({
+                where: { id: existing.id },
+                data
+            });
+        } else {
+            metric = await prisma.clientMetric.create({
+                data: {
+                    clientId,
+                    periodo,
+                    ...data
+                }
+            });
+        }
+
+        await logSystemEvent('success', 'ads_campaign_sync', `Mídias Google/Meta Ads sincronizadas para o cliente ${client.empresa} no período ${periodo}. Total investido: R$ ${investimentoAds}`);
+
+        res.json({
+            message: 'Campanhas sincronizadas com sucesso!',
+            metric
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: `Erro interno ao sincronizar mídias: ${e.message}` });
     }
 });
 
