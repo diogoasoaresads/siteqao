@@ -30,6 +30,7 @@
     </script>
 </head>
 <body>
+    <div class="grid-background"></div>
     
     <!-- Body origens limpas -->
 
@@ -37,13 +38,14 @@
     <header class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="/" class="logo">
-                <span class="logo-icon"></span>
+                <span class="logo-icon" style="background: var(--gradient-neon);"></span>
                 QAO
             </a>
             <nav class="nav-links">
                 <a href="#metodo" class="nav-link">Método</a>
+                <a href="#simulador" class="nav-link">Simulador IA</a>
+                <a href="#roi" class="nav-link">Calculadora ROI</a>
                 <a href="#cases" class="nav-link">Cases</a>
-                <a href="#servicos" class="nav-link">IA aplicada</a>
                 <a href="/diagnostico-marketing" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Agendar Diagnóstico</a>
             </nav>
             <div style="display: flex; align-items: center; gap: 16px;">
@@ -63,22 +65,26 @@
         <div class="mobile-menu-content">
             <button class="close-menu-btn"><i class="fas fa-times"></i></button>
             <a href="#metodo" class="mobile-link">Método</a>
+            <a href="#simulador" class="mobile-link">Simulador IA</a>
+            <a href="#roi" class="mobile-link">Calculadora ROI</a>
             <a href="#cases" class="mobile-link">Cases</a>
-            <a href="#servicos" class="mobile-link">IA aplicada</a>
             <a href="/diagnostico-marketing" class="btn btn-primary w-full text-center">Agendar Diagnóstico</a>
         </div>
     </div>
 
     <!-- 1. HERO SECTION (Vercel Style) -->
-    <section class="hero fade-in-up">
-        <div class="container">
-            <span class="badge">Growth Marketing + IA</span>
-            <h1 class="hero-title">Crescimento previsível com IA aplicada ao marketing e vendas.</h1>
+    <section class="hero fade-in-up" style="position: relative; overflow: hidden;">
+        <div class="container" style="position: relative; z-index: 10;">
+            <span class="badge glow-border" style="background: var(--bg-offset); border-color: var(--border-subtle); display: inline-flex; align-items: center; gap: 8px;">
+                <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>
+                Growth Marketing + IA
+            </span>
+            <h1 class="hero-title">Crescimento previsível com <span class="text-gradient">IA aplicada</span> ao marketing e vendas.</h1>
             <p class="hero-subtitle">A QAO estrutura aquisição, CRM, automações e agentes de IA para transformar tráfego, leads e atendimento em receita mensurável.</p>
             
             <div class="hero-actions">
-                <a href="/diagnostico-marketing" class="btn btn-primary btn-lg">Agendar diagnóstico gratuito</a>
-                <a href="https://wa.me/5511999999999" class="btn btn-outline btn-lg" target="_blank"><i class="fab fa-whatsapp" style="margin-right: 8px; color: #25D366;"></i> Falar no WhatsApp</a>
+                <a href="/diagnostico-marketing" class="btn btn-primary btn-lg" style="background: var(--text-primary); color: var(--bg-main);">Agendar diagnóstico gratuito</a>
+                <a href="https://wa.me/5511999999999" class="btn btn-outline btn-lg" target="_blank" style="background: var(--bg-main); color: var(--text-primary); border-color: var(--border-subtle);"><i class="fab fa-whatsapp" style="margin-right: 8px; color: #25D366;"></i> Falar no WhatsApp</a>
             </div>
 
             <div class="metrics-row fade-in-up delay-200">
@@ -97,7 +103,7 @@
                 <!-- IA signal -->
                 <div class="metric-item" style="justify-content: center;">
                     <span class="metric-label" style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text-primary);">
-                        <i class="fas fa-microchip" style="font-size: 1.5rem;"></i> IA no Funil
+                        <i class="fas fa-microchip text-gradient" style="font-size: 1.5rem;"></i> IA no Funil
                     </span>
                 </div>
             </div>
@@ -160,51 +166,221 @@
         </div>
     </section>
 
-    <!-- 4. CASES SIMPLIFICADOS (Vercel Contrast Block) -->
-    <section id="cases" class="section bg-black">
+    <!-- 3.1. SIMULADOR DE GROWTH COM IA -->
+    <section id="simulador" class="section bg-offset" style="position: relative;">
         <div class="container fade-in-up">
+            <span class="badge glow-border" style="background: var(--bg-main);">Alavancas de IA</span>
+            <h2 class="section-title">Descubra suas alavancas de <span class="text-gradient">Growth com IA</span></h2>
+            <p class="section-desc mb-8">Nossos agentes inteligentes simulam um diagnóstico inicial do seu funil. Informe os dados para rodar a simulação.</p>
+            
+            <div class="grid-2">
+                <div class="glass-panel glow-border">
+                    <h3 class="mb-4" style="font-size: 1.5rem;">Dados do Negócio</h3>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div>
+                            <label style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; display: block;">Modelo de Negócio</label>
+                            <select id="sim-model" class="form-input" style="background: var(--bg-main); border: 1px solid var(--border-subtle); color: var(--text-primary);">
+                                <option value="b2b-saas">B2B SaaS / Tecnologia</option>
+                                <option value="b2b-servicos">B2B Serviços / Consultorias</option>
+                                <option value="ecommerce">E-commerce / Varejo</option>
+                                <option value="infoproduto">Infoproduto / Educação</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; display: block;">Faturamento Mensal Estimado</label>
+                            <select id="sim-revenue" class="form-input" style="background: var(--bg-main); border: 1px solid var(--border-subtle); color: var(--text-primary);">
+                                <option value="ate-50k">Até R$ 50k / mês</option>
+                                <option value="50-150k">R$ 50k a R$ 150k / mês</option>
+                                <option value="150-500k">R$ 150k a R$ 500k / mês</option>
+                                <option value="mais-500k">Acima de R$ 500k / mês</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; display: block;">Qual o maior gargalo hoje?</label>
+                            <select id="sim-gargalo" class="form-input" style="background: var(--bg-main); border: 1px solid var(--border-subtle); color: var(--text-primary);">
+                                <option value="leads">Gerar tráfego e leads qualificados</option>
+                                <option value="atendimento">Demora no atendimento/vendas (Follow-up)</option>
+                                <option value="cac">Custo de mídia muito alto (CAC alto)</option>
+                                <option value="conversao">Leads chegam mas não convertem no comercial</option>
+                            </select>
+                        </div>
+                        <button type="button" id="btnRunSimulation" class="btn btn-primary w-full" style="background: var(--text-primary); color: var(--bg-main); font-weight: 700; margin-top: 12px;">
+                            Rodar Análise do Agente QAO <i class="fas fa-microchip" style="margin-left: 8px;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="background: #000; border-color: #222; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #222; padding-bottom: 12px;">
+                            <span style="font-family: monospace; color: #10B981; font-weight: bold; font-size: 0.85rem;">QAO_AGENT_v1.0.8_SIMULATOR</span>
+                            <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; box-shadow: 0 0 8px #10B981;"></span>
+                        </div>
+                        <div id="simTerminal" class="terminal-box">
+                            <div class="terminal-line text-secondary">Aguardando inputs para iniciar a varredura do funil de growth...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="simCTA" style="display: none; margin-top: 20px; border-top: 1px solid #222; padding-top: 16px; text-align: center;">
+                        <p style="color: #fff; font-size: 0.9rem; margin-bottom: 12px;">Gostou das alavancas geradas?</p>
+                        <a href="/diagnostico-marketing" class="btn btn-primary" style="background: #10B981; color: #000; font-weight: bold; padding: 8px 16px; font-size: 0.9rem;">
+                            Agendar Apresentação do Diagnóstico Completo <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3.2. CALCULADORA DE ROI INTERATIVA -->
+    <section id="roi" class="section" style="position: relative;">
+        <div class="container fade-in-up">
+            <span class="badge glow-border" style="background: var(--bg-offset);">Previsibilidade Financeira</span>
+            <h2 class="section-title">Simule o Retorno com <span class="text-gradient">Automação e IA</span></h2>
+            <p class="section-desc mb-8">Ajuste os parâmetros abaixo para projetar o impacto financeiro da estruturação da assessoria de Growth no seu comercial.</p>
+            
+            <div class="grid-2">
+                <div class="glass-panel glow-border" style="display: flex; flex-direction: column; gap: 24px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                            <label for="sliderMedia">Verba de Mídia Mensal</label>
+                            <span id="valMedia" style="color: var(--neon-cyan);">R$ 10.000</span>
+                        </div>
+                        <input type="range" id="sliderMedia" class="roi-slider" min="3000" max="100000" step="1000" value="10000">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                            <span>Min: R$ 3.000</span>
+                            <span>Max: R$ 100.000</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                            <label for="sliderCPL">Custo por Lead (CPL) Esperado</label>
+                            <span id="valCPL" style="color: var(--neon-cyan);">R$ 40</span>
+                        </div>
+                        <input type="range" id="sliderCPL" class="roi-slider" min="10" max="250" step="5" value="40">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                            <span>Min: R$ 10</span>
+                            <span>Max: R$ 250</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                            <label for="sliderConversao">Taxa de Conversão em Vendas (%)</label>
+                            <span id="valConversao" style="color: var(--neon-cyan);">2.0%</span>
+                        </div>
+                        <input type="range" id="sliderConversao" class="roi-slider" min="0.5" max="15" step="0.5" value="2.0">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                            <span>Min: 0.5%</span>
+                            <span>Max: 15%</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                            <label for="sliderTicket">Ticket Médio do seu Produto/Serviço</label>
+                            <span id="valTicket" style="color: var(--neon-cyan);">R$ 3.000</span>
+                        </div>
+                        <input type="range" id="sliderTicket" class="roi-slider" min="500" max="25000" step="500" value="3000">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                            <span>Min: R$ 500</span>
+                            <span>Max: R$ 25.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="grid-2" style="gap: 20px; align-items: stretch;">
+                        <div class="roi-result-card">
+                            <span class="text-secondary" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Leads Gerados</span>
+                            <h3 id="resLeads" style="font-size: 1.8rem; font-weight: 800; margin-top: 8px;">250</h3>
+                            <p class="text-secondary" style="font-size: 0.75rem; margin-top: 4px;">Leads estimados no mês</p>
+                        </div>
+                        <div class="roi-result-card">
+                            <span class="text-secondary" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Novos Clientes</span>
+                            <h3 id="resVendas" style="font-size: 1.8rem; font-weight: 800; margin-top: 8px;">5</h3>
+                            <p class="text-secondary" style="font-size: 0.75rem; margin-top: 4px;">Clientes fechados no mês</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="gap: 20px; align-items: stretch;">
+                        <div class="roi-result-card">
+                            <span class="text-secondary" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">CAC Médio</span>
+                            <h3 id="resCAC" style="font-size: 1.8rem; font-weight: 800; margin-top: 8px;">R$ 2.000</h3>
+                            <p class="text-secondary" style="font-size: 0.75rem; margin-top: 4px;">Custo de Aquisição de Cliente</p>
+                        </div>
+                        <div class="roi-result-card">
+                            <span class="text-secondary" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Faturamento Estimado</span>
+                            <h3 id="resFaturamento" style="font-size: 1.8rem; font-weight: 800; margin-top: 8px;">R$ 15.000</h3>
+                            <p class="text-secondary" style="font-size: 0.75rem; margin-top: 4px;">Receita Bruta Gerada</p>
+                        </div>
+                    </div>
+
+                    <div class="roi-result-card accent">
+                        <span style="font-size: 0.85rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">Retorno Projetado com Growth + IA (ROI)</span>
+                        <h2 id="resROI" style="font-size: 3rem; font-weight: 900; margin-top: 8px; letter-spacing: -0.05em;">150%</h2>
+                        <p style="font-size: 0.85rem; opacity: 0.85; margin-top: 6px;">Proporção de Retorno sobre o Investimento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CASES DINÂMICOS (Vercel Contrast Block) -->
+    <section id="cases" class="section bg-black" style="position: relative;">
+        <div class="container fade-in-up" style="position: relative; z-index: 10;">
             <span class="badge mb-4">Estudos de Caso</span>
             <h2 class="section-title text-inverse">A matemática por trás dos resultados</h2>
             <p class="section-desc text-secondary mb-8">Empresas que trocaram achismo por IA, dados e rotina comercial mensurável.</p>
             
-            <div class="case-matrix mt-8">
-                <!-- Case 1 -->
-                <div class="case-row">
+            <div class="case-switch-container">
+                <button class="case-btn active" id="btnCaseTech" data-case="tech">Tech B2B (Mídia e Scoring)</button>
+                <button class="case-btn" id="btnCaseConsultoria" data-case="consultoria">Consultoria High-Ticket (Show-up)</button>
+            </div>
+
+            <!-- Case Container 1 (B2B Tech) -->
+            <div id="caseContentTech" class="case-row-animated">
+                <div class="case-row" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
                     <div class="case-client">
-                        <h4>Empresa B2B Tech</h4>
+                        <span class="badge" style="background: #111; color: #FFF; border-color: #333; margin-bottom: 12px; font-size: 0.75rem;">Tech B2B</span>
+                        <h4 class="text-inverse">Empresa B2B Tech</h4>
                         <span class="text-secondary" style="font-size: 0.85rem;">Geração de Leads</span>
                     </div>
                     <div class="case-problem">
                         <strong class="text-inverse">Problema:</strong> CPL insustentável na rede de pesquisa e leads sem qualificação. <br><br>
-                        <strong class="text-inverse">Estratégia:</strong> Reestruturação do Google Ads + scoring de leads com CRM e sinais de intenção.
+                        <strong class="text-inverse">Estratégia com IA:</strong> Reestruturação de Google Ads com intenção cirúrgica + scoring de leads automatizado com IA no CRM.
                     </div>
                     <div class="case-result-box text-center" style="border-left: 1px solid #333; padding-left: 20px;">
                         <div class="text-secondary" style="text-decoration: line-through; font-size: 0.9rem;">Antes CPL: R$ 120</div>
-                        <div class="case-result-large">R$ 38</div>
-                        <div class="case-result-label" style="color: #10B981;">+212% Matrículas</div>
+                        <div class="case-result-large text-gradient">R$ 38</div>
+                        <div class="case-result-label" style="color: #10B981; font-weight: bold;">+212% Matrículas (CPL -68%)</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Case 2 -->
-                <div class="case-row">
+            <!-- Case Container 2 (Consultoria) -->
+            <div id="caseContentConsultoria" class="case-row-animated hidden-state" style="display: none;">
+                <div class="case-row" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
                     <div class="case-client">
-                        <h4>Consultoria Empresarial</h4>
+                        <span class="badge" style="background: #111; color: #FFF; border-color: #333; margin-bottom: 12px; font-size: 0.75rem;">Consultoria</span>
+                        <h4 class="text-inverse">Consultoria Empresarial</h4>
                         <span class="text-secondary" style="font-size: 0.85rem;">Vendas High-Ticket</span>
                     </div>
                     <div class="case-problem">
                         <strong class="text-inverse">Problema:</strong> Baixa taxa de comparecimento nas reuniões comerciais geradas pelo marketing. <br><br>
-                        <strong class="text-inverse">Estratégia:</strong> Automação de WhatsApp, cadência inteligente e qualificação antes da reunião.
+                        <strong class="text-inverse">Estratégia com IA:</strong> Agente de agendamento e confirmação com IA integrada ao WhatsApp + cadência de qualificação comercial pré-reunião.
                     </div>
                     <div class="case-result-box text-center" style="border-left: 1px solid #333; padding-left: 20px;">
                         <div class="text-secondary" style="text-decoration: line-through; font-size: 0.9rem;">Antes Show-up: 30%</div>
-                        <div class="case-result-large">85%</div>
-                        <div class="case-result-label" style="color: #10B981;">+150% Reuniões/mês</div>
+                        <div class="case-result-large text-gradient">85%</div>
+                        <div class="case-result-label" style="color: #10B981; font-weight: bold;">+150% Comparecimento e Vendas</div>
                     </div>
                 </div>
             </div>
             
             <div class="mt-8 text-center pt-8">
-                <a href="/diagnostico-marketing" class="btn btn-outline btn-lg">Quero gerar esses resultados</a>
+                <a href="/diagnostico-marketing" class="btn btn-outline btn-lg" style="background: transparent; color: #fff; border-color: #333;">Quero gerar esses resultados</a>
             </div>
         </div>
     </section>
@@ -324,6 +500,212 @@
                     document.documentElement.setAttribute('data-theme', newTheme);
                     localStorage.setItem('theme', newTheme);
                     updateThemeIcon(newTheme);
+                });
+            }
+
+            // --- 1. CASES DINÂMICOS INTERATIVOS ---
+            const btnCaseTech = document.getElementById('btnCaseTech');
+            const btnCaseConsultoria = document.getElementById('btnCaseConsultoria');
+            const caseContentTech = document.getElementById('caseContentTech');
+            const caseContentConsultoria = document.getElementById('caseContentConsultoria');
+
+            if (btnCaseTech && btnCaseConsultoria) {
+                function switchCase(activeCase) {
+                    if (activeCase === 'tech') {
+                        btnCaseTech.classList.add('active');
+                        btnCaseConsultoria.classList.remove('active');
+                        
+                        caseContentTech.style.display = 'block';
+                        setTimeout(() => caseContentTech.classList.remove('hidden-state'), 50);
+                        
+                        caseContentConsultoria.classList.add('hidden-state');
+                        setTimeout(() => caseContentConsultoria.style.display = 'none', 300);
+                    } else {
+                        btnCaseConsultoria.classList.add('active');
+                        btnCaseTech.classList.remove('active');
+                        
+                        caseContentConsultoria.style.display = 'block';
+                        setTimeout(() => caseContentConsultoria.classList.remove('hidden-state'), 50);
+                        
+                        caseContentTech.classList.add('hidden-state');
+                        setTimeout(() => caseContentTech.style.display = 'none', 300);
+                    }
+                }
+
+                btnCaseTech.onclick = () => switchCase('tech');
+                btnCaseConsultoria.onclick = () => switchCase('consultoria');
+            }
+
+            // --- 2. SIMULADOR DE GROWTH COM IA ---
+            const btnRunSimulation = document.getElementById('btnRunSimulation');
+            const simTerminal = document.getElementById('simTerminal');
+            const simCTA = document.getElementById('simCTA');
+
+            if (btnRunSimulation && simTerminal) {
+                btnRunSimulation.onclick = () => {
+                    const model = document.getElementById('sim-model').value;
+                    const revenue = document.getElementById('sim-revenue').value;
+                    const gargalo = document.getElementById('sim-gargalo').value;
+
+                    btnRunSimulation.disabled = true;
+                    btnRunSimulation.innerHTML = 'Analisando... <i class="fas fa-spinner fa-spin"></i>';
+                    simCTA.style.display = 'none';
+                    simTerminal.innerHTML = '';
+
+                    const lines = [
+                        { text: '> Inicializando QAO Agent v1.0.8...', delay: 200 },
+                        { text: `> Conectando ao modelo de dados do nicho: ${model.toUpperCase()}...`, delay: 700 },
+                        { text: `> Analisando faturamento reportado na faixa: ${revenue.toUpperCase()}...`, delay: 1200 },
+                        { text: `> Analisando gargalo principal: ${gargalo.toUpperCase()}...`, delay: 1800 },
+                        { text: '> Varrendo funil de tráfego orgânico e pago...', delay: 2300 },
+                        { text: '> Calculando eficiência do CRM e tempo de resposta comercial...', delay: 2900 },
+                        { text: '> DIAGNÓSTICO COMPLETO. Carregando alavancas de crescimento...', delay: 3500 },
+                        { text: '\n--- ALAVANCAS DE GROWTH IA GERADAS ---', delay: 4000 }
+                    ];
+
+                    // Alavancas personalizadas de acordo com o modelo de negócio e faturamento
+                    let alavancas = [];
+                    if (model === 'b2b-saas') {
+                        alavancas = [
+                            '🎯 *Alavanca 1:* Otimização de Google Ads com audiências in-market e exclusão de termos informais para reduzir o CAC em até 30%.',
+                            '⚙️ *Alavanca 2:* Integração de Agente de IA para responder a solicitações de Demo em menos de 2 minutos no WhatsApp (aumentando a taxa de show-up em 45%).',
+                            '📈 *Alavanca 3:* Implementação de Cadência de E-mail de Nurturing baseado no uso da plataforma para diminuir Churn.'
+                        ];
+                    } else if (model === 'b2b-servicos') {
+                        alavancas = [
+                            '🎯 *Alavanca 1:* Criação de funil de "Isca Digital + Automação" para capturar e qualificar MQLs antes de agendar reuniões.',
+                            '⚙️ *Alavanca 2:* Setup de Agente de IA no CRM para enriquecer dados dos leads e encaminhá-los para o vendedor com maior taxa de fechamento.',
+                            '📈 *Alavanca 3:* Roteamento dinâmico de leads de alta intenção direto para o WhatsApp do comercial.'
+                        ];
+                    } else if (model === 'ecommerce') {
+                        alavancas = [
+                            '🎯 *Alavanca 1:* Campanha de Meta Ads direcionada a LAL (Lookalike) de Clientes com maior LTV.',
+                            '⚙️ *Alavanca 2:* Automação de Recuperação de Carrinho Abandonado usando Agente de IA conversacional no WhatsApp.',
+                            '📈 *Alavanca 3:* Teste de CRO na página de checkout para aumentar a taxa de conversão direta em 1.5%.'
+                        ];
+                    } else { // infoproduto
+                        alavancas = [
+                            '🎯 *Alavanca 1:* Funil de Vendas de lançamento perpétuo rodando no WhatsApp com inteligência de segmentação.',
+                            '⚙️ *Alavanca 2:* Agentes de IA fazendo o primeiro atendimento e tirando dúvidas de suporte em tempo real.',
+                            '📈 *Alavanca 3:* Automação de upsell instantâneo de checkout de alta conversão.'
+                        ];
+                    }
+
+                    lines.forEach(l => {
+                        setTimeout(() => {
+                            const p = document.createElement('div');
+                            p.className = 'terminal-line';
+                            p.innerHTML = l.text;
+                            simTerminal.appendChild(p);
+                            simTerminal.scrollTop = simTerminal.scrollHeight;
+                        }, l.delay);
+                    });
+
+                    setTimeout(() => {
+                        alavancas.forEach((al, index) => {
+                            setTimeout(() => {
+                                const p = document.createElement('div');
+                                p.className = 'terminal-line';
+                                p.style.color = '#fff';
+                                p.innerHTML = al;
+                                simTerminal.appendChild(p);
+                                simTerminal.scrollTop = simTerminal.scrollHeight;
+                            }, index * 600);
+                        });
+                    }, 4200);
+
+                    setTimeout(() => {
+                        const p = document.createElement('div');
+                        p.className = 'terminal-line terminal-cursor';
+                        p.style.color = '#10B981';
+                        p.innerHTML = '\n> Diagnóstico preliminar finalizado com sucesso.';
+                        simTerminal.appendChild(p);
+                        simTerminal.scrollTop = simTerminal.scrollHeight;
+
+                        btnRunSimulation.disabled = false;
+                        btnRunSimulation.innerHTML = 'Rodar Análise do Agente QAO <i class="fas fa-microchip" style="margin-left: 8px;"></i>';
+                        simCTA.style.display = 'block';
+                    }, 4200 + (alavancas.length * 600) + 200);
+                };
+            }
+
+            // --- 3. CALCULADORA DE ROI INTERATIVA ---
+            const sliderMedia = document.getElementById('sliderMedia');
+            const sliderCPL = document.getElementById('sliderCPL');
+            const sliderConversao = document.getElementById('sliderConversao');
+            const sliderTicket = document.getElementById('sliderTicket');
+
+            const valMedia = document.getElementById('valMedia');
+            const valCPL = document.getElementById('valCPL');
+            const valConversao = document.getElementById('valConversao');
+            const valTicket = document.getElementById('valTicket');
+
+            const resLeads = document.getElementById('resLeads');
+            const resVendas = document.getElementById('resVendas');
+            const resCAC = document.getElementById('resCAC');
+            const resFaturamento = document.getElementById('resFaturamento');
+            const resROI = document.getElementById('resROI');
+
+            function updateROI() {
+                const media = parseFloat(sliderMedia.value);
+                const cpl = parseFloat(sliderCPL.value);
+                const conversao = parseFloat(sliderConversao.value);
+                const ticket = parseFloat(sliderTicket.value);
+
+                // Formatar valores na interface
+                valMedia.innerText = media.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+                valCPL.innerText = cpl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                valConversao.innerText = conversao.toFixed(1) + '%';
+                valTicket.innerText = ticket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+                // Cálculos
+                const leads = Math.floor(media / cpl);
+                const vendas = Math.floor(leads * (conversao / 100));
+                
+                let cac = 0;
+                let faturamento = 0;
+                let roi = 0;
+
+                if (vendas > 0) {
+                    cac = media / vendas;
+                    faturamento = vendas * ticket;
+                    roi = ((faturamento - media) / media) * 100;
+                }
+
+                // Renderizar
+                resLeads.innerText = leads.toLocaleString('pt-BR');
+                resVendas.innerText = vendas.toLocaleString('pt-BR');
+                resCAC.innerText = vendas > 0 ? cac.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }) : 'R$ 0';
+                resFaturamento.innerText = faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+                resROI.innerText = roi.toFixed(0) + '%';
+            }
+
+            if (sliderMedia && sliderCPL && sliderConversao && sliderTicket) {
+                sliderMedia.oninput = updateROI;
+                sliderCPL.oninput = updateROI;
+                sliderConversao.oninput = updateROI;
+                sliderTicket.oninput = updateROI;
+                updateROI(); // Inicializa
+            }
+
+            // --- 4. ANIMAÇÕES DE SCROLL SUAVES ---
+            const fadeElements = document.querySelectorAll('.fade-in-up');
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                fadeElements.forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    el.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    observer.observe(el);
                 });
             }
 
