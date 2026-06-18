@@ -735,3 +735,109 @@ img {
     opacity: 0;
     transform: translateY(10px);
 }
+
+/* Interactive Mouse Glow Card */
+.glow-card-interactive {
+    position: relative;
+    transition: background 0.3s, border-color 0.3s;
+}
+.glow-card-interactive::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px; /* Border thickness */
+    background: radial-gradient(
+        350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+        var(--neon-cyan, #06B6D4) 0%,
+        var(--neon-green, #10B981) 40%,
+        transparent 80%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+}
+.glow-card-interactive:hover::before {
+    opacity: 1;
+}
+
+/* Terminal Scanner Line */
+.scanner-container {
+    position: relative;
+    overflow: hidden;
+}
+.scanner-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--success, #10B981), transparent);
+    box-shadow: 0 0 8px var(--success, #10B981), 0 0 16px var(--success, #10B981);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 0.3s ease;
+}
+.scanner-active .scanner-line {
+    opacity: 0.8;
+    animation: scan 2.5s linear infinite;
+}
+@keyframes scan {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+/* Presets de cenários rápidos para a calculadora */
+.roi-preset-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.preset-btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm, 6px);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border-subtle, #E5E7EB);
+    background: var(--bg-main, #FFFFFF);
+    color: var(--text-primary, #111827);
+    transition: all 0.2s ease;
+}
+.preset-btn:hover {
+    background: var(--bg-offset, #FAFAFA);
+    border-color: var(--text-secondary, #6B7280);
+}
+.preset-btn.active {
+    background: var(--text-primary, #111827);
+    color: var(--text-inverse, #FFFFFF);
+    border-color: var(--text-primary, #111827);
+}
+
+/* Slide Transitions for Multistep Form */
+.form-step {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+}
+.slide-left-exit {
+    transform: translateX(-30px);
+    opacity: 0;
+}
+.slide-left-enter {
+    transform: translateX(30px);
+    opacity: 0;
+}
+.slide-right-exit {
+    transform: translateX(30px);
+    opacity: 0;
+}
+.slide-right-enter {
+    transform: translateX(-30px);
+    opacity: 0;
+}

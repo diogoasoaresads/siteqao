@@ -107,7 +107,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 54px;
             position: relative;
             padding: 0 10px;
         }
@@ -159,16 +159,51 @@
             background: var(--text-primary);
             color: var(--bg-main);
         }
+        .step-label {
+            position: absolute;
+            bottom: -24px;
+            font-size: 0.75rem;
+            font-weight: 650;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            transition: color 0.3s ease;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .progress-step.active .step-label,
+        .progress-step.completed .step-label {
+            color: var(--text-primary);
+        }
         .form-step {
             display: none;
             opacity: 0;
-            transform: translateY(12px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateX(20px);
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .form-step.active {
             display: block;
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0);
+        }
+        .form-step.slide-left-exit {
+            display: block;
+            transform: translateX(-30px);
+            opacity: 0;
+        }
+        .form-step.slide-left-enter {
+            display: block;
+            transform: translateX(30px);
+            opacity: 0;
+        }
+        .form-step.slide-right-exit {
+            display: block;
+            transform: translateX(30px);
+            opacity: 0;
+        }
+        .form-step.slide-right-enter {
+            display: block;
+            transform: translateX(-30px);
+            opacity: 0;
         }
         .form-navigation {
             display: flex;
@@ -243,9 +278,18 @@
                     <div class="progress-bar-container">
                         <div class="progress-bar-line"></div>
                         <div class="progress-bar-fill" id="progressBarFill"></div>
-                        <div class="progress-step active" data-step="1">1</div>
-                        <div class="progress-step" data-step="2">2</div>
-                        <div class="progress-step" data-step="3">3</div>
+                        <div class="progress-step active" data-step="1">
+                            1
+                            <span class="step-label">Contato</span>
+                        </div>
+                        <div class="progress-step" data-step="2">
+                            2
+                            <span class="step-label">Empresa</span>
+                        </div>
+                        <div class="progress-step" data-step="3">
+                            3
+                            <span class="step-label">Desafio</span>
+                        </div>
                     </div>
 
                     <form id="diagnosticoForm" class="mt-2">
@@ -423,13 +467,34 @@
             }
 
             function goToStep(stepNumber) {
-                steps.forEach(step => {
-                    step.classList.remove('active');
-                });
-                
+                const currentStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
                 const nextStepEl = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
-                if (nextStepEl) {
+                
+                if (!nextStepEl) return;
+                
+                const isNext = stepNumber > currentStep;
+                
+                if (currentStepEl) {
+                    currentStepEl.classList.add(isNext ? 'slide-left-exit' : 'slide-right-exit');
+                    
+                    setTimeout(() => {
+                        currentStepEl.classList.remove('active', 'slide-left-exit', 'slide-right-exit');
+                        currentStepEl.style.display = 'none';
+                        
+                        nextStepEl.classList.add(isNext ? 'slide-left-enter' : 'slide-right-enter');
+                        nextStepEl.style.display = 'block';
+                        
+                        void nextStepEl.offsetWidth;
+                        
+                        nextStepEl.classList.add('active');
+                        nextStepEl.classList.remove('slide-left-enter', 'slide-right-enter');
+                        
+                        currentStep = stepNumber;
+                        updateProgressBar();
+                    }, 250);
+                } else {
                     nextStepEl.classList.add('active');
+                    nextStepEl.style.display = 'block';
                     currentStep = stepNumber;
                     updateProgressBar();
                 }

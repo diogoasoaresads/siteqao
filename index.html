@@ -129,35 +129,35 @@
             
             <div class="grid-3 mt-8">
                 <!-- Card 1 -->
-                <div class="card-minimal">
+                <div class="card-minimal glow-card-interactive">
                     <div class="card-icon"><i class="fas fa-magnet"></i></div>
                     <h3>1. Aquisição</h3>
                     <p>Google Ads, Meta Ads e SEO com inteligência de intenção para atrair a demanda com maior probabilidade de compra.</p>
                 </div>
                 
                 <!-- Card 2 -->
-                <div class="card-minimal">
+                <div class="card-minimal glow-card-interactive">
                     <div class="card-icon"><i class="fas fa-filter"></i></div>
                     <h3>2. Conversão</h3>
                     <p>Landing pages, ofertas e testes de CRO para transformar cliques caros em conversas comerciais qualificadas.</p>
                 </div>
                 
                 <!-- Card 3 -->
-                <div class="card-minimal">
+                <div class="card-minimal glow-card-interactive">
                     <div class="card-icon"><i class="fas fa-robot"></i></div>
                     <h3>3. IA & Automação</h3>
                     <p>Agentes, CRM, e-mail e WhatsApp conectados para responder rápido, qualificar melhor e reduzir perda de leads.</p>
                 </div>
 
                 <!-- Card 4 -->
-                <div class="card-minimal">
+                <div class="card-minimal glow-card-interactive">
                     <div class="card-icon"><i class="fas fa-chart-line"></i></div>
                     <h3>4. Dados & Atribuição</h3>
                     <p>Dashboards e leitura de funil para acompanhar CAC, ROI, origem das oportunidades e gargalos de conversão.</p>
                 </div>
 
                 <!-- Card 5 -->
-                <div class="card-minimal">
+                <div class="card-minimal glow-card-interactive">
                     <div class="card-icon"><i class="fas fa-layer-group"></i></div>
                     <h3>5. Escala</h3>
                     <p>Experimentação contínua, novos canais e growth loops operados com dados para aumentar previsibilidade.</p>
@@ -174,7 +174,7 @@
             <p class="section-desc mb-8">Nossos agentes inteligentes simulam um diagnóstico inicial do seu funil. Informe os dados para rodar a simulação.</p>
             
             <div class="grid-2">
-                <div class="glass-panel glow-border">
+                <div class="glass-panel glow-border glow-card-interactive">
                     <h3 class="mb-4" style="font-size: 1.5rem;">Dados do Negócio</h3>
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div>
@@ -214,7 +214,8 @@
                     </div>
                 </div>
 
-                <div class="glass-panel" style="background: #000; border-color: #222; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="glass-panel scanner-container" id="terminalContainer" style="background: #000; border-color: #222; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="scanner-line"></div>
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #222; padding-bottom: 12px;">
                             <span style="font-family: monospace; color: #10B981; font-weight: bold; font-size: 0.85rem;">QAO_AGENT_v1.0.8_SIMULATOR</span>
@@ -227,9 +228,14 @@
                     
                     <div id="simCTA" style="display: none; margin-top: 20px; border-top: 1px solid #222; padding-top: 16px; text-align: center;">
                         <p style="color: #fff; font-size: 0.9rem; margin-bottom: 12px;">Gostou das alavancas geradas?</p>
-                        <a href="/diagnostico-marketing" class="btn btn-primary" style="background: #10B981; color: #000; font-weight: bold; padding: 8px 16px; font-size: 0.9rem;">
-                            Agendar Apresentação do Diagnóstico Completo <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
-                        </a>
+                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: center;">
+                            <button type="button" id="btnCopySimulation" class="btn" style="background: #222; color: #fff; border: 1px solid #333; font-weight: bold; padding: 8px 16px; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                                <i class="far fa-copy" style="margin-right: 8px;"></i> Copiar Recomendações
+                            </button>
+                            <a href="/diagnostico-marketing" class="btn btn-primary" style="background: #10B981; color: #000; font-weight: bold; padding: 8px 16px; font-size: 0.9rem;">
+                                Agendar Diagnóstico Completo <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -244,7 +250,16 @@
             <p class="section-desc mb-8">Ajuste os parâmetros abaixo para projetar o impacto financeiro da estruturação da assessoria de Growth no seu comercial.</p>
             
             <div class="grid-2">
-                <div class="glass-panel glow-border" style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="glass-panel glow-border glow-card-interactive" style="display: flex; flex-direction: column; gap: 24px;">
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; display: block; color: var(--text-primary);">Configurações Rápidas (Presets)</label>
+                        <div class="roi-preset-container">
+                            <button type="button" class="preset-btn active" id="preset-tracao" data-media="10000" data-cpl="40" data-conv="2.0" data-ticket="6000">🚀 Tração Inicial</button>
+                            <button type="button" class="preset-btn" id="preset-escala" data-media="30000" data-cpl="50" data-conv="3.0" data-ticket="8000">⚡ Escala Média</button>
+                            <button type="button" class="preset-btn" id="preset-performance" data-media="75000" data-cpl="60" data-conv="4.5" data-ticket="12000">🔥 Alta Performance</button>
+                        </div>
+                    </div>
+                    
                     <div>
                         <div style="display: flex; justify-content: space-between; font-weight: bold;">
                             <label for="sliderMedia">Verba de Mídia Mensal</label>
@@ -544,6 +559,7 @@
             const btnRunSimulation = document.getElementById('btnRunSimulation');
             const simTerminal = document.getElementById('simTerminal');
             const simCTA = document.getElementById('simCTA');
+            const terminalContainer = document.getElementById('terminalContainer');
 
             if (btnRunSimulation && simTerminal) {
                 btnRunSimulation.onclick = () => {
@@ -555,6 +571,11 @@
                     btnRunSimulation.innerHTML = 'Analisando... <i class="fas fa-spinner fa-spin"></i>';
                     simCTA.style.display = 'none';
                     simTerminal.innerHTML = '';
+                    
+                    // Ativa a linha brilhante do scanner visual
+                    if (terminalContainer) {
+                        terminalContainer.classList.add('scanner-active');
+                    }
 
                     const lines = [
                         { text: '> Inicializando QAO Agent v1.0.8...', delay: 200 },
@@ -577,7 +598,7 @@
                         ];
                     } else if (model === 'b2b-servicos') {
                         alavancas = [
-                            '🎯 *Alavanca 1:* Criação de funil de "Isca Digital + Automação" para capturar e qualificar MQLs antes de agendar reuniões.',
+                            '🎯 *Alavanca 1:* Criação de funil de "Isca Digital + Automação" para qualificar MQLs antes de agendar reuniões.',
                             '⚙️ *Alavanca 2:* Setup de Agente de IA no CRM para enriquecer dados dos leads e encaminhá-los para o vendedor com maior taxa de fechamento.',
                             '📈 *Alavanca 3:* Roteamento dinâmico de leads de alta intenção direto para o WhatsApp do comercial.'
                         ];
@@ -653,6 +674,24 @@
                         btnRunSimulation.disabled = false;
                         btnRunSimulation.innerHTML = 'Rodar Análise do Agente QAO <i class="fas fa-microchip" style="margin-left: 8px;"></i>';
                         simCTA.style.display = 'block';
+                        
+                        // Desativa a linha de varredura brilhante
+                        if (terminalContainer) {
+                            terminalContainer.classList.remove('scanner-active');
+                        }
+
+                        // Lógica para copiar recomendações
+                        const btnCopy = document.getElementById('btnCopySimulation');
+                        if (btnCopy) {
+                            btnCopy.onclick = () => {
+                                const textoCopia = `Diagnóstico de Growth QAO para ${model.toUpperCase()}:\n\n` + alavancas.join('\n').replace(/\*/g, '');
+                                navigator.clipboard.writeText(textoCopia);
+                                btnCopy.innerHTML = '<i class="fas fa-check" style="margin-right: 8px; color: #10B981;"></i> Copiado!';
+                                setTimeout(() => {
+                                    btnCopy.innerHTML = '<i class="far fa-copy" style="margin-right: 8px;"></i> Copiar Recomendações';
+                                }, 2000);
+                            };
+                        }
                     }, 4200 + (alavancas.length * 600) + 200);
                 };
             }
@@ -713,8 +752,37 @@
                 sliderCPL.oninput = updateROI;
                 sliderConversao.oninput = updateROI;
                 sliderTicket.oninput = updateROI;
+                
+                // Lógica de Presets de ROI
+                const presetButtons = document.querySelectorAll('.preset-btn');
+                presetButtons.forEach(btn => {
+                    btn.onclick = () => {
+                        presetButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        sliderMedia.value = btn.getAttribute('data-media');
+                        sliderCPL.value = btn.getAttribute('data-cpl');
+                        sliderConversao.value = btn.getAttribute('data-conv');
+                        sliderTicket.value = btn.getAttribute('data-ticket');
+                        
+                        updateROI();
+                    };
+                });
+                
                 updateROI(); // Inicializa
             }
+
+            // --- MOUSE GLOW EFFECT FOR CARDS ---
+            const glowCards = document.querySelectorAll('.glow-card-interactive');
+            glowCards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
 
             // --- 4. ANIMAÇÕES DE SCROLL SUAVES ---
             const fadeElements = document.querySelectorAll('.fade-in-up');
