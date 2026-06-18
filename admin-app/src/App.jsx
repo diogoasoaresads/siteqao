@@ -15,12 +15,14 @@ import Settings from './pages/Settings';
 import SettingsScripts from './pages/SettingsScripts';
 import SettingsNotifications from './pages/SettingsNotifications';
 import SettingsLogs from './pages/SettingsLogs';
+import ClientPortal from './pages/ClientPortal';
 
 export default function App() {
   return (
     <BrowserRouter basename="/admin">
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/portal/:accessKey" element={<ClientPortal />} />
         
         {/* Protected Routes (we can add a real auth guard later, for now we rely on API returning 401 if not authed) */}
         <Route element={<Layout />}>

@@ -215,6 +215,23 @@ export default function Clients() {
                     <span className="font-medium">Budget Mídia:</span>
                     <span className="font-bold text-gray-950">{(client.budgetAds || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                   </div>
+                  <div className="flex items-center justify-between gap-2 pt-2 mt-2 border-t border-dashed border-gray-100">
+                    <div className="flex items-center gap-1 text-xs text-neutral-500 font-semibold">
+                      <Globe size={13} className="text-neutral-400" />
+                      <span>Portal do Cliente:</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const link = `${window.location.origin}/admin/portal/${client.accessKey}`;
+                        navigator.clipboard.writeText(link);
+                        alert('Link de acesso seguro copiado para o WhatsApp!');
+                      }}
+                      className="text-xs text-blue-600 hover:text-white font-bold bg-blue-50 hover:bg-blue-600 px-2 py-0.5 rounded-md transition-all border border-blue-100 flex items-center gap-0.5"
+                      title="Copiar link seguro do portal"
+                    >
+                      Copiar Link 🔗
+                    </button>
+                  </div>
                   {client.observacoes && (
                     <div className="mt-3 pt-3 border-t border-dashed border-gray-100">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Anotações / Histórico:</span>
@@ -337,6 +354,22 @@ export default function Clients() {
                     placeholder="Ex: 20000"
                   />
                 </div>
+                {editingClient && (
+                  <div className="col-span-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Link Exclusivo do Portal do Cliente (WhatsApp)</label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={`${window.location.origin}/admin/portal/${editingClient.accessKey}`}
+                      className="w-full px-3.5 py-2 border rounded-xl text-sm border-gray-200 bg-neutral-50 text-neutral-500 font-mono select-all cursor-pointer"
+                      onClick={(e) => {
+                        e.target.select();
+                        navigator.clipboard.writeText(e.target.value);
+                        alert('Link do portal copiado!');
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="col-span-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Anotações do Cliente / Histórico</label>
                   <textarea

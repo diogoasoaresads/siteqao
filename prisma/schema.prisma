@@ -96,6 +96,7 @@ model Client {
   valorMensal  Float              @default(0)       // Retainer mensal
   budgetAds    Float              @default(0)       // Investimento em anúncios
   observacoes  String?
+  accessKey    String?            @unique
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   experiments  GrowthExperiment[]

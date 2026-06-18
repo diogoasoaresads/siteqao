@@ -3,6 +3,7 @@ const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 if (!process.env.DATABASE_URL) {
     process.env.DATABASE_URL = 'file:./dev.db';
@@ -654,6 +655,19 @@ router.get('/clients', authenticateToken, async (req, res) => {
                 }
             }
         });
+
+        // Garantir que todos os clientes tenham uma accessKey gerada sob demanda
+        for (let i = 0; i < clients.length; i++) {
+            if (!clients[i].accessKey) {
+                const key = crypto.randomUUID();
+                await prisma.client.update({
+                    where: { id: clients[i].id },
+                    data: { accessKey: key }
+                });
+                clients[i].accessKey = key;
+            }
+        }
+
         res.json(clients);
     } catch (e) {
         res.status(500).json({ error: 'Erro ao buscar clientes' });
@@ -663,6 +677,7 @@ router.get('/clients', authenticateToken, async (req, res) => {
 router.post('/clients', authenticateToken, async (req, res) => {
     try {
         const { nome, empresa, email, telefone, status, valorMensal, budgetAds, observacoes } = req.body;
+        const key = crypto.randomUUID();
         const client = await prisma.client.create({
             data: {
                 nome,
@@ -672,7 +687,8 @@ router.post('/clients', authenticateToken, async (req, res) => {
                 status: status || 'ativo',
                 valorMensal: parseFloat(valorMensal) || 0,
                 budgetAds: parseFloat(budgetAds) || 0,
-                observacoes
+                observacoes,
+                accessKey: key
             }
         });
         await logSystemEvent('success', 'client_creation', `Cliente criado: ${nome} - ${empresa}`);
@@ -975,6 +991,7 @@ router.post('/leads/:id/promote', authenticateToken, async (req, res) => {
         initialObservacoes = initialObservacoes.trim() || null;
 
         // Cria o cliente
+        const key = crypto.randomUUID();
         const client = await prisma.client.create({
             data: {
                 nome: lead.nome,
@@ -984,7 +1001,8 @@ router.post('/leads/:id/promote', authenticateToken, async (req, res) => {
                 status: 'ativo',
                 valorMensal: 0,
                 budgetAds: 0,
-                observacoes: initialObservacoes
+                observacoes: initialObservacoes,
+                accessKey: key
             }
         });
 
@@ -1423,6 +1441,31 @@ router.post('/clients/:id/sync-media', authenticateToken, async (req, res) => {
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: `Erro interno ao sincronizar mídias: ${e.message}` });
+    }
+});
+
+/* --- CLIENT PORTAL (PUBLIC ACCESS) --- */
+router.get('/client-portal/data/:accessKey', async (req, res) => {
+    try {
+        const { accessKey } = req.params;
+        const client = await prisma.client.findUnique({
+            where: { accessKey },
+            include: {
+                metrics: { orderBy: { periodo: 'asc' } },
+                experiments: { orderBy: { createdAt: 'desc' } },
+                tasks: { orderBy: { createdAt: 'desc' } },
+                invoices: { orderBy: { periodo: 'desc' } }
+            }
+        });
+
+        if (!client) {
+            return res.status(404).json({ error: 'Portal não encontrado ou link expirado' });
+        }
+
+        res.json(client);
+    } catch (e) {
+        console.error("Erro no Portal do Cliente:", e);
+        res.status(500).json({ error: 'Erro ao carregar dados do portal do cliente' });
     }
 });
 
