@@ -187,10 +187,13 @@
                         <div>
                             <label style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; display: block;">Faturamento Mensal Estimado</label>
                             <select id="sim-revenue" class="form-input" style="background: var(--bg-main); border: 1px solid var(--border-subtle); color: var(--text-primary);">
-                                <option value="ate-50k">Até R$ 50k / mês</option>
-                                <option value="50-150k">R$ 50k a R$ 150k / mês</option>
-                                <option value="150-500k">R$ 150k a R$ 500k / mês</option>
-                                <option value="mais-500k">Acima de R$ 500k / mês</option>
+                                <option value="ate-15k">Até R$ 15.000 / mês (Simples F1)</option>
+                                <option value="15-30k">R$ 15.000 a R$ 30.000 / mês (Simples F2)</option>
+                                <option value="30-60k">R$ 30.000 a R$ 60.000 / mês (Simples F3)</option>
+                                <option value="60-150k">R$ 60.000 a R$ 150.000 / mês (Simples F4)</option>
+                                <option value="150-300k">R$ 150.000 a R$ 300.000 / mês (Simples F5)</option>
+                                <option value="300-400k">R$ 300.000 a R$ 400.000 / mês (Simples F6)</option>
+                                <option value="mais-400k">Acima de R$ 400.000 / mês (Regime Geral)</option>
                             </select>
                         </div>
                         <div>
@@ -603,10 +606,13 @@
                     btn.disabled = true;
                     
                     const faturamentosLabel = {
-                        'ate-50k': 'Até R$ 50k / mês',
-                        '50-150k': 'R$ 50k a R$ 150k / mês',
-                        '150-500k': 'R$ 150k a R$ 500k / mês',
-                        'mais-500k': 'Acima de R$ 500k / mês'
+                        'ate-15k': 'Até R$ 15k / mês (Simples F1)',
+                        '15-30k': 'R$ 15k a R$ 30k / mês (Simples F2)',
+                        '30-60k': 'R$ 30k a R$ 60k / mês (Simples F3)',
+                        '60-150k': 'R$ 60k a R$ 150k / mês (Simples F4)',
+                        '150-300k': 'R$ 150k a R$ 300k / mês (Simples F5)',
+                        '300-400k': 'R$ 300k a R$ 400k / mês (Simples F6)',
+                        'mais-400k': 'Acima de R$ 400k / mês (Regime Geral)'
                     };
                     const modelosLabel = {
                         'b2b-saas': 'B2B SaaS / Tecnologia',
@@ -2145,11 +2151,26 @@
                 }
             };
 
+            function mapRevenueToLegacy(rev) {
+                const mapping = {
+                    'ate-15k': 'ate-50k',
+                    '15-30k': 'ate-50k',
+                    '30-60k': '50-150k',
+                    '60-150k': '50-150k',
+                    '150-300k': '150-500k',
+                    '300-400k': '150-500k',
+                    'mais-400k': 'mais-500k'
+                };
+                return mapping[rev] || rev;
+            }
+
             if (btnRunSimulation && simTerminal) {
                 btnRunSimulation.onclick = () => {
                     const model = document.getElementById('sim-model').value;
                     const revenue = document.getElementById('sim-revenue').value;
                     const gargalo = document.getElementById('sim-gargalo').value;
+                    
+                    const legacyRevenue = mapRevenueToLegacy(revenue);
 
                     btnRunSimulation.disabled = true;
                     btnRunSimulation.innerHTML = 'Analisando... <i class="fas fa-spinner fa-spin"></i>';
@@ -2183,7 +2204,7 @@
                     const alavancasRaw = bancoAlavancasBase[model]?.[gargalo] || [];
                     const alavancas = alavancasRaw.map((al, index) => {
                         const emoji = index === 0 ? '🎯' : index === 1 ? '⚙️' : '📈';
-                        const desc = al.detalhe[revenue] || al.detalhe['ate-50k'];
+                        const desc = al.detalhe[legacyRevenue] || al.detalhe['ate-50k'];
                         return `${emoji} *${al.titulo}:* ${desc}`;
                     });
                     
@@ -2192,7 +2213,7 @@
                     }
                     
                     // Obtém a 4ª alavanca com base no faturamento do cliente para o nicho dele
-                    const alavancaFinanceira = alavancasFaturamento[revenue]?.[model] || `📊 *Alavanca de Escala:* Estruturar e otimizar verbas de tráfego de acordo com o crescimento do faturamento mensal.`;
+                    const alavancaFinanceira = alavancasFaturamento[legacyRevenue]?.[model] || `📊 *Alavanca de Escala:* Estruturar e otimizar verbas de tráfego de acordo com o crescimento do faturamento mensal.`;
                     alavancas.push(alavancaFinanceira);
 
                     lines.forEach(l => {
