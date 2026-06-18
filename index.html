@@ -341,6 +341,17 @@
                         <h2 id="resROI" style="font-size: 3rem; font-weight: 900; margin-top: 8px; letter-spacing: -0.05em;">150%</h2>
                         <p style="font-size: 0.85rem; opacity: 0.85; margin-top: 6px;">Proporção de Retorno sobre o Investimento</p>
                     </div>
+
+                    <!-- Card de Coerência / Viabilidade do Funil -->
+                    <div id="coherenceCard" class="roi-result-card" style="margin-top: 0px; text-align: left; padding: 20px; transition: all 0.3s ease; border-left: 4px solid var(--success); display: flex; flex-direction: column; gap: 4px; background: var(--bg-offset); border-top: 1px solid var(--border-subtle); border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i id="coherenceIcon" class="fas fa-check-circle" style="color: var(--success); font-size: 1.25rem;"></i>
+                            <span id="coherenceStatus" style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-primary);">Cenário Realista / Saudável</span>
+                        </div>
+                        <p id="coherenceText" style="font-size: 0.85rem; color: var(--text-secondary); margin: 6px 0 0 0; line-height: 1.5;">
+                            As proporções entre investimento, custo por lead e ticket médio estão alinhadas com as médias históricas de mercado para este nível de operação.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2329,6 +2340,59 @@
                 resCAC.innerText = vendas > 0 ? cac.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }) : 'R$ 0';
                 resFaturamento.innerText = faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
                 resROI.innerText = roi.toFixed(0) + '%';
+
+                // Lógica de Coerência / Viabilidade do Funil
+                const coherenceCard = document.getElementById('coherenceCard');
+                const coherenceIcon = document.getElementById('coherenceIcon');
+                const coherenceStatus = document.getElementById('coherenceStatus');
+                const coherenceText = document.getElementById('coherenceText');
+
+                if (coherenceCard && coherenceIcon && coherenceStatus && coherenceText) {
+                    const ratio = cpl / ticket; // Proporção CPL vs Ticket Médio
+                    const ratioInverse = ticket / cpl;
+
+                    if (ratio < 0.0006) {
+                        // Cenário Irrealista (CPL extremamente baixo para ticket muito alto)
+                        coherenceCard.style.borderLeftColor = '#ef4444';
+                        coherenceIcon.className = 'fas fa-exclamation-triangle';
+                        coherenceIcon.style.color = '#ef4444';
+                        coherenceStatus.innerText = 'Cenário Irrealista / Fantasioso';
+                        coherenceStatus.style.color = '#ef4444';
+                        coherenceText.innerText = `Um CPL de R$ ${cpl} para um ticket de ${ticket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })} é impraticável no mercado. Vendas de alto valor exigem tráfego ultra-qualificado e decisores complexos (B2B), elevando o custo do lead de forma significativa.`;
+                    } else if (ratio < 0.002) {
+                        // Cenário Muito Otimista / Incomum
+                        coherenceCard.style.borderLeftColor = '#f59e0b';
+                        coherenceIcon.className = 'fas fa-exclamation-circle';
+                        coherenceIcon.style.color = '#f59e0b';
+                        coherenceStatus.innerText = 'Cenário Muito Otimista / Raro';
+                        coherenceStatus.style.color = '#f59e0b';
+                        coherenceText.innerText = `Proporção incomum de 1 lead a cada R$ ${cpl} para produto de ${ticket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}. Exigirá automações de captação orgânica virais extremamente eficientes ou canais proprietários nichados de alta autoridade para se concretizar.`;
+                    } else if (ratio < 0.005) {
+                        // Cenário Desafiador / Otimizado
+                        coherenceCard.style.borderLeftColor = '#3B82F6';
+                        coherenceIcon.className = 'fas fa-info-circle';
+                        coherenceIcon.style.color = '#3B82F6';
+                        coherenceStatus.innerText = 'Cenário Desafiador / Otimizado';
+                        coherenceStatus.style.color = '#3B82F6';
+                        coherenceText.innerText = `Funil otimizado com boa proporção (ticket ${ratioInverse.toFixed(0)}x maior que o CPL). Exige campanhas de mídia eficientes e uma equipe comercial ágil (SDR/CRM) para converter leads qualificados sem desperdício de verba.`;
+                    } else if (ratio > 0.08) {
+                        // CAC Crítico / Operação Inviável
+                        coherenceCard.style.borderLeftColor = '#ef4444';
+                        coherenceIcon.className = 'fas fa-exclamation-triangle';
+                        coherenceIcon.style.color = '#ef4444';
+                        coherenceStatus.innerText = 'Risco de CAC Crítico (Operação Inviável)';
+                        coherenceStatus.style.color = '#ef4444';
+                        coherenceText.innerText = `O CPL de R$ ${cpl} está muito alto em relação ao seu ticket médio de ${ticket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}. Com a taxa de conversão comercial selecionada, a operação corre sério risco de gerar prejuízo ou ter ROI negativo.`;
+                    } else {
+                        // Cenário Realista / Saudável
+                        coherenceCard.style.borderLeftColor = '#10B981';
+                        coherenceIcon.className = 'fas fa-check-circle';
+                        coherenceIcon.style.color = '#10B981';
+                        coherenceStatus.innerText = 'Cenário Realista / Saudável';
+                        coherenceStatus.style.color = '#10B981';
+                        coherenceText.innerText = `As proporções de CPL (R$ ${cpl}) e Ticket Médio (${ticket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}) estão alinhadas com as médias históricas de mercado para este nível de operação comercial.`;
+                    }
+                }
             }
 
             if (sliderMedia && sliderCPL && sliderConversao && sliderTicket) {
