@@ -438,6 +438,32 @@ router.get('/settings/logs', authenticateToken, async (req, res) => {
     }
 });
 
+// Endpoint perigoso de Reset de Banco
+router.post('/system/reset-database-danger-zone', authenticateToken, async (req, res) => {
+    try {
+        // Deletar dependentes na ordem correta para evitar violação de FKs
+        await prisma.invoice.deleteMany();
+        await prisma.clientMetric.deleteMany();
+        await prisma.growthTask.deleteMany();
+        await prisma.growthExperiment.deleteMany();
+        await prisma.client.deleteMany();
+        await prisma.lead.deleteMany();
+        await prisma.systemLog.deleteMany();
+        
+        await prisma.siteSettings.deleteMany();
+        await prisma.siteSettings.create({ data: {} });
+        
+        await prisma.whatsappSettings.deleteMany();
+        await prisma.whatsappSettings.create({ data: {} });
+
+        await logSystemEvent('warning', 'database_reset', 'O banco de dados foi completamente reiniciado para o estado limpo de fábrica.');
+        
+        res.json({ message: 'Banco de dados limpo com sucesso!' });
+    } catch(err) {
+        res.status(500).json({ error: `Erro ao resetar banco: ${err.message}` });
+    }
+});
+
 /* --- ADMIN DASHBOARD ANALYTICS --- */
 router.get('/dashboard', authenticateToken, async (req, res) => {
     try {

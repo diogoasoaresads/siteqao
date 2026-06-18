@@ -18,6 +18,28 @@ export default function SettingsLogs() {
     }
   };
 
+  const handleResetDatabase = async () => {
+    if (!confirm("⚠️ ATENÇÃO CRÍTICA:\n\nIsso irá deletar permanentemente:\n- Todos os clientes e seus portais\n- Todos os experimentos e tarefas do Kanban\n- Todas as faturas e métricas do financeiro\n- Todos os leads cadastrados\n- Todos os logs de transação\n\nEsta ação não poderá ser desfeita de forma alguma. Tem certeza que deseja reiniciar o sistema do zero?")) {
+      return;
+    }
+    if (!confirm("⚠️ CONFIRMAÇÃO FINAL DE SEGURANÇA:\n\nVocê tem certeza absoluta que deseja apagar todos os dados operacionais?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/system/reset-database-danger-zone', { method: 'POST' });
+      if (res.ok) {
+        alert('✅ Banco de dados zerado com sucesso! Agora você pode usar o sistema do zero.');
+        fetchLogs();
+      } else {
+        const err = await res.json();
+        alert(`❌ Erro ao zerar banco: ${err.error || 'Erro desconhecido'}`);
+      }
+    } catch (err) {
+      alert(`❌ Erro de conexão: ${err.message}`);
+    }
+  };
+
   useEffect(() => {
     fetchLogs();
     // Refresh a cada 30 segundos
@@ -51,7 +73,14 @@ export default function SettingsLogs() {
           </h2>
           <p className="mt-1 text-sm text-gray-500">Histórico técnico das últimas 30 transações e erros de integração no servidor.</p>
         </div>
-        <div className="mt-4 flex md:ml-4 md:mt-0">
+        <div className="mt-4 flex gap-3 md:ml-4 md:mt-0">
+          <button
+            type="button"
+            onClick={handleResetDatabase}
+            className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          >
+            ⚠️ Zerar Todos os Dados
+          </button>
           <button
             type="button"
             onClick={fetchLogs}
