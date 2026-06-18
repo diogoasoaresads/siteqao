@@ -230,10 +230,13 @@
                         <p style="color: #fff; font-size: 0.9rem; margin-bottom: 12px;">Gostou das alavancas geradas?</p>
                         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: center;">
                             <button type="button" id="btnCopySimulation" class="btn" style="background: #222; color: #fff; border: 1px solid #333; font-weight: bold; padding: 8px 16px; font-size: 0.9rem; border-radius: var(--radius-sm);">
-                                <i class="far fa-copy" style="margin-right: 8px;"></i> Copiar Recomendações
+                                <i class="far fa-copy" style="margin-right: 6px;"></i> Copiar
                             </button>
-                            <a href="/diagnostico-marketing" class="btn btn-primary" style="background: #10B981; color: #000; font-weight: bold; padding: 8px 16px; font-size: 0.9rem;">
-                                Agendar Diagnóstico Completo <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                            <button type="button" id="btnDownloadReport" class="btn" style="background: #10B981; color: #000; font-weight: bold; padding: 8px 16px; font-size: 0.9rem; border: none; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s;">
+                                <i class="fas fa-file-download" style="margin-right: 6px;"></i> Baixar Relatório Completo
+                            </button>
+                            <a href="/diagnostico-marketing" class="btn" style="background: #222; color: #fff; border: 1px solid #333; font-weight: bold; padding: 8px 16px; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                                Agendar Reunião <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>
                             </a>
                         </div>
                     </div>
@@ -555,188 +558,1622 @@
                 btnCaseConsultoria.onclick = () => switchCase('consultoria');
             }
 
+            // --- FUNÇÕES DE CADASTRO E GERADOR DE RELATÓRIO DO SIMULADOR ---
+            function openReportModal(model, revenue, gargalo, alavancas) {
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0,0,0,0.85)';
+                overlay.style.zIndex = '10000';
+                overlay.style.display = 'flex';
+                overlay.style.justifyContent = 'center';
+                overlay.style.alignItems = 'center';
+                overlay.style.backdropFilter = 'blur(10px)';
+                
+                const modal = document.createElement('div');
+                modal.style.backgroundColor = 'rgba(10, 10, 10, 0.95)';
+                modal.style.border = '1px solid #222';
+                modal.style.padding = '32px';
+                modal.style.borderRadius = '16px';
+                modal.style.boxShadow = '0 10px 40px rgba(16, 185, 129, 0.15)';
+                modal.style.width = '100%';
+                modal.style.maxWidth = '440px';
+                modal.style.margin = '0 16px';
+                modal.style.position = 'relative';
+                modal.style.color = '#fff';
+                modal.style.fontFamily = 'Inter, sans-serif';
+                
+                modal.innerHTML = `
+                    <button type="button" id="rep-modal-close" style="position:absolute; top:16px; right:20px; font-size:28px; font-weight:bold; color:#666; background:none; border:none; cursor:pointer;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">&times;</button>
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+                       <i class="fas fa-microchip" style="color: #10B981; font-size: 28px;"></i>
+                       <h3 style="margin:0; font-size:20px; color:#fff; font-family:Outfit,sans-serif; font-weight:700;">Gerar Relatório Completo</h3>
+                    </div>
+                    <p style="margin: 0 0 24px 0; font-size: 14px; color: #aaa; line-height: 1.5;">Complete o cadastro rápido abaixo para gerar e baixar o diagnóstico estratégico estruturado para a sua empresa (HTML Interativo).</p>
+                    <form id="rep-lead-form" style="display:flex; flex-direction:column; gap:16px;">
+                       <div>
+                           <label style="font-size:0.8rem; font-weight:600; color:#ccc; display:block; margin-bottom:6px;">Seu Nome</label>
+                           <input type="text" id="rep-nome" placeholder="Ex: Diogo Soares" required style="width:100%; padding:12px 14px; background:#111; border:1px solid #333; border-radius:6px; font-size:14px; color:#fff; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#333'">
+                       </div>
+                       <div>
+                           <label style="font-size:0.8rem; font-weight:600; color:#ccc; display:block; margin-bottom:6px;">Nome da Empresa</label>
+                           <input type="text" id="rep-empresa" placeholder="Ex: QAO Growth" required style="width:100%; padding:12px 14px; background:#111; border:1px solid #333; border-radius:6px; font-size:14px; color:#fff; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#333'">
+                       </div>
+                       <div>
+                           <label style="font-size:0.8rem; font-weight:600; color:#ccc; display:block; margin-bottom:6px;">WhatsApp Corporativo</label>
+                           <input type="tel" id="rep-telefone" placeholder="Ex: (11) 99999-9999" required style="width:100%; padding:12px 14px; background:#111; border:1px solid #333; border-radius:6px; font-size:14px; color:#fff; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#333'">
+                       </div>
+                       <div>
+                           <label style="font-size:0.8rem; font-weight:600; color:#ccc; display:block; margin-bottom:6px;">E-mail de Contato</label>
+                           <input type="email" id="rep-email" placeholder="Ex: contato@empresa.com" required style="width:100%; padding:12px 14px; background:#111; border:1px solid #333; border-radius:6px; font-size:14px; color:#fff; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#333'">
+                       </div>
+                       <button type="submit" id="btnSubmitReportForm" style="width:100%; padding:14px; background:#10B981; color:#000; font-weight:bold; border:none; border-radius:6px; cursor:pointer; font-size:15px; margin-top:10px; transition:all 0.2s; font-family:Outfit,sans-serif; text-transform:uppercase; letter-spacing:0.5px;" onmouseover="this.style.boxShadow='0 0 15px rgba(16,185,129,0.4)'" onmouseout="this.style.boxShadow='none'">Gerar e Baixar Relatório ⚡</button>
+                    </form>
+                `;
+                
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+                
+                document.getElementById('rep-modal-close').onclick = () => {
+                    document.body.removeChild(overlay);
+                };
+                
+                const form = document.getElementById('rep-lead-form');
+                form.onsubmit = async (ev) => {
+                    ev.preventDefault();
+                    
+                    const nome = document.getElementById('rep-nome').value;
+                    const empresa = document.getElementById('rep-empresa').value;
+                    const telefone = document.getElementById('rep-telefone').value;
+                    const email = document.getElementById('rep-email').value;
+                    const btn = document.getElementById('btnSubmitReportForm');
+                    
+                    btn.innerText = 'Processando Dados... ⏳';
+                    btn.disabled = true;
+                    
+                    const faturamentosLabel = {
+                        'ate-50k': 'Até R$ 50k / mês',
+                        '50-150k': 'R$ 50k a R$ 150k / mês',
+                        '150-500k': 'R$ 150k a R$ 500k / mês',
+                        'mais-500k': 'Acima de R$ 500k / mês'
+                    };
+                    const modelosLabel = {
+                        'b2b-saas': 'B2B SaaS / Tecnologia',
+                        'b2b-servicos': 'B2B Serviços / Consultorias',
+                        'ecommerce': 'E-commerce / Varejo',
+                        'infoproduto': 'Infoproduto / Educação',
+                        'corretor': 'Imobiliárias & Corretores',
+                        'escola': 'Escolas & Instituições de Ensino',
+                        'clinica': 'Clínicas & Profissionais da Saúde',
+                        'local': 'Negócios Locais & Franquias'
+                    };
+                    const gargalosLabel = {
+                        'leads': 'Gerar tráfego e leads qualificados',
+                        'atendimento': 'Demora no atendimento/vendas (Follow-up)',
+                        'cac': 'Custo de mídia muito alto (CAC alto)',
+                        'conversao': 'Leads chegam mas não convertem no comercial'
+                    };
+                    
+                    const fatAmigavel = faturamentosLabel[revenue] || revenue;
+                    const nichoAmigavel = modelosLabel[model] || model;
+                    const gargaloAmigavel = gargalosLabel[gargalo] || gargalo;
+                    
+                    try {
+                        await fetch('/api/leads', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                nome,
+                                email,
+                                telefone,
+                                empresa,
+                                faturamento: fatAmigavel,
+                                desafio: gargaloAmigavel,
+                                origem_da_pagina: 'simulador_ia_relatorio'
+                            })
+                        });
+                        
+                        if(typeof window.qaoTrackLead === 'function') {
+                            window.qaoTrackLead('simulador_ia_relatorio');
+                        }
+                    } catch (e) {
+                        console.error('Erro ao enviar lead para o servidor:', e);
+                    }
+                    
+                    const reportHtml = generateReportHtml(nome, empresa, fatAmigavel, nichoAmigavel, gargaloAmigavel, alavancas);
+                    
+                    const blob = new Blob([reportHtml], { type: 'text/html;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Relatorio_Growth_QAO_${empresa.replace(/\s+/g, '_')}.html`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    document.body.removeChild(overlay);
+                    
+                    const successLine = document.createElement('div');
+                    successLine.className = 'terminal-line';
+                    successLine.style.color = '#10B981';
+                    successLine.innerHTML = `\n⚡ [SUCESSO]: Relatório Executivo gerado e enviado para download!`;
+                    document.getElementById('simTerminal').appendChild(successLine);
+                    document.getElementById('simTerminal').scrollTop = document.getElementById('simTerminal').scrollHeight;
+                };
+            }
+
+            function generateReportHtml(nome, empresa, faturamento, nicho, gargalo, alavancas) {
+                const originUrl = window.location.origin + '/diagnostico-marketing';
+                
+                const gargalosExplicacao = {
+                    'Gerar tráfego e leads qualificados': 'O tráfego pago ou orgânico está inconsistente ou mal segmentado, atraindo cliques curiosos em vez de tomadores de decisão qualificados. Isso satura o orçamento de mídia e gera volume sem conversão financeira.',
+                    'Demora no atendimento/vendas (Follow-up)': 'A velocidade comercial de resposta pós-lead é lenta. Dados indicam que responder após 5 minutos reduz em até 80% as chances de qualificar o lead. A falta de processos ou automação sobrecarrega o comercial.',
+                    'Custo de mídia muito alto (CAC alto)': 'O custo por aquisição está acima da margem viável do produto/serviço. Falta inteligência de públicos, otimização de conversão na Landing Page (CRO) ou estruturação de esteira de LTV para diluir o CAC.',
+                    'Leads chegam mas não convertem no comercial': 'O funil apresenta vazamentos na passagem de bastão de marketing para vendas. Objeções não resolvidas pré-reunião ou propostas comerciais sem estruturação de valor impedem o fechamento.'
+                };
+                
+                const explicacaoGargalo = gargalosExplicacao[gargalo] || 'O funil comercial apresenta fricção ou desalinhamento técnico entre atração e conversão.';
+                
+                const alavancasFormatadas = alavancas.map(al => {
+                    const cleanText = al.replace(/\*/g, '');
+                    const partes = cleanText.split(':');
+                    const titulo = partes[0] || 'Alavanca de Crescimento';
+                    const desc = partes[1] || '';
+                    return `
+                        <div class="lever-card">
+                            <div class="lever-header">
+                                <div class="lever-dot"></div>
+                                <h3 class="lever-title">${titulo}</h3>
+                            </div>
+                            <p class="lever-desc">${desc}</p>
+                        </div>
+                    `;
+                }).join('');
+
+                return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Executivo de Growth | QAO & ${empresa}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-card: #0d0d0d;
+            --border: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --neon-green: #10B981;
+            --neon-blue: #3B82F6;
+            --gradient: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-gradient {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .meta-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .title-section {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Metadata Cards */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .meta-card-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .meta-card-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Report Sections */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: var(--neon-green);
+        }
+
+        p {
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .danger-box {
+            background: rgba(239, 68, 68, 0.05);
+            border-left: 4px solid #ef4444;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 16px;
+        }
+
+        .danger-box p {
+            color: #fca5a5;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Lever Cards */
+        .levers-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .lever-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .lever-card:hover {
+            border-color: #333;
+            transform: translateX(4px);
+        }
+
+        .lever-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .lever-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-green);
+        }
+
+        .lever-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .lever-desc {
+            font-size: 0.95rem;
+            margin: 0;
+            color: var(--text-secondary);
+        }
+
+        /* Projeção / Calculadora */
+        .projection-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .projection-table th, .projection-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .projection-table th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .projection-table td {
+            font-size: 0.95rem;
+        }
+
+        .projection-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--neon-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.08), transparent), var(--bg-card);
+            border: 1px solid var(--neon-green);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.05);
+        }
+
+        .cta-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--neon-green);
+            color: #000000;
+            padding: 16px 32px;
+            border-radius: 6px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .print-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            color: var(--text-primary);
+            border-color: #444;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                color: #000;
+                padding: 0;
+            }
+            .section, .meta-card, .cta-section {
+                background: #fff;
+                border: 1px solid #ddd;
+                color: #000;
+                box-shadow: none;
+            }
+            h1, h2, h3, .logo-text {
+                color: #000 !important;
+            }
+            .logo-gradient {
+                -webkit-text-fill-color: initial;
+                color: #000 !important;
+            }
+            .cta-btn, .print-btn, .lever-dot {
+                display: none !important;
+            }
+            p, td {
+                color: #333 !important;
+            }
+            .danger-box {
+                border-color: #ef4444;
+                background: #fff5f5;
+            }
+            .danger-box p {
+                color: #c53030 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <i class="fas fa-microchip" style="color: var(--neon-green); font-size: 1.8rem;"></i>
+                <div class="logo-text">QAO <span class="logo-gradient">Growth</span></div>
+            </div>
+            <div class="meta-date">Gerado em: \${new Date().toLocaleDateString('pt-BR')}</div>
+        </header>
+
+        <div class="title-section">
+            <h1>Diagnóstico de Growth & IA</h1>
+            <div class="subtitle">Estratégias sob medida recomendadas para acelerar sua escala.</div>
+        </div>
+
+        <div class="meta-grid">
+            <div class="meta-card">
+                <div class="meta-card-label">Empresa analisada</div>
+                <div class="meta-card-value">\${empresa}</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-card-label">Nicho de atuação</div>
+                <div class="meta-card-value">\${nicho}</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-card-label">Faturamento Estimado</div>
+                <div class="meta-card-value">\${faturamento}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-exclamation-triangle"></i> 1. O Gargalo Identificado</h2>
+            <p><strong>\${gargalo}:</strong></p>
+            <p>\${explicacaoGargalo}</p>
+            <div class="danger-box">
+                <p><i class="fas fa-info-circle"></i> O custo operacional de não corrigir este gargalo impede a previsibilidade de receita e limita a margem de escala para atingir o próximo patamar de faturamento.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> 2. Suas Alavancas de Growth & IA</h2>
+            <p>Com base no seu modelo e gargalo, mapeamos as seguintes soluções práticas imediatas:</p>
+            <div class="levers-container">
+                \${alavancasFormatadas}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> 3. Projeção de Otimização Estimada</h2>
+            <p>Se as alavancas operacionais baseadas em dados e IA forem implementadas corretamente, as métricas estimadas de ganho sugerem:</p>
+            <table class="projection-table">
+                <thead>
+                    <tr>
+                        <th>Métrica de Funil</th>
+                        <th>Impacto Esperado</th>
+                        <th>Status Sugerido</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Custo de Aquisição por Lead (CPL)</td>
+                        <td>Redução média de 20% a 30%</td>
+                        <td><span class="badge-positive">Otimizado</span></td>
+                    </tr>
+                    <tr>
+                        <td>Velocidade do Primeiro Contato Comercial</td>
+                        <td>Resposta automatizada em menos de 1 minuto</td>
+                        <td><span class="badge-positive">Automação IA</span></td>
+                    </tr>
+                    <tr>
+                        <td>Taxa de Conversão Comercial</td>
+                        <td>Aumento relativo de 25% na taxa de fechamento</td>
+                        <td><span class="badge-positive">Aceleração</span></td>
+                    </tr>
+                    <tr>
+                        <td>LTV / Retenção da Carteira</td>
+                        <td>Ciclo de recompra com CRM preditivo ativado</td>
+                        <td><span class="badge-positive">Recorrência</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cta-section">
+            <div class="cta-title">Quer acelerar a execução desse plano?</div>
+            <p>Nós não apenas criamos relatórios: nós escrevemos o código, configuramos as integrações e operamos as ferramentas de IA e mídia integradas para tracionar seu comercial.</p>
+            <a href="${originUrl}" target="_blank" class="cta-btn">
+                <i class="fas fa-calendar-alt"></i> Agendar Reunião Estratégica
+            </a>
+            <div>
+                <button onclick="window.print()" class="print-btn">
+                    <i class="fas fa-print"></i> Salvar Relatório em PDF / Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>\`;
+            }
+
             // --- 2. SIMULADOR DE GROWTH COM IA ---
             const btnRunSimulation = document.getElementById('btnRunSimulation');
             const simTerminal = document.getElementById('simTerminal');
             const simCTA = document.getElementById('simCTA');
             const terminalContainer = document.getElementById('terminalContainer');
 
-            const bancoAlavancas = {
+            const bancoAlavancasBase = {
                 'b2b-saas': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Otimização de Google Ads com foco em termos transacionais de fundo de funil e exclusão de termos informativos.',
-                        '⚙️ *Alavanca 2:* Desenvolvimento de uma calculadora de ROI interativa na LP para triplicar a conversão de tráfego frio em cadastros.',
-                        '📈 *Alavanca 3:* Campanhas de retargeting no LinkedIn Ads mostrando depoimentos de diretores e decisores de contas similares.'
+                        {
+                            titulo: 'Google Search Ads',
+                            detalhe: {
+                                'ate-50k': 'Focar verba enxuta em palavras-chave de fundo de funil de concorrentes ("Alternativa ao [Concorrente]") para capturar leads prontos para contratar.',
+                                '50-150k': 'Ampliar para termos de categoria de alta intenção e otimizar termos negativos diariamente para filtrar cliques informativos.',
+                                '150-500k': 'Implementar lances inteligentes de valor (Value-Based Bidding) integrando dados de conversão do CRM de volta no Google.',
+                                'mais-500k': 'Dominar o canal de pesquisa de ponta a ponta com campanhas institucionais e presença paga forte em portais de comparação (G2/Capterra).'
+                            }
+                        },
+                        {
+                            titulo: 'Calculadora de ROI na Landing Page',
+                            detalhe: {
+                                'ate-50k': 'Adicionar formulário curto e dinâmico que simula o ROI do cliente para triplicar a conversão de tráfego orgânico frio.',
+                                '50-150k': 'Integrar a calculadora de ROI ao CRM para fazer pontuação de leads (Lead Scoring) antes de enviar ao time de vendas.',
+                                '150-500k': 'Desenvolver um diagnóstico de maturidade de growth, gerando um PDF com relatório personalizado na página de agradecimento.',
+                                'mais-500k': 'Criar portal de simulação financeira interativa de marca própria integrada a cases Enterprise para validação do time de CS/Vendas.'
+                            }
+                        },
+                        {
+                            titulo: 'Prospecção LinkedIn Outbound',
+                            detalhe: {
+                                'ate-50k': 'Iniciar prospecção ativa manual via LinkedIn Sales Navigator focando em tomadores de decisão (CEOs/Sócios) de PMEs.',
+                                '50-150k': 'Implementar automação de fluxos de outbound e-mail (cold mailing) integrada ao CRM para gerentes de tecnologia.',
+                                '150-500k': 'Estruturar campanhas de Account-Based Marketing (ABM) no LinkedIn direcionadas a decisores de contas pré-mapeadas.',
+                                'mais-500k': 'Operar time de inteligência comercial com dados preditivos de mercado cruzando intenção de compra de grandes contas Enterprise.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Setup de automação que notifica o time comercial no Slack/CRM em menos de 2 minutos após o cadastro do lead.',
-                        '⚙️ *Alavanca 2:* Integração de Agente de IA qualificador via WhatsApp para responder dúvidas de integração técnica antes de agendar demo.',
-                        '📈 *Alavanca 3:* Régua de lembretes automáticos via e-mail e WhatsApp pós-agendamento de demonstração, reduzindo o no-show em 30%.'
+                        {
+                            titulo: 'Velocidade de Resposta',
+                            detalhe: {
+                                'ate-50k': 'Criar automação via Zapier que notifica o WhatsApp do fundador/vendedor principal em menos de 5 minutos pós-lead.',
+                                '50-150k': 'Configurar alertas automáticos de novos leads MQL em canal dedicado no Slack da equipe de pré-vendas (SDR).',
+                                '150-500k': 'Implementar automação de agendamento imediato (Calendly) direto na página de obrigado para leads qualificados.',
+                                'mais-500k': 'Roteamento avançado em tempo real por IA no CRM baseando-se no potencial de faturamento da conta do lead.'
+                            }
+                        },
+                        {
+                            titulo: 'Qualificação Avançada',
+                            detalhe: {
+                                'ate-50k': 'Utilizar formulário enxuto de qualificação básica para barrar leads de perfil incompatível e focar o tempo no comercial.',
+                                '50-150k': 'Configurar assistente de IA qualificador via WhatsApp que valida orçamento e urgência antes de abrir agenda comercial.',
+                                '150-500k': 'Integrar enriquecimento de dados automático (Lusha/Apollo) no formulário do site para qualificação sem fricção.',
+                                'mais-500k': 'Auditoria interna contínua de leads qualificados por marketing com filtros rígidos de compliance e governança.'
+                            }
+                        },
+                        {
+                            titulo: 'Nutrição de Leads',
+                            detalhe: {
+                                'ate-50k': 'Cadência básica de 3 e-mails pós-demonstração com quebra de principais dúvidas técnicas e comerciais.',
+                                '50-150k': 'Régua de nutrição de e-mails automatizada focando em comparativos de funcionalidades contra concorrentes diretos.',
+                                '150-500k': 'Trilha de conteúdo multimídia com envio automático de cases de sucesso específicos do mesmo segmento de atuação do lead.',
+                                'mais-500k': 'Comunicação personalizada baseada em gatilhos de engajamento no produto (Product Usage Data) via CRM.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Revisão estrutural de públicos no Meta Ads e Google Ads, eliminando audiências de baixo fit comercial.',
-                        '⚙️ *Alavanca 2:* Teste A/B com oferta de trial estendido de 30 dias na Landing Page para aumentar o volume e reduzir custo de clique.',
-                        '📈 *Alavanca 3:* Implementação de modelo de atribuição robusto para cortar verba de campanhas que geram tráfego sem conversão real.'
+                        {
+                            titulo: 'Otimização de Públicos',
+                            detalhe: {
+                                'ate-50k': 'Pausar anúncios de interesses amplos no Meta Ads e focar o orçamento unicamente em intenção direta no Google Search.',
+                                '50-150k': 'Negar termos corporativos irrelevantes no Google Ads e focar criativos em problemas específicos de diretores de TI.',
+                                '150-500k': 'Criar campanhas direcionadas a listas Lookalike refinadas a partir da base de clientes com maior LTV no CRM.',
+                                'mais-500k': 'Implementar algoritmos de IA de otimização de lances preditivos limitados estritamente às contas-alvo do ICP.'
+                            }
+                        },
+                        {
+                            titulo: 'Oferta de Conversão',
+                            detalhe: {
+                                'ate-50k': 'Substituir reuniões de vendas complexas por oferta de teste grátis (Free Trial) de 14 dias para baratear a conversão.',
+                                '50-150k': 'Testar modelo híbrido (Demo assistida para contas Enterprise e Free Trial autoatendimento para contas menores).',
+                                '150-500k': 'Criar planos trimestrais/semestrais com descontos agressivos para amortizar o CAC na primeira parcela do contrato.',
+                                'mais-500k': 'Focar em Product-Led Growth (PLG) com fluxo de conversão 100% autônomo (Self-Serve) para baratear aquisição massiva.'
+                            }
+                        },
+                        {
+                            titulo: 'Mensuração de Dados',
+                            detalhe: {
+                                'ate-50k': 'Utilizar pixels padrões de rastreamento do Meta/Google instalados corretamente nas Landing Pages principais.',
+                                '50-150k': 'Configurar o acompanhamento básico da jornada (Origem -> Clique -> Lead -> Trial) no Google Analytics 4.',
+                                '150-500k': 'Conectar conversões offline no CRM para enviar de volta aos painéis de anúncios o sinal exato de vendas realizadas.',
+                                'mais-500k': 'Estruturar Data Lake de marketing unificado com modelos de atribuição multi-toque avançados para tomada de decisão.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Criação de um tour interativo do produto direto na página de agradecimento pós-cadastro do lead.',
-                        '⚙️ *Alavanca 2:* Enriquecimento automático de dados no formulário para priorizar e rotear contas Enterprise diretamente para os Closers.',
-                        '📈 *Alavanca 3:* Cadência automatizada de nutrição focada em estudos de caso reais e comparativos de concorrência direta.'
+                        {
+                            titulo: 'Vídeo Demonstrativo (VSL)',
+                            detalhe: {
+                                'ate-50k': 'Adicionar vídeo explicativo curto (VSL) de até 2 minutos na página de obrigado demonstrando o valor imediato do software.',
+                                '50-150k': 'Inserir tour interativo do produto em HTML direto na Landing Page para o lead testar a interface antes de comprar.',
+                                '150-500k': 'Personalizar a demonstração ao vivo (Live Demo) trazendo dados ou templates fictícios da própria marca do lead.',
+                                'mais-500k': 'Aprovar pilotos pagos e provas de conceito (PoC) com garantias de conformidade técnica em grandes clientes.'
+                            }
+                        },
+                        {
+                            titulo: 'Processo Comercial',
+                            detalhe: {
+                                'ate-50k': 'Estabelecer follow-up no WhatsApp pessoal do comercial em no máximo 24 horas após o lead sinalizar interesse.',
+                                '50-150k': 'Automatizar envio de propostas do CRM com gatilhos que avisam o vendedor quando o prospect abrir o documento.',
+                                '150-500k': 'Divisão comercial rígida: SDRs qualificam e Closers apresentam propostas e fecham negociações mais complexas.',
+                                'mais-500k': 'Criar comitês de vendas técnicas compostos por engenheiros de soluções e executivos de contas seniores.'
+                            }
+                        },
+                        {
+                            titulo: 'Políticas e Suporte',
+                            detalhe: {
+                                'ate-50k': 'Exibir selos básicos de segurança e destacar a facilidade de cancelamento de assinaturas na página de preços.',
+                                '50-150k': 'Oferecer garantia incondicional de reembolso de 7 ou 14 dias para eliminar qualquer barreira de compra.',
+                                '150-500k': 'Disponibilizar contratos com Acordos de Nível de Serviço (SLA) claros de atendimento pós-venda para segurança jurídica.',
+                                'mais-500k': 'Garantir conformidade total com políticas rígidas de compliance de segurança (SOC2 / LGPD corporativa).'
+                            }
+                        }
                     ]
                 },
                 'b2b-servicos': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Criação de Landing Pages específicas oferecendo uma Auditoria ou Diagnóstico Gratuito de Funil.',
-                        '⚙️ *Alavanca 2:* Campanhas de LinkedIn Lead Gen Forms direcionadas a cargos diretivos e tomadores de decisão.',
-                        '📈 *Alavanca 3:* Google Search Ads cobrindo buscas relacionadas à solução direta dos problemas mais urgentes das suas personas.'
+                        {
+                            titulo: 'Auditoria Gratuita',
+                            detalhe: {
+                                'ate-50k': 'Oferecer diagnóstico ou auditoria simplificada em Landing Pages com formulário curto de contato.',
+                                '50-150k': 'Criar LPs setoriais oferecendo auditoria de funil de vendas exclusiva para empresas de nicho de mercado médio.',
+                                '150-500k': 'Promover diagnósticos aprofundados baseados em metodologias autorais exclusivas como isca de alto valor.',
+                                'mais-500k': 'Montar comitês consultivos ou estudos estratégicos anuais do setor para atração de marcas líderes de mercado.'
+                            }
+                        },
+                        {
+                            titulo: 'Prospecção Ativa',
+                            detalhe: {
+                                'ate-50k': 'Mapear clientes ideais manualmente no LinkedIn e iniciar conexões estratégicas com ofertas de reuniões breves.',
+                                '50-150k': 'Implementar robôs que automatizam as mensagens de boas-vindas no LinkedIn Sales Navigator integrados ao CRM.',
+                                '150-500k': 'Campanhas integradas de prospecção corporativa (ABM) enviando materiais físicos exclusivos via correio para tomadores de decisão.',
+                                'mais-500k': 'Operar time de desenvolvimento de novos negócios (Business Development) focado exclusivamente em conexões institucionais.'
+                            }
+                        },
+                        {
+                            titulo: 'Google Ads Search',
+                            detalhe: {
+                                'ate-50k': 'Focar anúncios apenas no Google para buscas diretas da solução (Ex: "empresa de consultoria financeira").',
+                                '50-150k': 'Ampliar campanhas para dores específicas dos clientes e direcionar para Landing Pages dedicadas de especialidade.',
+                                '150-500k': 'Investir em termos de alta autoridade e segmentar anúncios por faturamento presumido das empresas via Google Ads.',
+                                'mais-500k': 'Patrocinar pesquisas setoriais de mercado associando a marca a eventos e feiras de negócios de alta visibilidade.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Robô qualificador no WhatsApp que valida orçamento e urgência do projeto antes da reunião comercial.',
-                        '⚙️ *Alavanca 2:* Roteamento automático e dinâmico de leads qualificados direto para a agenda livre do consultor no CRM.',
-                        '📈 *Alavanca 3:* Fluxo de follow-up automatizado pós-envio de proposta comercial por e-mail e alertas no WhatsApp do vendedor.'
+                        {
+                            titulo: 'Robô de Triagem',
+                            detalhe: {
+                                'ate-50k': 'Adicionar formulário de contato básico no WhatsApp perguntando faturamento e necessidade principal antes do atendimento.',
+                                '50-150k': 'Configurar assistente virtual inteligente no WhatsApp para validar o perfil da empresa e o orçamento disponível.',
+                                '150-500k': 'Triagem automatizada via formulários enriquecidos que encaminham o lead ao especialista de acordo com o segmento.',
+                                'mais-500k': 'Setup de equipe de SDRs dedicada unicamente ao filtro e qualificação rigorosa de grandes corporações (Enterprise).'
+                            }
+                        },
+                        {
+                            titulo: 'Agenda de Consultor',
+                            detalhe: {
+                                'ate-50k': 'Inserir link de agendamento rápido gratuito na página pós-formulário para garantir contato imediato.',
+                                '50-150k': 'Integrar CRM com ferramentas de agenda para o lead marcar a consultoria diretamente no calendário do consultor livre.',
+                                '150-500k': 'Disponibilizar reuniões com especialistas seniores roteadas de acordo com a especialidade do problema apontado.',
+                                'mais-500k': 'Gerenciamento de agendas corporativas comerciais com distribuição inteligente em rodízio (Round-Robin).'
+                            }
+                        },
+                        {
+                            titulo: 'Fluxo de Proposta',
+                            detalhe: {
+                                'ate-50k': 'Enviar proposta comercial em formato de PDF simples via WhatsApp no mesmo dia da reunião para agilizar o fechamento.',
+                                '50-150k': 'Configurar fluxo automatizado de follow-up por WhatsApp e e-mail avisando o vendedor sobre propostas em aberto.',
+                                '150-500k': 'Criar sistema de propostas dinâmicas web (ex: Proposify) para monitorar quais sessões o cliente passou mais tempo lendo.',
+                                'mais-500k': 'Definir fluxos formais de validação jurídica e aprovação de minutas contratuais integrados ao processo comercial.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Mudança da estratégia de anúncios genéricos para campanhas de Account-Based Marketing (ABM) focadas em lista fechada de empresas.',
-                        '⚙️ *Alavanca 2:* Adição de perguntas de qualificação excludentes no formulário para descartar leads sem fit financeiro antes do atendimento.',
-                        '📈 *Alavanca 3:* Otimização de criativos no Meta Ads focada em prejuízos e perdas operacionais que o lead tem hoje.'
+                        {
+                            titulo: 'Estratégia de ICP',
+                            detalhe: {
+                                'ate-50k': 'Excluir buscas de estudantes ou curiosos e focar apenas em empresários locais que necessitam do serviço urgente.',
+                                '50-150k': 'Qualificar os leads via formulários mais longos para que a equipe de vendas gaste tempo somente com reais oportunidades.',
+                                '150-500k': 'Mudar foco de anúncios genéricos para campanhas de Account-Based Marketing (ABM) focadas em empresas selecionadas.',
+                                'mais-500k': 'Especialização em mercados específicos onde a consultoria possui maior histórico de ROI, aumentando a margem.'
+                            }
+                        },
+                        {
+                            titulo: 'Serviço de Entrada',
+                            detalhe: {
+                                'ate-50k': 'Oferecer um micro-diagnóstico inicial de baixo custo para pagar o custo de anúncios e iniciar a relação comercial.',
+                                '50-150k': 'Estruturar uma oferta de auditoria simplificada ou workshop pago de 1 dia para validação rápida do cliente.',
+                                '150-500k': 'Criar esteira de serviços com pacotes iniciais de implementação rápida e pacotes recorrentes de consultoria continuada.',
+                                'mais-500k': 'Oferecer estudos de viabilidade ou consultoria pré-projeto de alto valor para ancoragem de grandes negociações.'
+                            }
+                        },
+                        {
+                            titulo: 'Programa de Indicações',
+                            detalhe: {
+                                'ate-50k': 'Pedir indicações ativas aos clientes atuais em troca de descontos na mensalidade dos meses subsequentes.',
+                                '50-150k': 'Estruturar um programa de parcerias com profissionais de áreas complementares para troca contínua de indicações.',
+                                '150-500k': 'Comissionamento financeiro formal ou bônus estruturados por indicações de novos contratos corporativos fechados.',
+                                'mais-500k': 'Criar rede de parceiros corporativos integrados (Alliance Network) com partilha de receita em projetos conjuntos.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Inclusão de vídeos de depoimentos e cases de sucesso na Landing Page e na apresentação de vendas.',
-                        '⚙️ *Alavanca 2:* Proposta comercial interativa digital (notifica o assessor por WhatsApp quando o lead abrir o documento).',
-                        '📈 *Alavanca 3:* Trilha de aquecimento de conteúdo pós-agendamento com as principais dúvidas e objeções respondidas.'
+                        {
+                            titulo: 'Vídeos de Depoimentos',
+                            detalhe: {
+                                'ate-50k': 'Solicitar depoimentos curtos por WhatsApp de clientes satisfeitos e anexar ao portfólio de vendas comercial.',
+                                '50-150k': 'Produzir estudos de caso em PDF detalhando problemas, a solução aplicada pela consultoria e os resultados numéricos.',
+                                '150-500k': 'Criar acervo de cases de sucesso em vídeo profissional integrados às Landing Pages e apresentações comerciais.',
+                                'mais-500k': 'Publicar relatórios formais de impacto econômico (Total Economic Impact) chancelados por auditoria ou dados robustos.'
+                            }
+                        },
+                        {
+                            titulo: 'Proposta Consultiva',
+                            detalhe: {
+                                'ate-50k': 'Criar proposta comercial simples contendo objetivo, metodologia resumida, prazos de entrega e valor claro.',
+                                '50-150k': 'Montar proposta com 3 opções de escopo (Bronze, Prata, Ouro) para dar alternativas ao cliente e ancorar o valor.',
+                                '150-500k': 'Co-desenhar a proposta técnica em uma oficina de alinhamento com o time do lead para garantir aceitação prévia.',
+                                'mais-500k': 'Apresentar propostas comerciais complexas focadas em partilha de resultados futuros (Success Fee) com grandes corporações.'
+                            }
+                        },
+                        {
+                            titulo: 'Nutrição Pós-Demo',
+                            detalhe: {
+                                'ate-50k': 'Enviar artigo ou dica de valor relacionada à dor do lead 3 dias após a reunião para manter contato ativo.',
+                                '50-150k': 'Trilha de e-mails abordando as principais objeções de contratação de serviços (tempo de entrega, equipe e escopo).',
+                                '150-500k': 'Enviar materiais ricos de tendências de mercado personalizados com a logo e setor de atuação do lead.',
+                                'mais-500k': 'Convidar decisores do lead para eventos corporativos exclusivos ou jantares de relacionamento pós-proposta.'
+                            }
+                        }
                     ]
                 },
                 'ecommerce': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Campanhas de catálogos dinâmicos de Meta Ads direcionadas a públicos Lookalike de compradores recorrentes.',
-                        '⚙️ *Alavanca 2:* Google Performance Max (PMax) otimizada para capturar tráfego de busca focado nos produtos campeões de vendas.',
-                        '📈 *Alavanca 3:* Parcerias de criativos UGC (conteúdo gerado por usuário/influenciadores) testadas via anúncios nativos no Instagram.'
+                        {
+                            titulo: 'Catálogos Dinâmicos',
+                            detalhe: {
+                                'ate-50k': 'Concentrar criativos dinâmicos de catálogo do Meta Ads apenas nos 3 produtos campeões de vendas do site.',
+                                '50-150k': 'Campanhas de conversão de catálogo segmentadas por coleções de produtos baseadas no comportamento de navegação.',
+                                '150-500k': 'Campanhas dinâmicas avançadas (DABA) cruzando públicos frios com recomendações personalizadas pelo pixel.',
+                                'mais-500k': 'Otimização avançada de catálogos XML com dados de estoque em tempo real e tags de personalização baseadas em IA.'
+                            }
+                        },
+                        {
+                            titulo: 'Google Shopping / PMax',
+                            detalhe: {
+                                'ate-50k': 'Criar campanha básica de Google Shopping configurando feeds limpos de imagens e títulos claros de produtos.',
+                                '50-150k': 'Configurar campanha de Google Performance Max (PMax) focada nos produtos com melhor margem de lucro.',
+                                '150-500k': 'Separar campanhas de PMax por faixas de ROI desejadas (ROAS Alvo) e de acordo com o estoque disponível.',
+                                'mais-500k': 'Integração de dados de BI direto no Google Ads para desativar anúncios de produtos com estoque crítico automaticamente.'
+                            }
+                        },
+                        {
+                            titulo: 'Criativos UGC',
+                            detalhe: {
+                                'ate-50k': 'Gravar vídeos simples no celular do próprio fundador mostrando detalhes de uso, embalagem e envio do produto.',
+                                '50-150k': 'Fazer parcerias com micro-influenciadores do nicho enviando produtos em troca de reviews em vídeo no Instagram.',
+                                '150-500k': 'Investir em produção sistemática de UGC contratando criadores de conteúdo para gerar 15 a 20 novos vídeos de teste por mês.',
+                                'mais-500k': 'Operar hub interno de co-criação de marca e campanhas em escala com influenciadores nacionais de peso.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Chatbot de IA de suporte de vendas respondendo instantaneamente dúvidas sobre frete, tamanhos, cores e devolução.',
-                        '⚙️ *Alavanca 2:* Régua automática de WhatsApp enviando rastreio do pedido e mantendo contato ativo pós-venda para nova compra.',
-                        '📈 *Alavanca 3:* Campanhas de remarketing dinâmico de carrinho abandonado oferecendo suporte humano no WhatsApp.'
+                        {
+                            titulo: 'Chatbot de Vendas',
+                            detalhe: {
+                                'ate-50k': 'Instalar botão de WhatsApp integrado para a secretária ou dono tirar dúvidas de clientes sobre tamanhos e frete.',
+                                '50-150k': 'Configurar chatbot básico de IA (ex: ManyChat) no Instagram/WhatsApp respondendo dúvidas comuns de frete e envio.',
+                                '150-500k': 'Chatbot de IA inteligente integrado com a plataforma de e-commerce que busca código de rastreamento do pedido diretamente.',
+                                'mais-500k': 'Assistente conversacional nativo baseado em IA generativa focado em recomendação preditiva e vendas por conversa (Conversational Commerce).'
+                            }
+                        },
+                        {
+                            titulo: 'Régua de WhatsApp',
+                            detalhe: {
+                                'ate-50k': 'Enviar e-mails transacionais automáticos de confirmação de pedido e código de rastreio básico.',
+                                '50-150k': 'Automação de WhatsApp que notifica o cliente quando o pagamento for aprovado e quando o produto for despachado.',
+                                '150-500k': 'Régua inteligente que envia notificações em tempo real de entrega e convida o cliente a postar uma foto marcando a loja.',
+                                'mais-500k': 'Fluxos de comunicação omnichannel preditivos baseados na transportadora para mitigar problemas de frete e no-show.'
+                            }
+                        },
+                        {
+                            titulo: 'Recuperação de Abandono',
+                            detalhe: {
+                                'ate-50k': 'Enviar e-mail automático de carrinho abandonado em até 4 horas com cupom de 5% de desconto de incentivo.',
+                                '50-150k': 'Disparar mensagens de WhatsApp automáticas notificando o abandono de carrinho em até 30 minutos pós-saída.',
+                                '150-500k': 'Automação de recuperação de carrinho no WhatsApp que oferece ajuda humana com atendente de suporte em caso de erro no pagamento.',
+                                'mais-500k': 'Recuperação de carrinho preditiva cruzando dados de histórico de compras do usuário para ofertar upsell imediato.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Campanhas agressivas de e-mail e WhatsApp para clientes inativos com foco em recompra para diminuir o CAC misto.',
-                        '⚙️ *Alavanca 2:* Exclusão de compradores recentes das campanhas de topo de funil para não gastar verba com quem já comprou.',
-                        '📈 *Alavanca 3:* Otimização do Core Web Vitals (velocidade de página móvel) para reduzir cliques pagos que desistem antes da página carregar.'
+                        {
+                            titulo: 'Públicos Excludentes',
+                            detalhe: {
+                                'ate-50k': 'Excluir compradores dos últimos 30 dias de todas as campanhas de tráfego de atração para economizar verba.',
+                                '50-150k': 'Campanhas específicas separando topo de funil (frio), meio de funil (visitas) e fundo de funil (carrinho/checkout).',
+                                '150-500k': 'Excluir listas de clientes ativos no CRM atualizadas em tempo real via integrações automáticas dos painéis de anúncios.',
+                                'mais-500k': 'Lookalike dinâmico de altíssimo valor baseado em clientes recorrentes e de alto ticket médio (LTV Alto).'
+                            }
+                        },
+                        {
+                            titulo: 'Retenção & Recompra',
+                            detalhe: {
+                                'ate-50k': 'Disparar e-mail semanal com ofertas para clientes cadastrados na base para estimular compras repetidas sem custo.',
+                                '50-150k': 'Montar campanhas de remarketing dinâmico oferecendo produtos complementares pós-compra (Cross-Selling).',
+                                '150-500k': 'Estruturar clube de fidelidade digital simples com acúmulo de pontos/cashback para incentivar a recompra.',
+                                'mais-500k': 'Modelos preditivos de CRM que alertam quando o cliente está no período médio de reposição e enviam oferta no WhatsApp.'
+                            }
+                        },
+                        {
+                            titulo: 'Velocidade de Carregamento',
+                            detalhe: {
+                                'ate-50k': 'Compactar imagens de produtos e desativar plugins pesados na plataforma para acelerar o carregamento móvel.',
+                                '50-150k': 'Otimizar o tempo de resposta do servidor (Core Web Vitals) para garantir carregamento em menos de 3 segundos.',
+                                '150-500k': 'Desenvolver checkout simplificado de página única (One-Page Checkout) para reduzir a taxa de desistência técnica.',
+                                'mais-500k': 'Adotar arquitetura de frontend desacoplada (Headless Commerce) para navegação móvel instantânea ultra-rápida.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Implementação de checkout em 1 clique (express) e oferta de desconto progressivo no Pix.',
-                        '⚙️ *Alavanca 2:* Automação de recuperação de boleto/Pix pendente via WhatsApp com oferta de suporte e auxílio de pagamento.',
-                        '📈 *Alavanca 3:* Recuperação avançada de carrinho abandonado com envio automatizado de cupons progressivos via WhatsApp.'
+                        {
+                            titulo: 'Checkout Otimizado',
+                            detalhe: {
+                                'ate-50k': 'Garantir botão de PIX em destaque e oferecer pequeno desconto fixo para compras à vista no site.',
+                                '50-150k': 'Checkout express de 1 clique integrado com carteiras digitais (Google Pay / Apple Pay) para acelerar a compra.',
+                                '150-500k': 'Implementar ofertas de Order Bump direto no checkout (ex: "adicione garantia estendida por + R$ 10").',
+                                'mais-500k': 'Personalizar dinamicamente a página de checkout exibindo ofertas baseadas no histórico de cliques do usuário.'
+                            }
+                        },
+                        {
+                            titulo: 'Mensagem de Boleto',
+                            detalhe: {
+                                'ate-50k': 'Enviar e-mail manual com código de barras de boletos pendentes no dia seguinte ao vencimento.',
+                                '50-150k': 'Disparar WhatsApp automático com link do Pix copia e cola imediatamente após a geração do boleto/recusa de cartão.',
+                                '150-500k': 'Atendimento humano ativo via televendas no WhatsApp para auxiliar clientes que geraram boletos a finalizar o Pix.',
+                                'mais-500k': 'Recuperação de boletos preditiva por IA com oferecimento automático de facilitação ou divisão em Pix parcelado.'
+                            }
+                        },
+                        {
+                            titulo: 'Prova Social Reais',
+                            detalhe: {
+                                'ate-50k': 'Adicionar prints de avaliações de clientes do WhatsApp no rodapé das páginas dos produtos.',
+                                '50-150k': 'Instalar plugin que coleta avaliações reais de clientes com fotos e estrelas nas páginas de compras.',
+                                '150-500k': 'Mostrar pop-ups sutis no site indicando compras recentes em tempo real (ex: "Maria de SP acabou de comprar").',
+                                'mais-500k': 'Painel de avaliações integrado com selos de auditorias independentes de confiança e reputação nacional (Reclame Aqui/Ebit).'
+                            }
+                        }
                     ]
                 },
                 'infoproduto': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Escala de tráfego pago em Meta Ads e YouTube Ads com foco em leads de baixo custo para lives de captação.',
-                        '⚙️ *Alavanca 2:* Landing Page de alta velocidade (mobile first) integrada a entrada imediata em grupos VIP de WhatsApp.',
-                        '📈 *Alavanca 3:* Campanhas de tráfego pago direto para vídeo de vendas (VSL) de curta duração com público morno.'
+                        {
+                            titulo: 'Anúncios para Lançamento',
+                            detalhe: {
+                                'ate-50k': 'Escalar campanhas no Meta Ads focadas em cadastros de leads de baixo custo direcionados a lives semanais no YouTube.',
+                                '50-150k': 'Tráfego pago omnichannel (Meta + Google + YouTube) para eventos de captação de leads com criativos de quebra de objeções.',
+                                '150-500k': 'Mapear audiências qualificadas através de remarketing de visualizações de vídeos longos de conteúdo autoral no YouTube.',
+                                'mais-500k': 'Campanhas integradas com grandes portais e marcas parceiras para eventos de atração corporativa educacional.'
+                            }
+                        },
+                        {
+                            titulo: 'Grupos VIP de WhatsApp',
+                            detalhe: {
+                                'ate-50k': 'Enviar links dos grupos de WhatsApp na página de obrigado pós-cadastro para capturar contato imediato.',
+                                '50-150k': 'Automatizar envios de lembretes das aulas e materiais complementares nos grupos de WhatsApp dos inscritos.',
+                                '150-500k': 'Segmentar grupos VIP por nível de interesse dos leads a partir de respostas em formulários de cadastro rápidos.',
+                                'mais-500k': 'Operar canais oficiais e comunidades de engajamento no WhatsApp/Telegram monitorados por inteligência artificial.'
+                            }
+                        },
+                        {
+                            titulo: 'Tráfego para VSL',
+                            detalhe: {
+                                'ate-50k': 'Criar campanhas focando direto em páginas de vendas com vídeos de vendas curtas (VSL) de alta conversão.',
+                                '50-150k': 'Estruturar funil perpétuo de VSL com campanhas de remarketing para quem assistiu pelo menos 50% do vídeo de vendas.',
+                                '150-500k': 'Testar múltiplos ganchos (criativos de topo de funil) direcionando para a mesma VSL para baratear o custo por lead.',
+                                'mais-500k': 'Omnichannel perpétuo avançado com criativos segmentados por nível de consciência do usuário com ofertas inteligentes.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Chatbot qualificador que responde directs do Instagram com link dinâmico de checkout baseado na conversa.',
-                        '⚙️ *Alavanca 2:* Alerta instantâneo no WhatsApp de vendas para Pix/Cartão recusado, iniciando recuperação consultiva humana imediata.',
-                        '📈 *Alavanca 3:* Régua de boas-vindas pós-compra via WhatsApp com link da comunidade de alunos, melhorando engajamento inicial.'
+                        {
+                            titulo: 'Direct Automation (ManyChat)',
+                            detalhe: {
+                                'ate-50k': 'Responder comentários nos posts do Instagram manualmente enviando o link de compras no Direct.',
+                                '50-150k': 'Configurar ManyChat automático enviando links de vendas e tirando dúvidas comuns no direct do Instagram.',
+                                '150-500k': 'Automação de direct com funil conversacional qualificador e direcionamento humano imediato para dúvidas complexas.',
+                                'mais-500k': 'Agente conversacional nativo baseado em IA generativa no Instagram que faz vendas consultivas completas em chat.'
+                            }
+                        },
+                        {
+                            titulo: 'Recuperação Humana',
+                            detalhe: {
+                                'ate-50k': 'Enviar mensagem manual no WhatsApp para cartões recusados ou boletos gerados na plataforma de vendas.',
+                                '50-150k': 'Configurar alertas automáticos de Pix/Cartão recusados para o WhatsApp comercial da equipe de suporte a vendas.',
+                                '150-500k': 'Time de vendas interno (Televendas) que liga ativamente para checkouts abandonados em menos de 15 minutos.',
+                                'mais-500k': 'Equipe comercial estruturada com controle de comissão integrado ao CRM de vendas para recuperação ativa de tickets altos.'
+                            }
+                        },
+                        {
+                            titulo: 'Onboarding de Alunos',
+                            detalhe: {
+                                'ate-50k': 'Enviar mensagem de boas-vindas padrão por e-mail com instruções de primeiro acesso à plataforma de curso.',
+                                '50-150k': 'Automação de boas-vindas no WhatsApp enviando o link de acesso e as datas das primeiras mentorias ao vivo.',
+                                '150-500k': 'Onboarding interativo no WhatsApp estimulando a primeira aula com gamificação (conclua a aula e ganhe um bônus).',
+                                'mais-500k': 'Suporte de Customer Success (CS) ativo ligando e acompanhando a taxa de conclusão (Completion Rate) dos alunos.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Campanhas de produto de entrada barata (tripwire) na página de obrigado da captação de leads para recuperar custos de tráfego.',
-                        '⚙️ *Alavanca 2:* Campanhas direcionadas estritamente a quem visitou o perfil do Instagram e engajou com publicações nos últimos 30 dias.',
-                        '📈 *Alavanca 3:* Produção de anúncios focados em depoimentos e histórias de sucesso reais de alunos, reduzindo o CPA em até 40%.'
+                        {
+                            titulo: 'Oferta Tripwire',
+                            detalhe: {
+                                'ate-50k': 'Oferecer um e-book ou minicurso barato na página de agradecimento para cobrir os custos imediatos de anúncios.',
+                                '50-150k': 'Campanhas de captação de leads com oferta de produto de entrada (tripwire) de baixo ticket para pagar o CAC misto.',
+                                '150-500k': 'Estruturar funil de venda rápida de produto intermediário imediatamente pós-inscrição em eventos gratuitos.',
+                                'mais-500k': 'Tráfego focado na venda de livros físicos ou ferramentas básicas que ancoram os programas premium posteriores.'
+                            }
+                        },
+                        {
+                            titulo: 'Remarketing Segmentado',
+                            detalhe: {
+                                'ate-50k': 'Criar campanhas direcionadas a quem visitou o perfil do Instagram e engajou com posts nos últimos 15 dias.',
+                                '50-150k': 'Criar audiências de remarketing específicas focadas em quem visualizou pelo menos 75% dos vídeos do canal.',
+                                '150-500k': 'Ajustar lances de remarketing baseados em pontuações de engajamento do lead nas ferramentas de e-mail/WhatsApp.',
+                                'mais-500k': 'Mapear canais de tráfego de atração em tempo real e cortar criativos com taxa de conversão final insatisfatória.'
+                            }
+                        },
+                        {
+                            titulo: 'Criativos de Cases',
+                            detalhe: {
+                                'ate-50k': 'Pedir prints de agradecimentos de alunos e usar como criativos simples de imagem no Meta Ads.',
+                                '50-150k': 'Criar anúncios em formato de carrossel no Meta mostrando prints de transformações reais de múltiplos alunos.',
+                                '150-500k': 'Produzir criativos em vídeo curto contando a história de sucesso de alunos reais antes e depois do infoproduto.',
+                                'mais-500k': 'Grandes produções de mini-documentários de histórias de alunos veiculadas em campanhas de branding massivas.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Configuração de Order Bumps e Upsells de 1 clique no fluxo de checkout para elevar o ticket médio.',
-                        '⚙️ *Alavanca 2:* Trilha de e-mails diária durante a abertura de carrinho com quebra de objeções (tempo, dinheiro, suporte).',
-                        '📈 *Alavanca 3:* Recuperação de vendas por televendas/WhatsApp focado em quem iniciou o preenchimento de dados no checkout.'
+                        {
+                            titulo: 'Order Bumps & Upsells',
+                            detalhe: {
+                                'ate-50k': 'Ativar Order Bump na página de pagamento oferecendo um material complementar em áudio ou PDF.',
+                                '50-150k': 'Configurar upsell de 1 clique logo após a compra oferecendo acesso a uma comunidade de alunos ou minicurso.',
+                                '150-500k': 'Criar funil com múltiplos order bumps de ticket baixo a médio no checkout para elevar o ticket médio de compra.',
+                                'mais-500k': 'Esteira completa de upsell e cross-sell automatizada na própria plataforma de membros baseada na jornada do aluno.'
+                            }
+                        },
+                        {
+                            titulo: 'Quebra de Objeções',
+                            detalhe: {
+                                'ate-50k': 'Enviar e-mails diários de vendas explicando a garantia incondicional de 7 dias de devolução do dinheiro.',
+                                '50-150k': 'Fazer lives rápidas de tirar dúvidas do produto no Instagram e enviar gravação nos grupos VIP de WhatsApp.',
+                                '150-500k': 'Trilha de nutrição pós-inscrição em VSL com e-mails abordando as principais dúvidas de tempo, dinheiro e suporte.',
+                                'mais-500k': 'Fornecer diagnósticos estratégicos de mentores humanos em reuniões curtas gratuitas para fechamentos de tickets altos.'
+                            }
+                        },
+                        {
+                            titulo: 'Recuperação de Checkout',
+                            detalhe: {
+                                'ate-50k': 'Adicionar link flutuante de suporte via WhatsApp direto na página de checkout de compras.',
+                                '50-150k': 'Automatizar envio de mensagens do WhatsApp avisando sobre preenchimento incompleto de dados no checkout.',
+                                '150-500k': 'Equipe comercial dedicada ligando e negociando cupons parciais com leads que abandonaram o checkout.',
+                                'mais-500k': 'Recuperação inteligente de checkout integrando ofertas de parcelamento inteligente sem consumir o limite do cartão.'
+                            }
+                        }
                     ]
                 },
                 'corretor': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Campanhas de formulário nativo em Meta Ads segmentadas por bairros nobres e público de alto poder aquisitivo.',
-                        '⚙️ *Alavanca 2:* Anúncios em Google Search focados em empreendimentos específicos da sua construtora para capturar busca qualificada.',
-                        '📈 *Alavanca 3:* Produção de criativos em formato de vídeo-tour narrado (mostrando detalhes do imóvel) para cliques altamente qualificados.'
+                        {
+                            titulo: 'Meta Leads Forms',
+                            detalhe: {
+                                'ate-50k': 'Anunciar formulários nativos do Instagram direcionados a interesses de bairros locais selecionados.',
+                                '50-150k': 'Criar campanhas de cadastros nativos no Meta Ads segmentadas por público de interesse em imóveis e investimentos.',
+                                '150-500k': 'Campanhas de cadastros Meta integradas ao CRM com qualificação automática e distribuição imediata ao corretor.',
+                                'mais-500k': 'Campanhas de branding massivas locais e anúncios de alto luxo mapeando listas de diretores e investidores regionais.'
+                            }
+                        },
+                        {
+                            titulo: 'Google Search Ads',
+                            detalhe: {
+                                'ate-50k': 'Focar anúncios no Google Search em empreendimentos específicos ou buscas diretas de "apartamento no bairro X".',
+                                '50-150k': 'Anunciar em termos de busca de construtoras parceiras locais para capturar cliques de alta intenção.',
+                                '150-500k': 'Otimizar lances para termos de alto padrão e cobrir palavras-chave focadas em investidores de imóveis de luxo.',
+                                'mais-500k': 'Estratégia SEO local cobrindo termos de portfólio completo de imóveis comerciais e condomínios fechados da região.'
+                            }
+                        },
+                        {
+                            titulo: 'Vídeos de Tour',
+                            detalhe: {
+                                'ate-50k': 'Gravar vídeos em formato vertical mostrando os principais pontos fortes e o condomínio do imóvel anunciado.',
+                                '50-150k': 'Produzir criativos de vídeo-tour narrado de forma dinâmica mostrando detalhes internos do imóvel para anúncios.',
+                                '150-500k': 'Investir em tours virtuais de alta qualidade com fotos em 360º e filmagem com drone do entorno do empreendimento.',
+                                'mais-500k': 'Produção de produções em formato cinematográfico e transmissões ao vivo exclusivas para investidores selecionados.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Assistente de IA de WhatsApp focado em responder dúvidas de plantas, metragens, preço e agendamento de visita.',
-                        '⚙️ *Alavanca 2:* Envio automático de PDF do catálogo do empreendimento via WhatsApp integrado a qualificação inicial por formulário.',
-                        '📈 *Alavanca 3:* Lembretes recorrentes e confirmação de visitas no stand integrados com calendário no WhatsApp do lead.'
+                        {
+                            titulo: 'Assistente no WhatsApp',
+                            detalhe: {
+                                'ate-50k': 'Configurar mensagem automática enviando catálogo básico de fotos em PDF pós-mensagem do cliente.',
+                                '50-150k': 'Configurar chatbot de triagem que coleta dados de preferência (quartos, vagas, valor) antes do contato do corretor.',
+                                '150-500k': 'Assistente virtual de IA integrado que qualifica o lead, envia o catálogo correto e já sugere horários de visita.',
+                                'mais-500k': 'Central de atendimento digital unificada omnichannel integrando CRM com WhatsApp pessoal de toda a equipe.'
+                            }
+                        },
+                        {
+                            titulo: 'Visita Agendada',
+                            detalhe: {
+                                'ate-50k': 'Marcar visitas de forma manual pelo WhatsApp sugerindo datas específicas na mesma semana do contato.',
+                                '50-150k': 'Enviar link de agendamento online de visitas e mandar lembrete automático 24h antes da visita marcada.',
+                                '150-500k': 'Lembrete automático com geolocalização exata do imóvel enviado para o WhatsApp do cliente 2 horas antes da reunião.',
+                                'mais-500k': 'Confirmador ativo dedicado a telefonar para leads qualificados e organizar roteiros de visitas no stand.'
+                            }
+                        },
+                        {
+                            titulo: 'Follow-up Comercial',
+                            detalhe: {
+                                'ate-50k': 'Mandar mensagem no dia seguinte à visita colhendo impressões do imóvel e propondo propostas de fluxos.',
+                                '50-150k': 'Criar alertas automáticos no CRM lembrando o corretor de fazer contato pós-visita a cada 3 dias.',
+                                '150-500k': 'Trilha de WhatsApp pós-visita enviando relatórios de valorização imobiliária do bairro e andamento de obras.',
+                                'mais-500k': 'CRM integrado que monitora o comportamento de leitura de novas propostas enviadas digitalmente ao cliente.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Desligamento de campanhas genéricas ("apartamento 2 quartos") e foco total em anúncios de empreendimentos ativos.',
-                        '⚙️ *Alavanca 2:* Exclusão de concorrência (outros corretores/imobiliárias) das campanhas de tráfego pago via exclusão de interesses.',
-                        '📈 *Alavanca 3:* Criação de tráfego focado em listas de clientes antigos para indicações ativas com comissão de indicação.'
+                        {
+                            titulo: 'Exclusão de Outros Corretores',
+                            detalhe: {
+                                'ate-50k': 'Excluir corretores e imobiliárias das segmentações de interesses de tráfego pago para não desperdiçar verba.',
+                                '50-150k': 'Focar anúncios em criativos com diferenciais claros para evitar cliques curiosos sem real poder de compra.',
+                                '150-500k': 'Excluir contatos de imobiliárias parceiras e corretores concorrentes usando listas de exclusão de e-mails/telefones.',
+                                'mais-500k': 'Filtrar anúncios estritamente para pessoas de alto poder aquisitivo cruzando listas de investidores qualificados.'
+                            }
+                        },
+                        {
+                            titulo: 'Programa de Indicações',
+                            detalhe: {
+                                'ate-50k': 'Oferecer micro-comissão ou brindes por indicação de amigos que estejam procurando imóveis na região.',
+                                '50-150k': 'Parcerias estratégicas locais (ex: arquitetos, designers de interiores) para troca mútua de indicações de clientes.',
+                                '150-500k': 'Estruturar clube de embaixadores (clientes antigos) oferecendo comissões atrativas por novas vendas fechadas.',
+                                'mais-500k': 'Rede integrada de parcerias com escritórios de advocacia corporativa e assessores de investimento locais.'
+                            }
+                        },
+                        {
+                            titulo: 'Anúncios Específicos',
+                            detalhe: {
+                                'ate-50k': 'Pausar campanhas amplas de branding de corretor e focar 100% de verba em anunciar imóveis de alta liquidez.',
+                                '50-150k': 'Anunciar lançamentos com foco em propostas de financiamento bancário facilitadas para atrair clientes prontos.',
+                                '150-500k': 'Segmentar campanhas por faixas de preço de imóveis e readequar a verba de acordo com o retorno de vendas.',
+                                'mais-500k': 'Investimento de branding corporativo institucional forte associado a campanhas de alta conversão de lançamentos.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Qualificação e score de leads no CRM focado em filtrar quem já possui simulação ou aprovação de financiamento ativo.',
-                        '⚙️ *Alavanca 2:* Trilha de aquecimento por WhatsApp enviando dados de valorização do bairro e andamento da obra antes da reunião.',
-                        '📈 *Alavanca 3:* Follow-up automatizado pós-visita para colher feedback e propor simulações de fluxo de pagamento.'
+                        {
+                            titulo: 'Qualificação Bancária',
+                            detalhe: {
+                                'ate-50k': 'Consultar perfil de financiamento de forma manual no primeiro contato para evitar visitas perdidas.',
+                                '50-150k': 'Parceria com correspondentes bancários para aprovação prévia de crédito de leads no início do funil comercial.',
+                                '150-500k': 'Integrar simulador de financiamento ativo na Landing Page para qualificar leads com base no crédito real aprovado.',
+                                'mais-500k': 'Oferecer assessoria financeira integrada para estruturação de compras de imóveis via permutas e consórcios.'
+                            }
+                        },
+                        {
+                            titulo: 'Dossiê do Imóvel',
+                            detalhe: {
+                                'ate-50k': 'Enviar PDF básico com fotos, metragem, valor de condomínio e IPTU logo após a qualificação do lead.',
+                                '50-150k': 'Criar dossiês completos digitais com memorial descritivo, planta humanizada e estimativa de fluxo de parcelas.',
+                                '150-500k': 'Disponibilizar propostas interativas digitais onde o cliente pode simular o fluxo de entrada e parcelas mensais online.',
+                                'mais-500k': 'Apresentar propostas físicas premium em caixas corporativas com maquetes 3D e estudos fiscais de rentabilidade.'
+                            }
+                        },
+                        {
+                            titulo: 'Fechamento Comercial',
+                            detalhe: {
+                                'ate-50k': 'Propor condições de entrada facilitadas e agendar reunião de fechamento presencial o quanto antes.',
+                                '50-150k': 'Oferecer bônus exclusivos (ex: isenção de ITBI ou móveis planejados na cozinha) para acelerar a assinatura do contrato.',
+                                '150-500k': 'Estruturar processos de assinatura digital de minutas contratuais integrados para fechamentos rápidos sem papelada.',
+                                'mais-500k': 'Plantão de fechamento ativo em stands de vendas com condições exclusivas e suporte jurídico imediato do incorporador.'
+                            }
+                        }
                     ]
                 },
                 'escola': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Anúncios geolocalizados de Meta Ads em um raio de até 5km da escola focados em pais com filhos na faixa etária correta.',
-                        '⚙️ *Alavanca 2:* Landing Page otimizada oferecendo "Manual de Adaptação Escolar" em troca do cadastro e telefone dos pais.',
-                        '📈 *Alavanca 3:* Google Search Ads cobrindo buscas locais como "escola infantil particular perto de mim" ou "melhor colégio da região".'
+                        {
+                            titulo: 'Anúncios Geolocalizados',
+                            detalhe: {
+                                'ate-50k': 'Campanhas de tráfego pago locais no Meta Ads em raio de 3km focando em pais com filhos em idade pré-escolar.',
+                                '50-150k': 'Anúncios direcionados a condomínios residenciais vizinhos com criativos de depoimentos de mães da mesma região.',
+                                '150-500k': 'Campanhas geofencing estruturadas cobrindo múltiplos bairros com criativos adaptados por faixa etária das crianças.',
+                                'mais-500k': 'Dominação do funil local omnichannel cobrindo toda a cidade com anúncios integrando tráfego online e outdoors.'
+                            }
+                        },
+                        {
+                            titulo: 'Manual de Adaptação (Isca)',
+                            detalhe: {
+                                'ate-50k': 'Criar Landing Page simples oferecendo checklist de adaptação escolar para coletar e-mails e WhatsApp.',
+                                '50-150k': 'Oferecer guias pedagógicos completos em campanhas de anúncios de cadastro nativos no Instagram/Meta Ads.',
+                                '150-500k': 'Realizar palestras online e webinars exclusivos de especialistas em educação infantil para atração de leads qualificados.',
+                                'mais-500k': 'Disponibilizar relatórios anuais de desenvolvimento educacional e eventos abertos gratuitos na própria escola.'
+                            }
+                        },
+                        {
+                            titulo: 'Google Search Local',
+                            detalhe: {
+                                'ate-50k': 'Otimizar o perfil da escola no Google Meu Negócio adicionando fotos do espaço físico e atividades.',
+                                '50-150k': 'Anunciar em termos de busca de alta conversão locais (ex: "melhor escola infantil particular no bairro X").',
+                                '150-500k': 'Campanhas de Google Search com lances baseados em geolocalização e direcionadas para Landing Pages de turmas.',
+                                'mais-500k': 'SEO agressivo local para garantir que a escola apareça nas 3 primeiras posições orgânicas de todas as buscas locais.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Agente de IA que atende no WhatsApp respondendo de forma imediata dúvidas de mensalidade, matrícula e atividades.',
-                        '⚙️ *Alavanca 2:* Criação de um fluxo automático de WhatsApp para envio de materiais da escola e agendamento de visitas pedagógicas.',
-                        '📈 *Alavanca 3:* Lembrete automatizado e confirmação de presença de visitas pedagógicas agendadas pelo WhatsApp do comercial.'
+                        {
+                            titulo: 'Triagem Conversacional',
+                            detalhe: {
+                                'ate-50k': 'Adicionar mensagem no WhatsApp solicitando série desejada e telefone para contato comercial rápido.',
+                                '50-150k': 'Instalar assistente de IA qualificador que tria idade da criança e envia informações de valores de matrículas.',
+                                '150-500k': 'Chatbot inteligente de WhatsApp integrado ao CRM escolar direcionando os pais direto para a secretaria correta.',
+                                'mais-500k': 'Central de relacionamento digital unificada onde os atendentes gerenciam as conversas comerciais de todas as filiais.'
+                            }
+                        },
+                        {
+                            titulo: 'Agendamento de Visitas',
+                            detalhe: {
+                                'ate-50k': 'Convidar os pais manualmente via WhatsApp para agendar uma visita pedagógica rápida no contraturno.',
+                                '50-150k': 'Disparar e-mails automáticos com link de agendamento online de visitas e mandar lembrete de confirmação via WhatsApp.',
+                                '150-500k': 'Roteiro de agendamento de visitas com integração de calendários de coordenadores pedagógicos no CRM.',
+                                'mais-500k': 'Confirmador ativo dedicado focado em resgatar pais faltosos nas visitas e readequar horários de forma humanizada.'
+                            }
+                        },
+                        {
+                            titulo: 'Follow-up de Matrículas',
+                            detalhe: {
+                                'ate-50k': 'Fazer contato telefônico pós-visita para colher feedback e tirar dúvidas sobre mensalidades e uniformes.',
+                                '50-150k': 'Criar trilhas de e-mails pós-visita demonstrando depoimentos de famílias sobre a proposta pedagógica.',
+                                '150-500k': 'Enviar fotos personalizadas da criança realizando atividades experimentais na escola durante a visita.',
+                                'mais-500k': 'CRM integrado que rastreia a jornada dos pais e notifica a coordenação para ligar ativamente nas fases de decisão.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Programa de indicação estruturado (Member Get Member) oferecendo descontos na matrícula para pais atuais.',
-                        '⚙️ *Alavanca 2:* Produção de anúncios em vídeo com depoimentos de famílias reais sobre a experiência escolar dos filhos.',
-                        '📈 *Alavanca 3:* Exclusão estrita da lista de alunos ativos de todas as campanhas de remarketing e atração de novos leads.'
+                        {
+                            titulo: 'Clube de Indicações',
+                            detalhe: {
+                                'ate-50k': 'Oferecer descontos na mensalidade de dezembro para pais atuais que indicarem novos alunos matriculados.',
+                                '50-150k': 'Programa estruturado de indicação (Member Get Member) com descontos progressivos para cada indicação ativa.',
+                                '150-500k': 'Conceder bolsas parciais ou incentivos atrativos para associações corporativas e empresas parceiras locais.',
+                                'mais-500k': 'Rede estruturada de parcerias com clubes residenciais, condomínios e pediatras influentes da região.'
+                            }
+                        },
+                        {
+                            titulo: 'Vídeo Depoimentos',
+                            detalhe: {
+                                'ate-50k': 'Gravar depoimentos simples de mães satisfeitas na recepção e publicar nos canais orgânicos da escola.',
+                                '50-150k': 'Produzir criativos de anúncios em vídeo com depoimentos de famílias sobre a adaptação e desenvolvimento dos filhos.',
+                                '150-500k': 'Criar vídeos documentais profissionais de ex-alunos de destaque comentando como a escola impactou a formação deles.',
+                                'mais-500k': 'Produzir campanhas em vídeo cobrindo projetos pedagógicos inovadores com ampla divulgação em mídias digitais.'
+                            }
+                        },
+                        {
+                            titulo: 'Exclusão de Alunos Ativos',
+                            detalhe: {
+                                'ate-50k': 'Garantir que a verba não seja gasta veiculando anúncios para os pais que já são clientes ativos.',
+                                '50-150k': 'Excluir base de e-mails/telefones de pais ativos das campanhas de remarketing de matrículas abertas.',
+                                '150-500k': 'Otimizar investimentos sazonais concentrando verbas pesadas estritamente nos meses de pico de rematrícula (Out-Jan).',
+                                'mais-500k': 'Implementar dashboards de BI para mensurar o CAC exato por cada turma e canal de captação digital.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Funil estruturado no CRM focando na jornada de visitas pedagógicas (agendado, visitado, proposta enviada, matriculado).',
-                        '⚙️ *Alavanca 2:* Automação de envio de contratos e documentos de matrícula digital integrados a assinatura com validade jurídica.',
-                        '📈 *Alavanca 3:* Reengajamento por WhatsApp de pais que visitaram e gostaram da escola mas sumiram após o envio dos valores.'
+                        {
+                            titulo: 'Contrato Digital',
+                            detalhe: {
+                                'ate-50k': 'Enviar o modelo de contrato padrão em PDF para assinatura manual e entrega física na secretaria.',
+                                '50-150k': 'Automatizar o envio de contratos e documentos de matrícula digital integrados à assinatura eletrônica jurídica.',
+                                '150-500k': 'Criação de fluxo de pré-matrícula 100% online integrada ao pagamento imediato da taxa de reserva de vaga.',
+                                'mais-500k': 'Integração de compliance e checagem de restrição cadastral financeira automatizada antes da assinatura do contrato.'
+                            }
+                        },
+                        {
+                            titulo: 'Diferencial Pedagógico',
+                            detalhe: {
+                                'ate-50k': 'Apresentar a proposta pedagógica impressa de forma direta aos pais no momento da visita inicial.',
+                                '50-150k': 'Enviar apresentações multimídia (ex: links de tours de salas/laboratórios) logo após a visita física.',
+                                '150-500k': 'Disponibilizar acesso temporário à plataforma de ensino ou aplicativo escolar para os pais testarem a comunicação.',
+                                'mais-500k': 'Organizar palestras e workshops exclusivos conduzidos pela direção pedagógica para esclarecer diferenciais curriculares.'
+                            }
+                        },
+                        {
+                            titulo: 'Repescagem de Cadastro',
+                            detalhe: {
+                                'ate-50k': 'Ligar para os pais que visitaram mas não deram retorno na semana seguinte oferecendo desconto na primeira parcela.',
+                                '50-150k': 'Automatizar e-mails de lembrete de encerramento de prazos de descontos na taxa de matrícula do ano subsequente.',
+                                '150-500k': 'Enviar WhatsApp personalizado da coordenação com oferta de isenção de matrícula para matrículas em até 48 horas.',
+                                'mais-500k': 'Trilha de reengajamento telefônico ativo conduzida por especialistas em matrículas para resgatar cadastros perdidos.'
+                            }
+                        }
                     ]
                 },
                 'clinica': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Google Search Ads cobrindo termos de agendamento imediato ("médico dermatologista", "consulta cardiologista urgente").',
-                        '⚙️ *Alavanca 2:* Criação de Landing Pages limpas e focadas em especialidades individuais para anúncios de alta conversão.',
-                        '📈 *Alavanca 3:* Campanhas de Meta Ads geolocalizadas na cidade/bairro promovendo tratamentos estéticos ou preventivos.'
+                        {
+                            titulo: 'Google Search Ads',
+                            detalhe: {
+                                'ate-50k': 'Patrocinar buscas exatas do bairro para consultas imediatas (" dermatologista no bairro X").',
+                                '50-150k': 'Campanhas de Google Search focadas nos termos de especialidades e procedimentos de maior valor agregado.',
+                                '150-500k': 'Configurar termos de busca segmentados por convênios atendidos ou foco em consultas particulares de alto ticket.',
+                                'mais-500k': 'Dominação de Google Ads unificada cobrindo todas as especialidades e médicos parceiros da clínica de forma coordenada.'
+                            }
+                        },
+                        {
+                            titulo: 'Landing Pages de Procedimentos',
+                            detalhe: {
+                                'ate-50k': 'Desenvolver uma Landing Page limpa focada em agendamento imediato pelo WhatsApp.',
+                                '50-150k': 'Desenvolver Landing Pages específicas para cada tratamento principal oferecendo materiais explicativos sobre cuidados.',
+                                '150-500k': 'LPs responsivas de carregamento rápido com vídeos explicativos dos médicos tirando dúvidas comuns sobre o tratamento.',
+                                'mais-500k': 'Arquitetura de portal de marca própria com LPs integradas e pré-agendamento digital síncrono com a agenda do CRM.'
+                            }
+                        },
+                        {
+                            titulo: 'Meta Ads Geolocalizado',
+                            detalhe: {
+                                'ate-50k': 'Anúncios locais simples promovendo tratamentos de prevenção ou procedimentos estéticos básicos na cidade.',
+                                '50-150k': 'Campanhas com criativos em vídeo curto dos médicos tirando dúvidas rápidas no Instagram para gerar autoridade local.',
+                                '150-500k': 'Remarketing no Meta Ads focado em quem visitou as LPs de procedimentos, mostrando antes e depois (onde permitido).'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Integração de IA à agenda médica para confirmações automáticas de consultas no WhatsApp, reduzindo no-show.',
-                        '⚙️ *Alavanca 2:* Triagem e direcionamento automatizado no WhatsApp para o médico correto baseado na queixa do paciente.',
-                        '📈 *Alavanca 3:* Automação pós-consulta de lembrete de retorno preventivo após 6 ou 12 meses, reativando pacientes antigos.'
+                        {
+                            titulo: 'Confirmações no WhatsApp',
+                            detalhe: {
+                                'ate-50k': 'Mandar mensagem manual no dia anterior confirmando o horário da consulta para reduzir no-show.',
+                                '50-150k': 'Automação de WhatsApp que envia mensagem de confirmação 24h antes e exige resposta sim/não de forma automatizada.',
+                                '150-500k': 'Integração de agendas médicas com sistema de confirmações automáticas omnichannel (WhatsApp e SMS recorrentes).',
+                                'mais-500k': 'IA preditiva que analisa histórico de faltas do paciente e faz lembretes personalizados com suporte de secretária humana.'
+                            }
+                        },
+                        {
+                            titulo: 'Triagem e WhatsApp',
+                            detalhe: {
+                                'ate-50k': 'Mensagem automática solicitando nome, convênio e queixa principal para agilizar o atendimento da secretária.',
+                                '50-150k': 'Chatbot no WhatsApp com menu de opções simplificando o direcionamento para agendamentos particulares vs convênios.',
+                                '150-500k': 'Automação conversacional que responde dúvidas de valores, horários e convênios liberando a recepção para o atendimento.',
+                                'mais-500k': 'Plataforma de recepção digital centralizada unificada integrando WhatsApp comercial de múltiplos médicos da clínica.'
+                            }
+                        },
+                        {
+                            titulo: 'Trilha Pós-Consulta',
+                            detalhe: {
+                                'ate-50k': 'Enviar receita digital e mensagem agradecendo a preferência logo após a consulta.',
+                                '50-150k': 'Fluxo automatizado pós-procedimento enviando orientações de cuidados e pós-operatório via WhatsApp.',
+                                '150-500k': 'Lembrete automático após 6 ou 12 meses convidando o paciente para consulta de rotina preventiva de acompanhamento.',
+                                'mais-500k': 'Automações de CRM pós-consulta enviando conteúdos educacionais e lembretes de exames baseados no diagnóstico do prontuário.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Otimização orgânica de Google Maps e perfil comercial para aparecer no topo das pesquisas locais gratuitamente.',
-                        '⚙️ *Alavanca 2:* Otimização de termos negativos no Google Ads para barrar buscas informativas que custam cliques sem gerar consultas.',
-                        '📈 *Alavanca 3:* Campanhas direcionadas a públicos que já conhecem a clínica para re-marcação de exames de rotina.'
+                        {
+                            titulo: 'Google Maps Otimizado',
+                            detalhe: {
+                                'ate-50k': 'Incentivar pacientes a deixarem avaliações no Google Maps enviando o link direto ao final de cada consulta.',
+                                '50-150k': 'Configurar o perfil comercial com fotos profissionais da recepção, consultório e localização exata no Google Maps.',
+                                '150-500k': 'Anunciar em destaque no Google Maps para aparecer nas buscas de mapas locais ("clínica perto de mim").',
+                                'mais-500k': 'SEO local avançado cobrindo buscas locais de alta concorrência e monitorando a concorrência na região.'
+                            }
+                        },
+                        {
+                            titulo: 'Negativação de Termos',
+                            detalhe: {
+                                'ate-50k': 'Negar pesquisas informativas como "sintomas de X" para focar a verba apenas em termos transacionais ("consulta com Y").',
+                                '50-150k': 'Monitorar termos de busca diariamente e negar palavras que tragam cliques de pesquisadores sem intenção de agendamento.',
+                                '150-500k': 'Limitar anúncios estritamente a faixas de horários comerciais onde a equipe de recepção está online para responder rápido.',
+                                'mais-500k': 'Otimização avançada de lances baseada no valor de consultas particulares em detrimento de convênios de baixa margem.'
+                            }
+                        },
+                        {
+                            titulo: 'Reativação de Base',
+                            detalhe: {
+                                'ate-50k': 'Enviar mensagem personalizada via WhatsApp para pacientes que não comparecem há mais de 6 meses.',
+                                '50-150k': 'Campanhas de e-mail marketing e WhatsApp de lembrete de check-up de saúde anual preventivo para pacientes antigos.',
+                                '150-500k': 'Automação integrada ao CRM que envia alertas para a recepção ligar e agendar retorno de pacientes com tratamentos pendentes.',
+                                'mais-500k': 'Fidelização estruturada e CRM preditivo que sugere novos tratamentos preventivos baseados no histórico de consultas.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Botão dinâmico e destacado de WhatsApp na Landing Page com resposta automática nos primeiros 30 segundos.',
-                        '⚙️ *Alavanca 2:* Trilha de WhatsApp pós-avaliação estética para tirar dúvidas de valores e formas de parcelamento do procedimento.',
-                        '📈 *Alavanca 3:* Script automatizado de recepção focado no reagendamento de consultas perdidas ou canceladas.'
+                        {
+                            titulo: 'Velocidade Comercial',
+                            detalhe: {
+                                'ate-50k': 'Garantir que as mensagens de interesse vindas do site sejam respondidas em até 5 minutos pela secretária.',
+                                '50-150k': 'Implementar botão dinâmico de WhatsApp na Landing Page com abertura direta no aplicativo e resposta rápida configurada.',
+                                '150-500k': 'Qualificação rápida no WhatsApp pré-agendamento e direcionamento para especialistas em propostas estéticas.',
+                                'mais-500k': 'Secretaria dedicada a vendas estéticas ativas focando em leads que demonstraram interesse em procedimentos cirúrgicos.'
+                            }
+                        },
+                        {
+                            titulo: 'Orçamentos Estéticos',
+                            detalhe: {
+                                'ate-50k': 'Apresentar orçamentos impressos simples ao final da avaliação com as formas de pagamento disponíveis.',
+                                '50-150k': 'Enviar proposta comercial em PDF pelo WhatsApp detalhando as condições de parcelamento do procedimento estético.',
+                                '150-500k': 'Trilha de WhatsApp pós-avaliação estética para tirar dúvidas de valores e segurança do procedimento nos dias seguintes.',
+                                'mais-500k': 'Follow-up comercial estruturado com visitas presenciais conduzidas por assessores de atendimento personalizados (Patient Advocacy).'
+                            }
+                        },
+                        {
+                            titulo: 'Fila de Espera CRM',
+                            detalhe: {
+                                'ate-50k': 'Manutenção de planilha simples de faltosos para encaixes de última hora quando surgirem janelas de horários.',
+                                '50-150k': 'Registrar pacientes faltosos no CRM e automatizar lembretes de reagendamentos de forma humanizada.',
+                                '150-500k': 'Lista de espera ativa digital integrada que notifica automaticamente por WhatsApp pacientes interessados quando houver cancelamentos.',
+                                'mais-500k': 'CRM integrado a IA que analisa taxas históricas de cancelamento para fazer overbooking inteligente programado.'
+                            }
+                        }
                     ]
                 },
                 'local': {
                     'leads': [
-                        '🎯 *Alavanca 1:* Anúncios geolocalizados de Meta Ads em raio curto (3 a 5km) promovendo promoções exclusivas da semana.',
-                        '⚙️ *Alavanca 2:* Campanhas de cupons de desconto digitais para retirada física (estimulando tráfego no local).',
-                        '📈 *Alavanca 3:* Anúncios patrocinados no Google Maps para aparecer em destaque quando buscarem serviços similares na proximidade.'
+                        {
+                            titulo: 'Geofencing Meta Ads',
+                            detalhe: {
+                                'ate-50k': 'Campanhas locais no Meta Ads em raio de 2km promovendo ofertas físicas ou cupom de desconto da semana.',
+                                '50-150k': 'Anúncios focados em bairros residenciais vizinhos com criativos em vídeo mostrando o estabelecimento físico.',
+                                '150-500k': 'Campanhas programadas para veicular anúncios apenas em horários específicos de maior fluxo comercial.',
+                                'mais-500k': 'Estratégias de geofencing omnichannel associando mídias digitais locais a eventos e promoções físicas regionais.'
+                            }
+                        },
+                        {
+                            titulo: 'Cupons Digitais',
+                            detalhe: {
+                                'ate-50k': 'Oferecer cupom de desconto para novos clientes no site principal com retirada obrigatória na loja física.',
+                                '50-150k': 'Campanhas de cadastros Meta Ads captando leads que recebem cupons de desconto automáticos no WhatsApp.',
+                                '150-500k': 'Criação de Landing Pages de ofertas relâmpago integradas com QR Codes para resgate direto no caixa físico.',
+                                'mais-500k': 'Integração de cupons eletrônicos com aplicativos de marca própria e programas de recompensas com cashback.'
+                            }
+                        },
+                        {
+                            titulo: 'Google Meu Negócio',
+                            detalhe: {
+                                'ate-50k': 'Manter o perfil comercial do Google Meu Negócio sempre atualizado com horário de funcionamento e telefone.',
+                                '50-150k': 'Google Search Ads locais direcionados para buscas de serviços próximos (ex: "restaurante aberto agora perto de mim").',
+                                '150-500k': 'Anúncios patrocinados no Google Maps para que a loja apareça no topo quando pesquisarem produtos/serviços similares.',
+                                'mais-500k': 'SEO local massivo cobrindo pesquisas locais em toda a região metropolitana para fortalecimento da rede de franquias.'
+                            }
+                        }
                     ],
                     'atendimento': [
-                        '🎯 *Alavanca 1:* Robô de WhatsApp respondendo horários de funcionamento, telefone, preços, cardápios e link de localização.',
-                        '⚙️ *Alavanca 2:* Canal de delivery automatizado via WhatsApp para pedidos rápidos sem intermediários.',
-                        '📈 *Alavanca 3:* Envio de mensagem automática pós-venda agradecendo e convidando a avaliar a loja no Google Meu Negócio.'
+                        {
+                            titulo: 'Menu de Opções Bot',
+                            detalhe: {
+                                'ate-50k': 'Mensagem de boas-vindas no WhatsApp informando horário de funcionamento e link de localização física.',
+                                '50-150k': 'Configurar robô no WhatsApp com cardápio ou lista de serviços e links rápidos para reservas e orçamentos.',
+                                '150-500k': 'Chatbot inteligente de WhatsApp que automatiza pedidos de delivery ou agendamentos de horários de serviço.',
+                                'mais-500k': 'IA de atendimento por voz integrada ao telefone principal para responder dúvidas básicas e fazer agendamentos.'
+                            }
+                        },
+                        {
+                            titulo: 'Delivery e Reservas',
+                            detalhe: {
+                                'ate-50k': 'Disponibilizar telefone de contato e chaves Pix diretas no WhatsApp para pedidos rápidos.',
+                                '50-150k': 'Integrar plataforma de pedidos web simples direto no link do perfil do WhatsApp e Instagram.',
+                                '150-500k': 'Sistema de agendamento ou delivery próprio automatizado com atualizações em tempo real enviadas no WhatsApp.',
+                                'mais-500k': 'Central unificada de agendamentos e delivery integrados ao sistema ERP físico de todas as unidades.'
+                            }
+                        },
+                        {
+                            titulo: 'Avaliação Pós-Venda',
+                            detalhe: {
+                                'ate-50k': 'Secretária solicita avaliação no Google Meu Negócio verbalmente aos clientes mais assíduos.',
+                                '50-150k': 'Automação no WhatsApp que envia mensagem pós-compra agradecendo e fornecendo o link direto para avaliação no Google.',
+                                '150-500k': 'Colocar QR Code no cupom fiscal físico que direciona para pesquisa de satisfação NPS integrada a brindes na próxima visita.',
+                                'mais-500k': 'Auditoria de reputação online com respostas rápidas automatizadas e integradas para avaliações de todas as filiais.'
+                            }
+                        }
                     ],
                     'cac': [
-                        '🎯 *Alavanca 1:* Criação de um clube de fidelidade digital para incentivar a recorrência do cliente e cobrir o custo de tráfego.',
-                        '⚙️ *Alavanca 2:* Anúncios programados apenas para rodar nos dias de menor movimento com ofertas especiais de ativação.',
-                        '📈 *Alavanca 3:* Lookalike dinâmico baseado na lista de e-mails/WhatsApp de quem já comprou fisicamente na loja.'
+                        {
+                            titulo: 'Fidelidade Digital',
+                            detalhe: {
+                                'ate-50k': 'Criar cartão fidelidade físico impresso em papel (ex: complete 10 compras e ganhe 1 brinde).',
+                                '50-150k': 'Configurar programa de fidelidade digital básico com controle de pontos por número de WhatsApp do cliente.',
+                                '150-500k': 'Clube de fidelidade integrado com envio de cupons de cashback automáticos pós-compra no WhatsApp do cliente.',
+                                'mais-500k': 'Programa de assinatura de serviços recorrentes (Clubes de Assinatura locais) para garantir caixa previsível mensal.'
+                            }
+                        },
+                        {
+                            titulo: 'Anúncios Segmentados',
+                            detalhe: {
+                                'ate-50k': 'Programar campanhas no Meta Ads para rodarem apenas nos dias e horários de menor movimento físico.',
+                                '50-150k': 'Anunciar promoções especiais exclusivas para happy hours ou períodos de entressafra comercial do negócio.',
+                                '150-500k': 'Criar campanhas no Meta Ads utilizando listas de e-mails/WhatsApp de clientes ativos para Lookalike localizado.',
+                                'mais-500k': 'Campanhas omnichannel programadas com base no tráfego físico mensurado via sensores ou BI de loja.'
+                            }
+                        },
+                        {
+                            titulo: 'Exclusão de Clientes',
+                            detalhe: {
+                                'ate-50k': 'Excluir da segmentação dos anúncios locais pessoas que já visitaram o estabelecimento recentemente.',
+                                '50-150k': 'Garantir exclusão de base de clientes ativos cadastrados nas campanhas de topo de funil do Meta Ads.',
+                                '150-500k': 'Ajustar segmentações de tráfego local limitando criativos de atração apenas para novos moradores da região.',
+                                'mais-500k': 'Otimização de verbas com exclusão sistemática de base em filiais saturadas redirecionando verbas para novas lojas.'
+                            }
+                        }
                     ],
                     'conversao': [
-                        '🎯 *Alavanca 1:* Envio de cupons de desconto exclusivos via WhatsApp para clientes inativos há mais de 30 dias na base de dados.',
-                        '⚙️ *Alavanca 2:* Otimização da conversão de tráfego local integrando o pixel nas telas de pedido de checkout de delivery ou reservas.',
-                        '📈 *Alavanca 3:* Exibição de avaliações reais de clientes do Google Meu Negócio em destaque na Landing Page, aumentando a conversão em 15%.'
+                        {
+                            titulo: 'Cupons de Reativação',
+                            detalhe: {
+                                'ate-50k': 'Enviar mensagem manual aos clientes inativos oferecendo um pequeno mimo para que retornem à loja.',
+                                '50-150k': 'Automação no WhatsApp que envia cupom de desconto exclusivo para clientes que não compram há mais de 30 dias.',
+                                '150-500k': 'Campanhas automatizadas de ofertas sazonais e de aniversário com cupons integrados ao sistema do caixa (PDV).',
+                                'mais-500k': ' CRM de loja que monitora a queda de frequência de visitas de clientes VIP e envia alertas com benefícios exclusivos.'
+                            }
+                        },
+                        {
+                            titulo: 'Reservas e Check-in',
+                            detalhe: {
+                                'ate-50k': 'Garantir resposta ágil a solicitações de reservas de mesas ou horários feitas por canais de chat.',
+                                '50-150k': 'Disponibilizar ferramenta de check-in ou pré-reserva online com confirmação imediata enviada pelo WhatsApp.',
+                                '150-500k': 'Desenvolver Landing Page com checkout rápido para compra antecipada de ingressos, vouchers ou serviços.',
+                                'mais-500k': 'Integração de check-in de serviços automatizado por QR Codes em totens de autoatendimento físico nas lojas.'
+                            }
+                        },
+                        {
+                            titulo: 'Prova Social Local',
+                            detalhe: {
+                                'ate-50k': 'Exibir fotos reais de clientes felizes no estabelecimento nas redes sociais da loja de forma espontânea.',
+                                '50-150k': 'Exibir widget com avaliações reais de clientes do Google Maps em destaque no site principal da loja.',
+                                '150-500k': 'Inserir painéis ou totens físicos exibindo fotos de clientes marcando a loja no Instagram para gerar desejo.',
+                                'mais-500k': 'Publicar estudos de caso locais e avaliações agregadas chanceladas por premiações regionais de destaque.'
+                            }
+                        }
                     ]
+                }
+            };
+
+            const alavancasFaturamento = {
+                'ate-50k': {
+                    'b2b-saas': '📊 *Alavanca de Escala (Faturamento < 50k):* Focar em campanhas de outbound automatizadas de baixo custo (e-mail frio) e micro-anúncios direcionados para validar a oferta mínima viável (MVP).',
+                    'b2b-servicos': '📊 *Alavanca de Escala (Faturamento < 50k):* Validação da oferta de entrada focando em prospecção ativa de baixo custo e anúncios geolocalizados locais para obter os primeiros contratos e caixa rápido.',
+                    'ecommerce': '📊 *Alavanca de Escala (Faturamento < 50k):* Concentrar 90% do orçamento em campanhas de conversão de catálogo no Meta Ads apenas para os 3 produtos de maior giro, sem dispersar caixa.',
+                    'infoproduto': '📊 *Alavanca de Escala (Faturamento < 50k):* Focar em lançamentos semestrais mais simples no formato de lives e captação orgânica via Instagram, validando a oferta antes de investir em tráfego massivo.',
+                    'corretor': '📊 *Alavanca de Escala (Faturamento < 50k):* Focar em anúncios de um único imóvel em destaque na região com criativo próprio, usando o WhatsApp pessoal para atendimento rápido.',
+                    'escola': '📊 *Alavanca de Escala (Faturamento < 50k):* Focar em campanhas locais de panfletagem digital e tráfego direto para agendamento de visitas com orçamento limitado.',
+                    'clinica': '📊 *Alavanca de Escala (Faturamento < 50k):* Campanhas de Google Ads focadas unicamente em buscas exatas do bairro do consultório para garantir fluxo inicial de pacientes a baixo custo.',
+                    'local': '📊 *Alavanca de Escala (Faturamento < 50k):* Anúncios locais de geofencing com raio curto (2km) e cupom de desconto físico para validar o fluxo de clientes na loja física.'
+                },
+                '50-150k': {
+                    'b2b-saas': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Configuração de trial e funil de autoatendimento (PLG) para acelerar a aquisição de usuários sem sobrecarregar a equipe comercial.',
+                    'b2b-servicos': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Criação de uma esteira de serviços (ofertas de entrada de menor valor e pacotes de recorrência premium) para aumentar o ticket médio por cliente.',
+                    'ecommerce': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Estruturar campanhas de Google Shopping integradas a e-mails semanais automáticos de recuperação e ofertas baseadas na navegação.',
+                    'infoproduto': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Transição para modelo perpétuo híbrido (venda diária automatizada + eventos bimestrais de fechamento) para estabilizar o faturamento mensal.',
+                    'corretor': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Parcerias de tráfego pago com construtoras locais para anunciar lançamentos oficiais com landing pages exclusivas do corretor.',
+                    'escola': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Campanhas sazonais de rematrícula antecipada com descontos exclusivos para estabilização de caixa antes do período de férias.',
+                    'clinica': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Criação de landing pages específicas de tratamentos de maior valor agregado (procedimentos estéticos, cirurgias eletivas) para elevar o ticket.',
+                    'local': '📊 *Alavanca de Escala (Faturamento 50k-150k):* Criação de um programa de indicações integrado a cupons digitais para multiplicar o volume de clientes recorrentes.'
+                },
+                '150-500k': {
+                    'b2b-saas': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Estruturação de time comercial dedicado (SDRs dedicados a qualificação + Closers) alimentados por tráfego pago omnichannel contínuo.',
+                    'b2b-servicos': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Delegação operacional e foco em campanhas de atração corporativa (ABM) focadas em empresas de médio e grande porte.',
+                    'ecommerce': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Expansão de canais de mídia (Meta Ads + Google Ads + TikTok Ads + Pinterest Ads) para evitar saturação de público e manter o ROI estável.',
+                    'infoproduto': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Estruturação de uma equipe interna de comercial (vendas de alta conversão ativa por WhatsApp) para recuperar boletos e checkouts abandonados.',
+                    'corretor': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Investimento em produções profissionais de vídeo dos imóveis e anúncios direcionados de forma segmentada para empresários e investidores da região.',
+                    'escola': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Campanhas de branding e presença digital de longo prazo associadas a eventos da comunidade local para fortalecer a marca da escola.',
+                    'clinica': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Campanhas omnichannel cobrindo múltiplos procedimentos e presença digital activa dos médicos nas redes como diferencial técnico.',
+                    'local': '📊 *Alavanca de Escala (Faturamento 150k-500k):* Campanhas de tráfego de geofencing cobrindo toda a cidade, preparando a marca para abertura de novas franquias/unidades.'
+                },
+                'mais-500k': {
+                    'b2b-saas': '📊 *Alavanca de Escala (Faturamento > 500k):* Implantação de atribuição avançada de dados (Data Lake) e modelos de BI personalizados para controlar o CAC por canal e o LTV em nível corporativo.',
+                    'b2b-servicos': '📊 *Alavanca de Escala (Faturamento > 500k):* Posicionamento estratégico institucional de marca (Brand Equity) e inteligência competitiva com agentes de IA cruzando dados de mercado.',
+                    'ecommerce': '📊 *Alavanca de Escala (Faturamento > 500k):* Otimização avançada de logística, CRM integrado e automações de IA personalizadas para recomendação preditiva de produtos para clientes da base.',
+                    'infoproduto': '📊 *Alavanca de Escala (Faturamento > 500k):* Diversificação de múltiplos coprodutores, esteira de produtos complexa (do ticket baixo ao high-ticket presencial) e auditoria de tráfego de dados.',
+                    'corretor': '📊 *Alavanca de Escala (Faturamento > 500k):* Criação de imobiliária digital própria com múltiplos agentes corretores sendo alimentados por campanhas de branding massivas na cidade.',
+                    'escola': '📊 *Alavanca de Escala (Faturamento > 500k):* Implantação de IA preditiva para acompanhamento pedagógico e prevenção de evasão escolar baseando-se no comportamento de uso da plataforma.',
+                    'clinica': '📊 *Alavanca de Escala (Faturamento > 500k):* Criação de rede de clínicas integradas com BI unificado de custos de aquisição por médico e automações de IA para lembretes omnichannel.',
+                    'local': '📊 *Alavanca de Escala (Faturamento > 500k):* Funil corporativo para atração e conversão de novos franqueados usando campanhas de captação ativa B2B em escala nacional.'
                 }
             };
 
@@ -774,7 +2211,21 @@
                         '📈 *Alavanca 3:* Análise contínua de CAC/LTV e CRO na landing page para aumentar as vendas totais.'
                     ];
                     
-                    const alavancas = bancoAlavancas[model]?.[gargalo] || fallbackAlavancas;
+                    // Obtém as 3 alavancas básicas baseadas no faturamento + nicho + gargalo
+                    const alavancasRaw = bancoAlavancasBase[model]?.[gargalo] || [];
+                    const alavancas = alavancasRaw.map((al, index) => {
+                        const emoji = index === 0 ? '🎯' : index === 1 ? '⚙️' : '📈';
+                        const desc = al.detalhe[revenue] || al.detalhe['ate-50k'];
+                        return `${emoji} *${al.titulo}:* ${desc}`;
+                    });
+                    
+                    if (alavancas.length === 0) {
+                        alavancas.push(...fallbackAlavancas);
+                    }
+                    
+                    // Obtém a 4ª alavanca com base no faturamento do cliente para o nicho dele
+                    const alavancaFinanceira = alavancasFaturamento[revenue]?.[model] || `📊 *Alavanca de Escala:* Estruturar e otimizar verbas de tráfego de acordo com o crescimento do faturamento mensal.`;
+                    alavancas.push(alavancaFinanceira);
 
                     lines.forEach(l => {
                         setTimeout(() => {
@@ -820,12 +2271,20 @@
                         const btnCopy = document.getElementById('btnCopySimulation');
                         if (btnCopy) {
                             btnCopy.onclick = () => {
-                                const textoCopia = `Diagnóstico de Growth QAO para ${model.toUpperCase()} (${gargalo.toUpperCase()}):\n\n` + alavancas.join('\n').replace(/\*/g, '');
+                                const textoCopia = `Diagnóstico de Growth QAO para ${model.toUpperCase()} (${gargalo.toUpperCase()} - Faturamento ${revenue.toUpperCase()}):\n\n` + alavancas.join('\n').replace(/\*/g, '');
                                 navigator.clipboard.writeText(textoCopia);
-                                btnCopy.innerHTML = '<i class="fas fa-check" style="margin-right: 8px; color: #10B981;"></i> Copiado!';
+                                btnCopy.innerHTML = '<i class="fas fa-check" style="margin-right: 6px; color: #10B981;"></i> Copiado!';
                                 setTimeout(() => {
-                                    btnCopy.innerHTML = '<i class="far fa-copy" style="margin-right: 8px;"></i> Copiar Recomendações';
+                                    btnCopy.innerHTML = '<i class="far fa-copy" style="margin-right: 6px;"></i> Copiar';
                                 }, 2000);
+                            };
+                        }
+
+                        // Lógica para baixar o relatório completo (abre o modal de cadastro)
+                        const btnDownload = document.getElementById('btnDownloadReport');
+                        if (btnDownload) {
+                            btnDownload.onclick = () => {
+                                openReportModal(model, revenue, gargalo, alavancas);
                             };
                         }
                     }, 4200 + (alavancas.length * 600) + 200);
