@@ -561,6 +561,185 @@
             const simCTA = document.getElementById('simCTA');
             const terminalContainer = document.getElementById('terminalContainer');
 
+            const bancoAlavancas = {
+                'b2b-saas': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Otimização de Google Ads com foco em termos transacionais de fundo de funil e exclusão de termos informativos.',
+                        '⚙️ *Alavanca 2:* Desenvolvimento de uma calculadora de ROI interativa na LP para triplicar a conversão de tráfego frio em cadastros.',
+                        '📈 *Alavanca 3:* Campanhas de retargeting no LinkedIn Ads mostrando depoimentos de diretores e decisores de contas similares.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Setup de automação que notifica o time comercial no Slack/CRM em menos de 2 minutos após o cadastro do lead.',
+                        '⚙️ *Alavanca 2:* Integração de Agente de IA qualificador via WhatsApp para responder dúvidas de integração técnica antes de agendar demo.',
+                        '📈 *Alavanca 3:* Régua de lembretes automáticos via e-mail e WhatsApp pós-agendamento de demonstração, reduzindo o no-show em 30%.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Revisão estrutural de públicos no Meta Ads e Google Ads, eliminando audiências de baixo fit comercial.',
+                        '⚙️ *Alavanca 2:* Teste A/B com oferta de trial estendido de 30 dias na Landing Page para aumentar o volume e reduzir custo de clique.',
+                        '📈 *Alavanca 3:* Implementação de modelo de atribuição robusto para cortar verba de campanhas que geram tráfego sem conversão real.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Criação de um tour interativo do produto direto na página de agradecimento pós-cadastro do lead.',
+                        '⚙️ *Alavanca 2:* Enriquecimento automático de dados no formulário para priorizar e rotear contas Enterprise diretamente para os Closers.',
+                        '📈 *Alavanca 3:* Cadência automatizada de nutrição focada em estudos de caso reais e comparativos de concorrência direta.'
+                    ]
+                },
+                'b2b-servicos': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Criação de Landing Pages específicas oferecendo uma Auditoria ou Diagnóstico Gratuito de Funil.',
+                        '⚙️ *Alavanca 2:* Campanhas de LinkedIn Lead Gen Forms direcionadas a cargos diretivos e tomadores de decisão.',
+                        '📈 *Alavanca 3:* Google Search Ads cobrindo buscas relacionadas à solução direta dos problemas mais urgentes das suas personas.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Robô qualificador no WhatsApp que valida orçamento e urgência do projeto antes da reunião comercial.',
+                        '⚙️ *Alavanca 2:* Roteamento automático e dinâmico de leads qualificados direto para a agenda livre do consultor no CRM.',
+                        '📈 *Alavanca 3:* Fluxo de follow-up automatizado pós-envio de proposta comercial por e-mail e alertas no WhatsApp do vendedor.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Mudança da estratégia de anúncios genéricos para campanhas de Account-Based Marketing (ABM) focadas em lista fechada de empresas.',
+                        '⚙️ *Alavanca 2:* Adição de perguntas de qualificação excludentes no formulário para descartar leads sem fit financeiro antes do atendimento.',
+                        '📈 *Alavanca 3:* Otimização de criativos no Meta Ads focada em prejuízos e perdas operacionais que o lead tem hoje.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Inclusão de vídeos de depoimentos e cases de sucesso na Landing Page e na apresentação de vendas.',
+                        '⚙️ *Alavanca 2:* Proposta comercial interativa digital (notifica o assessor por WhatsApp quando o lead abrir o documento).',
+                        '📈 *Alavanca 3:* Trilha de aquecimento de conteúdo pós-agendamento com as principais dúvidas e objeções respondidas.'
+                    ]
+                },
+                'ecommerce': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Campanhas de catálogos dinâmicos de Meta Ads direcionadas a públicos Lookalike de compradores recorrentes.',
+                        '⚙️ *Alavanca 2:* Google Performance Max (PMax) otimizada para capturar tráfego de busca focado nos produtos campeões de vendas.',
+                        '📈 *Alavanca 3:* Parcerias de criativos UGC (conteúdo gerado por usuário/influenciadores) testadas via anúncios nativos no Instagram.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Chatbot de IA de suporte de vendas respondendo instantaneamente dúvidas sobre frete, tamanhos, cores e devolução.',
+                        '⚙️ *Alavanca 2:* Régua automática de WhatsApp enviando rastreio do pedido e mantendo contato ativo pós-venda para nova compra.',
+                        '📈 *Alavanca 3:* Campanhas de remarketing dinâmico de carrinho abandonado oferecendo suporte humano no WhatsApp.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Campanhas agressivas de e-mail e WhatsApp para clientes inativos com foco em recompra para diminuir o CAC misto.',
+                        '⚙️ *Alavanca 2:* Exclusão de compradores recentes das campanhas de topo de funil para não gastar verba com quem já comprou.',
+                        '📈 *Alavanca 3:* Otimização do Core Web Vitals (velocidade de página móvel) para reduzir cliques pagos que desistem antes da página carregar.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Implementação de checkout em 1 clique (express) e oferta de desconto progressivo no Pix.',
+                        '⚙️ *Alavanca 2:* Automação de recuperação de boleto/Pix pendente via WhatsApp com oferta de suporte e auxílio de pagamento.',
+                        '📈 *Alavanca 3:* Recuperação avançada de carrinho abandonado com envio automatizado de cupons progressivos via WhatsApp.'
+                    ]
+                },
+                'infoproduto': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Escala de tráfego pago em Meta Ads e YouTube Ads com foco em leads de baixo custo para lives de captação.',
+                        '⚙️ *Alavanca 2:* Landing Page de alta velocidade (mobile first) integrada a entrada imediata em grupos VIP de WhatsApp.',
+                        '📈 *Alavanca 3:* Campanhas de tráfego pago direto para vídeo de vendas (VSL) de curta duração com público morno.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Chatbot qualificador que responde directs do Instagram com link dinâmico de checkout baseado na conversa.',
+                        '⚙️ *Alavanca 2:* Alerta instantâneo no WhatsApp de vendas para Pix/Cartão recusado, iniciando recuperação consultiva humana imediata.',
+                        '📈 *Alavanca 3:* Régua de boas-vindas pós-compra via WhatsApp com link da comunidade de alunos, melhorando engajamento inicial.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Campanhas de produto de entrada barata (tripwire) na página de obrigado da captação de leads para recuperar custos de tráfego.',
+                        '⚙️ *Alavanca 2:* Campanhas direcionadas estritamente a quem visitou o perfil do Instagram e engajou com publicações nos últimos 30 dias.',
+                        '📈 *Alavanca 3:* Produção de anúncios focados em depoimentos e histórias de sucesso reais de alunos, reduzindo o CPA em até 40%.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Configuração de Order Bumps e Upsells de 1 clique no fluxo de checkout para elevar o ticket médio.',
+                        '⚙️ *Alavanca 2:* Trilha de e-mails diária durante a abertura de carrinho com quebra de objeções (tempo, dinheiro, suporte).',
+                        '📈 *Alavanca 3:* Recuperação de vendas por televendas/WhatsApp focado em quem iniciou o preenchimento de dados no checkout.'
+                    ]
+                },
+                'corretor': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Campanhas de formulário nativo em Meta Ads segmentadas por bairros nobres e público de alto poder aquisitivo.',
+                        '⚙️ *Alavanca 2:* Anúncios em Google Search focados em empreendimentos específicos da sua construtora para capturar busca qualificada.',
+                        '📈 *Alavanca 3:* Produção de criativos em formato de vídeo-tour narrado (mostrando detalhes do imóvel) para cliques altamente qualificados.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Assistente de IA de WhatsApp focado em responder dúvidas de plantas, metragens, preço e agendamento de visita.',
+                        '⚙️ *Alavanca 2:* Envio automático de PDF do catálogo do empreendimento via WhatsApp integrado a qualificação inicial por formulário.',
+                        '📈 *Alavanca 3:* Lembretes recorrentes e confirmação de visitas no stand integrados com calendário no WhatsApp do lead.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Desligamento de campanhas genéricas ("apartamento 2 quartos") e foco total em anúncios de empreendimentos ativos.',
+                        '⚙️ *Alavanca 2:* Exclusão de concorrência (outros corretores/imobiliárias) das campanhas de tráfego pago via exclusão de interesses.',
+                        '📈 *Alavanca 3:* Criação de tráfego focado em listas de clientes antigos para indicações ativas com comissão de indicação.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Qualificação e score de leads no CRM focado em filtrar quem já possui simulação ou aprovação de financiamento ativo.',
+                        '⚙️ *Alavanca 2:* Trilha de aquecimento por WhatsApp enviando dados de valorização do bairro e andamento da obra antes da reunião.',
+                        '📈 *Alavanca 3:* Follow-up automatizado pós-visita para colher feedback e propor simulações de fluxo de pagamento.'
+                    ]
+                },
+                'escola': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Anúncios geolocalizados de Meta Ads em um raio de até 5km da escola focados em pais com filhos na faixa etária correta.',
+                        '⚙️ *Alavanca 2:* Landing Page otimizada oferecendo "Manual de Adaptação Escolar" em troca do cadastro e telefone dos pais.',
+                        '📈 *Alavanca 3:* Google Search Ads cobrindo buscas locais como "escola infantil particular perto de mim" ou "melhor colégio da região".'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Agente de IA que atende no WhatsApp respondendo de forma imediata dúvidas de mensalidade, matrícula e atividades.',
+                        '⚙️ *Alavanca 2:* Criação de um fluxo automático de WhatsApp para envio de materiais da escola e agendamento de visitas pedagógicas.',
+                        '📈 *Alavanca 3:* Lembrete automatizado e confirmação de presença de visitas pedagógicas agendadas pelo WhatsApp do comercial.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Programa de indicação estruturado (Member Get Member) oferecendo descontos na matrícula para pais atuais.',
+                        '⚙️ *Alavanca 2:* Produção de anúncios em vídeo com depoimentos de famílias reais sobre a experiência escolar dos filhos.',
+                        '📈 *Alavanca 3:* Exclusão estrita da lista de alunos ativos de todas as campanhas de remarketing e atração de novos leads.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Funil estruturado no CRM focando na jornada de visitas pedagógicas (agendado, visitado, proposta enviada, matriculado).',
+                        '⚙️ *Alavanca 2:* Automação de envio de contratos e documentos de matrícula digital integrados a assinatura com validade jurídica.',
+                        '📈 *Alavanca 3:* Reengajamento por WhatsApp de pais que visitaram e gostaram da escola mas sumiram após o envio dos valores.'
+                    ]
+                },
+                'clinica': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Google Search Ads cobrindo termos de agendamento imediato ("médico dermatologista", "consulta cardiologista urgente").',
+                        '⚙️ *Alavanca 2:* Criação de Landing Pages limpas e focadas em especialidades individuais para anúncios de alta conversão.',
+                        '📈 *Alavanca 3:* Campanhas de Meta Ads geolocalizadas na cidade/bairro promovendo tratamentos estéticos ou preventivos.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Integração de IA à agenda médica para confirmações automáticas de consultas no WhatsApp, reduzindo no-show.',
+                        '⚙️ *Alavanca 2:* Triagem e direcionamento automatizado no WhatsApp para o médico correto baseado na queixa do paciente.',
+                        '📈 *Alavanca 3:* Automação pós-consulta de lembrete de retorno preventivo após 6 ou 12 meses, reativando pacientes antigos.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Otimização orgânica de Google Maps e perfil comercial para aparecer no topo das pesquisas locais gratuitamente.',
+                        '⚙️ *Alavanca 2:* Otimização de termos negativos no Google Ads para barrar buscas informativas que custam cliques sem gerar consultas.',
+                        '📈 *Alavanca 3:* Campanhas direcionadas a públicos que já conhecem a clínica para re-marcação de exames de rotina.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Botão dinâmico e destacado de WhatsApp na Landing Page com resposta automática nos primeiros 30 segundos.',
+                        '⚙️ *Alavanca 2:* Trilha de WhatsApp pós-avaliação estética para tirar dúvidas de valores e formas de parcelamento do procedimento.',
+                        '📈 *Alavanca 3:* Script automatizado de recepção focado no reagendamento de consultas perdidas ou canceladas.'
+                    ]
+                },
+                'local': {
+                    'leads': [
+                        '🎯 *Alavanca 1:* Anúncios geolocalizados de Meta Ads em raio curto (3 a 5km) promovendo promoções exclusivas da semana.',
+                        '⚙️ *Alavanca 2:* Campanhas de cupons de desconto digitais para retirada física (estimulando tráfego no local).',
+                        '📈 *Alavanca 3:* Anúncios patrocinados no Google Maps para aparecer em destaque quando buscarem serviços similares na proximidade.'
+                    ],
+                    'atendimento': [
+                        '🎯 *Alavanca 1:* Robô de WhatsApp respondendo horários de funcionamento, telefone, preços, cardápios e link de localização.',
+                        '⚙️ *Alavanca 2:* Canal de delivery automatizado via WhatsApp para pedidos rápidos sem intermediários.',
+                        '📈 *Alavanca 3:* Envio de mensagem automática pós-venda agradecendo e convidando a avaliar a loja no Google Meu Negócio.'
+                    ],
+                    'cac': [
+                        '🎯 *Alavanca 1:* Criação de um clube de fidelidade digital para incentivar a recorrência do cliente e cobrir o custo de tráfego.',
+                        '⚙️ *Alavanca 2:* Anúncios programados apenas para rodar nos dias de menor movimento com ofertas especiais de ativação.',
+                        '📈 *Alavanca 3:* Lookalike dinâmico baseado na lista de e-mails/WhatsApp de quem já comprou fisicamente na loja.'
+                    ],
+                    'conversao': [
+                        '🎯 *Alavanca 1:* Envio de cupons de desconto exclusivos via WhatsApp para clientes inativos há mais de 30 dias na base de dados.',
+                        '⚙️ *Alavanca 2:* Otimização da conversão de tráfego local integrando o pixel nas telas de pedido de checkout de delivery ou reservas.',
+                        '📈 *Alavanca 3:* Exibição de avaliações reais de clientes do Google Meu Negócio em destaque na Landing Page, aumentando a conversão em 15%.'
+                    ]
+                }
+            };
+
             if (btnRunSimulation && simTerminal) {
                 btnRunSimulation.onclick = () => {
                     const model = document.getElementById('sim-model').value;
@@ -588,57 +767,14 @@
                         { text: '\n--- ALAVANCAS DE GROWTH IA GERADAS ---', delay: 4000 }
                     ];
 
-                    // Alavancas personalizadas de acordo com o modelo de negócio e faturamento
-                    let alavancas = [];
-                    if (model === 'b2b-saas') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Otimização de Google Ads com audiências in-market e exclusão de termos informais para reduzir o CAC em até 30%.',
-                            '⚙️ *Alavanca 2:* Integração de Agente de IA para responder a solicitações de Demo em menos de 2 minutos no WhatsApp (aumentando a taxa de show-up em 45%).',
-                            '📈 *Alavanca 3:* Implementação de Cadência de E-mail de Nurturing baseado no uso da plataforma para diminuir Churn.'
-                        ];
-                    } else if (model === 'b2b-servicos') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Criação de funil de "Isca Digital + Automação" para qualificar MQLs antes de agendar reuniões.',
-                            '⚙️ *Alavanca 2:* Setup de Agente de IA no CRM para enriquecer dados dos leads e encaminhá-los para o vendedor com maior taxa de fechamento.',
-                            '📈 *Alavanca 3:* Roteamento dinâmico de leads de alta intenção direto para o WhatsApp do comercial.'
-                        ];
-                    } else if (model === 'ecommerce') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Campanha de Meta Ads direcionada a LAL (Lookalike) de Clientes com maior LTV.',
-                            '⚙️ *Alavanca 2:* Automação de Recuperação de Carrinho Abandonado usando Agente de IA conversacional no WhatsApp.',
-                            '📈 *Alavanca 3:* Teste de CRO na página de checkout para aumentar a taxa de conversão direta em 1.5%.'
-                        ];
-                    } else if (model === 'corretor') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Campanhas de cadastro nativo no Meta Ads segmentadas por geolocalização e interesses de alta renda para atração de investidores de imóveis.',
-                            '⚙️ *Alavanca 2:* Assistente de IA de qualificação no WhatsApp que envia tours virtuais 3D e filtra leads por potencial de crédito.',
-                            '📈 *Alavanca 3:* Régua de relacionamento pós-visita via e-mail e WhatsApp para aumentar o fechamento de propostas em 20%.'
-                        ];
-                    } else if (model === 'escola') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Campanhas sazonais de captação de alunos com vídeos dinâmicos da metodologia escolar direcionados a pais na região.',
-                            '⚙️ *Alavanca 2:* Agente de IA integrado ao WhatsApp para sanar dúvidas comuns de matrícula (mensalidades, grade) e agendar visitas pedagógicas automaticamente.',
-                            '📈 *Alavanca 3:* Funil de captação de leads via download de materiais (ex: "Manual de Adaptação Escolar") com automação de follow-up.'
-                        ];
-                    } else if (model === 'clinica') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Campanhas estruturadas de Google Ads focadas em termos de intenção de urgência de consultas locais para gerar agendamentos diários.',
-                            '⚙️ *Alavanca 2:* Robô de IA integrado ao sistema de agenda médica para confirmação, reagendamento e redução da taxa de faltas (no-show) em 35%.',
-                            '📈 *Alavanca 3:* Landing Page de alta velocidade focada em conversão direta para contato de agendamento por WhatsApp.'
-                        ];
-                    } else if (model === 'local') {
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Anúncios de geofencing (raio curto de 3 a 5km do estabelecimento) promovendo ofertas exclusivas de ativação rápida.',
-                            '⚙️ *Alavanca 2:* Menu automatizado via WhatsApp com suporte de IA respondendo horários, cardápio de serviços, preços e dúvidas de rota/localização.',
-                            '📈 *Alavanca 3:* Funil pós-venda que dispara mensagem automática solicitando feedback e incentivando avaliação de 5 estrelas no Google Meu Negócio.'
-                        ];
-                    } else { // infoproduto
-                        alavancas = [
-                            '🎯 *Alavanca 1:* Funil de Vendas de lançamento perpétuo rodando no WhatsApp com inteligência de segmentação.',
-                            '⚙️ *Alavanca 2:* Agentes de IA fazendo o primeiro atendimento e tirando dúvidas de suporte em tempo real.',
-                            '📈 *Alavanca 3:* Automação de upsell instantâneo de checkout de alta conversão.'
-                        ];
-                    }
+                    // Alavancas dinâmicas e ultra-personalizadas cruzando modelo de negócio e gargalo
+                    const fallbackAlavancas = [
+                        '🎯 *Alavanca 1:* Otimização de campanhas de tráfego pago baseando-se no público qualificado histórico.',
+                        '⚙️ *Alavanca 2:* Configuração de robô de atendimento em WhatsApp para diminuir a demora de resposta comercial.',
+                        '📈 *Alavanca 3:* Análise contínua de CAC/LTV e CRO na landing page para aumentar as vendas totais.'
+                    ];
+                    
+                    const alavancas = bancoAlavancas[model]?.[gargalo] || fallbackAlavancas;
 
                     lines.forEach(l => {
                         setTimeout(() => {
@@ -684,7 +820,7 @@
                         const btnCopy = document.getElementById('btnCopySimulation');
                         if (btnCopy) {
                             btnCopy.onclick = () => {
-                                const textoCopia = `Diagnóstico de Growth QAO para ${model.toUpperCase()}:\n\n` + alavancas.join('\n').replace(/\*/g, '');
+                                const textoCopia = `Diagnóstico de Growth QAO para ${model.toUpperCase()} (${gargalo.toUpperCase()}):\n\n` + alavancas.join('\n').replace(/\*/g, '');
                                 navigator.clipboard.writeText(textoCopia);
                                 btnCopy.innerHTML = '<i class="fas fa-check" style="margin-right: 8px; color: #10B981;"></i> Copiado!';
                                 setTimeout(() => {
