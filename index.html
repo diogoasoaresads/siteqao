@@ -1089,7 +1089,7 @@
                 <i class="fas fa-microchip" style="color: var(--neon-green); font-size: 1.8rem;"></i>
                 <div class="logo-text">QAO <span class="logo-gradient">Growth</span></div>
             </div>
-            <div class="meta-date">Gerado em: \${new Date().toLocaleDateString('pt-BR')}</div>
+            <div class="meta-date">Gerado em: ${new Date().toLocaleDateString('pt-BR')}</div>
         </header>
 
         <div class="title-section">
@@ -1100,22 +1100,22 @@
         <div class="meta-grid">
             <div class="meta-card">
                 <div class="meta-card-label">Empresa analisada</div>
-                <div class="meta-card-value">\${empresa}</div>
+                <div class="meta-card-value">${empresa}</div>
             </div>
             <div class="meta-card">
                 <div class="meta-card-label">Nicho de atuação</div>
-                <div class="meta-card-value">\${nicho}</div>
+                <div class="meta-card-value">${nicho}</div>
             </div>
             <div class="meta-card">
                 <div class="meta-card-label">Faturamento Estimado</div>
-                <div class="meta-card-value">\${faturamento}</div>
+                <div class="meta-card-value">${faturamento}</div>
             </div>
         </div>
 
         <div class="section">
             <h2><i class="fas fa-exclamation-triangle"></i> 1. O Gargalo Identificado</h2>
-            <p><strong>\${gargalo}:</strong></p>
-            <p>\${explicacaoGargalo}</p>
+            <p><strong>${gargalo}:</strong></p>
+            <p>${explicacaoGargalo}</p>
             <div class="danger-box">
                 <p><i class="fas fa-info-circle"></i> O custo operacional de não corrigir este gargalo impede a previsibilidade de receita e limita a margem de escala para atingir o próximo patamar de faturamento.</p>
             </div>
@@ -1125,7 +1125,7 @@
             <h2><i class="fas fa-cogs"></i> 2. Suas Alavancas de Growth & IA</h2>
             <p>Com base no seu modelo e gargalo, mapeamos as seguintes soluções práticas imediatas:</p>
             <div class="levers-container">
-                \${alavancasFormatadas}
+                ${alavancasFormatadas}
             </div>
         </div>
 
@@ -1179,7 +1179,7 @@
         </div>
     </div>
 </body>
-</html>\`;
+</html>`;
             }
 
             // --- 2. SIMULADOR DE GROWTH COM IA ---
