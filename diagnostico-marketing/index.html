@@ -18,12 +18,10 @@
     <!-- Core CSS (Premium Minimal Theme) -->
     <link rel="stylesheet" href="/css/styles.css?v=3">
     
-    <!-- Dark Mode Init -->
+    <!-- Theme Init (Forçado Light) -->
     <script>
-        (function() {
-            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        })();
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
     </script>
     
     <style>
@@ -243,10 +241,7 @@
                 </a>
                 <p class="text-secondary mt-2" style="font-size: 0.9rem;">Growth Marketing com IA aplicada</p>
             </div>
-            <button class="theme-toggle" aria-label="Alternar Tema" style="background: none; border: none; font-size: 1.25rem; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
-                <i class="fas fa-moon theme-icon-moon"></i>
-                <i class="fas fa-sun theme-icon-sun" style="display: none;"></i>
-            </button>
+
         </div>
     </header>
 
@@ -396,34 +391,7 @@
     <!-- Theme Toggle Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const themeToggleBtn = document.querySelector('.theme-toggle');
-            const themeIconMoon = document.querySelector('.theme-icon-moon');
-            const themeIconSun = document.querySelector('.theme-icon-sun');
 
-            function updateThemeIcon(theme) {
-                if(themeIconMoon && themeIconSun) {
-                    if (theme === 'dark') {
-                        themeIconMoon.style.display = 'none';
-                        themeIconSun.style.display = 'block';
-                    } else {
-                        themeIconMoon.style.display = 'block';
-                        themeIconSun.style.display = 'none';
-                    }
-                }
-            }
-
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            updateThemeIcon(currentTheme);
-
-            if(themeToggleBtn) {
-                themeToggleBtn.addEventListener('click', () => {
-                    let theme = document.documentElement.getAttribute('data-theme');
-                    let newTheme = theme === 'dark' ? 'light' : 'dark';
-                    document.documentElement.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    updateThemeIcon(newTheme);
-                });
-            }
 
             // Lead Capture Form Logic (Multistep)
             const form = document.getElementById('diagnosticoForm');
