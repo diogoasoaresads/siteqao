@@ -97,6 +97,7 @@ model Client {
   budgetAds    Float              @default(0)       // Investimento em anúncios
   observacoes  String?
   accessKey    String?            @unique
+  portalPin    String?            // Senha PIN de 4 dígitos para acesso ao portal
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   experiments  GrowthExperiment[]

@@ -16,7 +16,9 @@ export default function Clients() {
     status: 'ativo',
     valorMensal: '',
     budgetAds: '',
-    observacoes: ''
+    observacoes: '',
+    accessKey: '',
+    portalPin: ''
   });
 
   const fetchClients = () => {
@@ -48,7 +50,9 @@ export default function Clients() {
       status: 'ativo',
       valorMensal: '',
       budgetAds: '',
-      observacoes: ''
+      observacoes: '',
+      accessKey: '',
+      portalPin: ''
     });
     setIsModalOpen(true);
   };
@@ -63,7 +67,9 @@ export default function Clients() {
       status: client.status || 'ativo',
       valorMensal: client.valorMensal || '',
       budgetAds: client.budgetAds || '',
-      observacoes: client.observacoes || ''
+      observacoes: client.observacoes || '',
+      accessKey: client.accessKey || '',
+      portalPin: client.portalPin || ''
     });
     setIsModalOpen(true);
   };
@@ -215,16 +221,21 @@ export default function Clients() {
                     <span className="font-medium">Budget Mídia:</span>
                     <span className="font-bold text-gray-950">{(client.budgetAds || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                   </div>
-                  <div className="flex items-center justify-between gap-2 pt-2 mt-2 border-t border-dashed border-gray-100">
-                    <div className="flex items-center gap-1 text-xs text-neutral-500 font-semibold">
-                      <Globe size={13} className="text-neutral-400" />
-                      <span>Portal do Cliente:</span>
+                   <div className="flex items-center justify-between gap-2 pt-2 mt-2 border-t border-dashed border-gray-100">
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1 text-xs text-neutral-500 font-semibold">
+                        <Globe size={13} className="text-neutral-400" />
+                        <span>Portal: <span className="text-gray-900 font-bold">{client.accessKey || '---'}</span></span>
+                      </div>
+                      <div className="text-[10px] text-gray-500">
+                        PIN de Acesso: <span className="font-bold text-gray-800">{client.portalPin || '----'}</span>
+                      </div>
                     </div>
                     <button
                       onClick={() => {
                         const link = `${window.location.origin}/admin/portal/${client.accessKey}`;
                         navigator.clipboard.writeText(link);
-                        alert('Link de acesso seguro copiado para o WhatsApp!');
+                        alert(`Dados do portal copiados!\n\nLink: ${link}\nPIN de Segurança: ${client.portalPin || 'Não definido'}`);
                       }}
                       className="text-xs text-blue-600 hover:text-white font-bold bg-blue-50 hover:bg-blue-600 px-2 py-0.5 rounded-md transition-all border border-blue-100 flex items-center gap-0.5"
                       title="Copiar link seguro do portal"
@@ -354,21 +365,47 @@ export default function Clients() {
                     placeholder="Ex: 20000"
                   />
                 </div>
-                {editingClient && (
-                  <div className="col-span-2">
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Link Exclusivo do Portal do Cliente (WhatsApp)</label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={`${window.location.origin}/admin/portal/${editingClient.accessKey}`}
-                      className="w-full px-3.5 py-2 border rounded-xl text-sm border-gray-200 bg-neutral-50 text-neutral-500 font-mono select-all cursor-pointer"
-                      onClick={(e) => {
-                        e.target.select();
-                        navigator.clipboard.writeText(e.target.value);
-                        alert('Link do portal copiado!');
-                      }}
-                    />
-                  </div>
+                 {editingClient && (
+                  <>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Slug da Empresa (Link)</label>
+                      <input
+                        type="text"
+                        value={formData.accessKey}
+                        onChange={e => setFormData({ ...formData, accessKey: e.target.value })}
+                        className="w-full px-3.5 py-2 border rounded-xl focus:ring-2 focus:ring-black focus:outline-none text-sm border-gray-300 font-mono"
+                        placeholder="Ex: qao-growth"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Senha PIN (4 dígitos)</label>
+                      <input
+                        type="text"
+                        maxLength={4}
+                        pattern="\d{4}"
+                        value={formData.portalPin}
+                        onChange={e => setFormData({ ...formData, portalPin: e.target.value.replace(/\D/g, '') })}
+                        className="w-full px-3.5 py-2 border rounded-xl focus:ring-2 focus:ring-black focus:outline-none text-sm border-gray-300 text-center font-bold tracking-widest"
+                        placeholder="Ex: 1234"
+                        required
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Link Exclusivo do Portal do Cliente (WhatsApp)</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={`${window.location.origin}/admin/portal/${formData.accessKey}`}
+                        className="w-full px-3.5 py-2 border rounded-xl text-sm border-gray-200 bg-neutral-50 text-neutral-500 font-mono select-all cursor-pointer"
+                        onClick={(e) => {
+                          e.target.select();
+                          navigator.clipboard.writeText(e.target.value);
+                          alert('Link do portal copiado!');
+                        }}
+                      />
+                    </div>
+                  </>
                 )}
                 <div className="col-span-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Anotações do Cliente / Histórico</label>

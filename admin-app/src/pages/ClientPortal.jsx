@@ -16,9 +16,19 @@ export default function ClientPortal() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [copiedInvoiceId, setCopiedInvoiceId] = useState(null);
 
-  useEffect(() => {
+  // Estados do PIN de Segurança
+  const [pinInput, setPinInput] = useState('');
+  const [isLocked, setIsLocked] = useState(false);
+  const [empresaNome, setEmpresaNome] = useState('');
+  const [pinError, setPinError] = useState(null);
+  const [submittingPin, setSubmittingPin] = useState(false);
+
+  const fetchPortalData = (pinValue) => {
     setLoading(true);
-    fetch(`/api/client-portal/data/${accessKey}`)
+    setPinError(null);
+    const pinToQuery = pinValue || sessionStorage.getItem(`portal_pin_${accessKey}`) || '';
+    
+    fetch(`/api/client-portal/data/${accessKey}?pin=${pinToQuery}`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Link de acesso inválido ou expirado.');
@@ -26,14 +36,60 @@ export default function ClientPortal() {
         return res.json();
       })
       .then(data => {
-        setClient(data);
+        if (data.status === 'locked') {
+          setIsLocked(true);
+          setEmpresaNome(data.empresa);
+          setClient(null);
+        } else {
+          setIsLocked(false);
+          setClient(data);
+          if (pinValue) {
+            sessionStorage.setItem(`portal_pin_${accessKey}`, pinValue);
+          }
+        }
         setLoading(false);
       })
       .catch(err => {
         setError(err.message);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchPortalData();
   }, [accessKey]);
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+    if (pinInput.length !== 4) {
+      setPinError('O PIN deve conter exatamente 4 dígitos.');
+      return;
+    }
+    setSubmittingPin(true);
+    fetch(`/api/client-portal/data/${accessKey}?pin=${pinInput}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Erro ao validar PIN.');
+        }
+        return res.json();
+      })
+      .then(data => {
+        setSubmittingPin(false);
+        if (data.status === 'locked') {
+          setPinError('PIN de segurança incorreto.');
+          setPinInput('');
+        } else {
+          setIsLocked(false);
+          setClient(data);
+          sessionStorage.setItem(`portal_pin_${accessKey}`, pinInput);
+          setPinError(null);
+        }
+      })
+      .catch(err => {
+        setSubmittingPin(false);
+        setPinError('Erro de conexão ao validar PIN.');
+      });
+  };
 
   if (loading) {
     return (
@@ -43,6 +99,78 @@ export default function ClientPortal() {
           <div className="absolute inset-0 rounded-full border-4 border-t-cyan-500 border-r-indigo-500 animate-spin"></div>
         </div>
         <p className="mt-4 text-neutral-400 text-sm tracking-wider animate-pulse">Carregando painel de growth exclusivo...</p>
+      </div>
+    );
+  }
+
+  if (isLocked) {
+    return (
+      <div className="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden">
+        {/* Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none"></div>
+        
+        {/* Ambient Glows */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-900/10 blur-[120px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[120px] pointer-events-none"></div>
+
+        <div className="max-w-md w-full relative z-10">
+          <div className="text-center mb-8">
+            <span className="text-2xl font-black tracking-wider bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
+              QAO
+            </span>
+            <span className="text-xs uppercase font-bold tracking-widest text-neutral-500 bg-neutral-900 px-2 py-0.5 rounded ml-2 border border-neutral-800/80">
+              Security
+            </span>
+          </div>
+
+          <div className="bg-neutral-900/60 border border-neutral-800/80 p-8 rounded-3xl backdrop-blur-md shadow-2xl">
+            <div className="w-16 h-16 bg-cyan-500/10 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-5 border border-cyan-500/20">
+              <span className="text-2xl">🔒</span>
+            </div>
+            
+            <h2 className="text-xl font-bold text-white text-center tracking-tight mb-1">Painel Protegido</h2>
+            <p className="text-neutral-400 text-xs text-center mb-6">
+              O portal de growth da <strong className="text-neutral-200">{empresaNome || 'sua empresa'}</strong> está protegido. Insira o PIN de 4 dígitos enviado pelo seu assessor.
+            </p>
+
+            <form onSubmit={handlePinSubmit} className="space-y-4">
+              <div className="relative">
+                <input
+                  type="password"
+                  maxLength={4}
+                  required
+                  value={pinInput}
+                  onChange={e => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setPinInput(val);
+                    if (pinError) setPinError(null);
+                  }}
+                  className="w-full bg-neutral-950/80 border border-neutral-800 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 rounded-xl px-4 py-3 text-center text-2xl font-bold tracking-[1.5em] text-white focus:outline-none placeholder-neutral-700 transition-all"
+                  placeholder="••••"
+                  autoFocus
+                />
+              </div>
+
+              {pinError && (
+                <div className="text-rose-500 text-xs text-center font-medium bg-rose-500/5 py-2 rounded-lg border border-rose-500/10">
+                  ⚠️ {pinError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submittingPin || pinInput.length !== 4}
+                className="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-600 hover:to-indigo-700 text-neutral-950 hover:text-white font-bold py-3 px-4 rounded-xl text-sm transition-all shadow-lg hover:shadow-cyan-500/10 disabled:opacity-50 disabled:pointer-events-none flex justify-center items-center gap-2"
+              >
+                {submittingPin ? 'Validando...' : 'Acessar Painel 🚀'}
+              </button>
+            </form>
+          </div>
+
+          <p className="text-[10px] text-neutral-500 text-center mt-6">
+            Dúvidas ou perda do PIN? Entre em contato diretamente com o seu Growth Advisor da QAO.
+          </p>
+        </div>
       </div>
     );
   }

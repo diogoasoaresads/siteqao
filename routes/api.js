@@ -11,6 +11,23 @@ if (!process.env.DATABASE_URL) {
 const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET || 'qao_growth_secret_sD89s9aD8';
 
+// Funções auxiliares para Slug e PIN de 4 dígitos
+const generateSlug = (text) => {
+    return text
+        .toString()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/--+/g, '-')
+        .trim();
+};
+
+const generatePortalPin = () => {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+};
+
 // Helper para gravação de log limpa no BD
 const logSystemEvent = async (level, source, message, details = null) => {
     try {
@@ -656,15 +673,31 @@ router.get('/clients', authenticateToken, async (req, res) => {
             }
         });
 
-        // Garantir que todos os clientes tenham uma accessKey gerada sob demanda
+        // Garantir que todos os clientes tenham uma accessKey (slug) e portalPin gerados sob demanda
         for (let i = 0; i < clients.length; i++) {
-            if (!clients[i].accessKey) {
-                const key = crypto.randomUUID();
+            let updated = false;
+            const dataToUpdate = {};
+            if (!clients[i].accessKey || (clients[i].accessKey.includes('-') && clients[i].accessKey.length > 30)) {
+                let slug = generateSlug(clients[i].empresa);
+                let existing = await prisma.client.findUnique({ where: { accessKey: slug } });
+                if (existing && existing.id !== clients[i].id) {
+                    slug = `${slug}-${Math.floor(100 + Math.random() * 900)}`;
+                }
+                dataToUpdate.accessKey = slug;
+                clients[i].accessKey = slug;
+                updated = true;
+            }
+            if (!clients[i].portalPin) {
+                const pin = generatePortalPin();
+                dataToUpdate.portalPin = pin;
+                clients[i].portalPin = pin;
+                updated = true;
+            }
+            if (updated) {
                 await prisma.client.update({
                     where: { id: clients[i].id },
-                    data: { accessKey: key }
+                    data: dataToUpdate
                 });
-                clients[i].accessKey = key;
             }
         }
 
@@ -677,7 +710,12 @@ router.get('/clients', authenticateToken, async (req, res) => {
 router.post('/clients', authenticateToken, async (req, res) => {
     try {
         const { nome, empresa, email, telefone, status, valorMensal, budgetAds, observacoes } = req.body;
-        const key = crypto.randomUUID();
+        let slug = generateSlug(empresa);
+        let existing = await prisma.client.findUnique({ where: { accessKey: slug } });
+        if (existing) {
+            slug = `${slug}-${Math.floor(100 + Math.random() * 900)}`;
+        }
+        const pin = generatePortalPin();
         const client = await prisma.client.create({
             data: {
                 nome,
@@ -688,7 +726,8 @@ router.post('/clients', authenticateToken, async (req, res) => {
                 valorMensal: parseFloat(valorMensal) || 0,
                 budgetAds: parseFloat(budgetAds) || 0,
                 observacoes,
-                accessKey: key
+                accessKey: slug,
+                portalPin: pin
             }
         });
         await logSystemEvent('success', 'client_creation', `Cliente criado: ${nome} - ${empresa}`);
@@ -700,7 +739,18 @@ router.post('/clients', authenticateToken, async (req, res) => {
 
 router.put('/clients/:id', authenticateToken, async (req, res) => {
     try {
-        const { nome, empresa, email, telefone, status, valorMensal, budgetAds, observacoes } = req.body;
+        const { nome, empresa, email, telefone, status, valorMensal, budgetAds, observacoes, accessKey, portalPin } = req.body;
+        
+        let finalAccessKey = accessKey;
+        if (accessKey) {
+            let slug = generateSlug(accessKey);
+            let existing = await prisma.client.findUnique({ where: { accessKey: slug } });
+            if (existing && existing.id !== req.params.id) {
+                return res.status(400).json({ error: 'Este slug (Link do Portal) já está em uso por outra empresa.' });
+            }
+            finalAccessKey = slug;
+        }
+
         const client = await prisma.client.update({
             where: { id: req.params.id },
             data: {
@@ -711,7 +761,9 @@ router.put('/clients/:id', authenticateToken, async (req, res) => {
                 status,
                 valorMensal: valorMensal !== undefined ? parseFloat(valorMensal) : undefined,
                 budgetAds: budgetAds !== undefined ? parseFloat(budgetAds) : undefined,
-                observacoes
+                observacoes,
+                accessKey: finalAccessKey,
+                portalPin
             }
         });
         res.json(client);
@@ -990,8 +1042,13 @@ router.post('/leads/:id/promote', authenticateToken, async (req, res) => {
         if (lead.observacoes) initialObservacoes += `[Notas comerciais]: ${lead.observacoes}`;
         initialObservacoes = initialObservacoes.trim() || null;
 
-        // Cria o cliente
-        const key = crypto.randomUUID();
+        // Cria o cliente com slug e pin amigáveis
+        let slug = generateSlug(lead.empresa);
+        let existingClient = await prisma.client.findUnique({ where: { accessKey: slug } });
+        if (existingClient) {
+            slug = `${slug}-${Math.floor(100 + Math.random() * 900)}`;
+        }
+        const pin = generatePortalPin();
         const client = await prisma.client.create({
             data: {
                 nome: lead.nome,
@@ -1002,7 +1059,8 @@ router.post('/leads/:id/promote', authenticateToken, async (req, res) => {
                 valorMensal: 0,
                 budgetAds: 0,
                 observacoes: initialObservacoes,
-                accessKey: key
+                accessKey: slug,
+                portalPin: pin
             }
         });
 
@@ -1448,7 +1506,25 @@ router.post('/clients/:id/sync-media', authenticateToken, async (req, res) => {
 router.get('/client-portal/data/:accessKey', async (req, res) => {
     try {
         const { accessKey } = req.params;
+        const { pin } = req.query;
+
         const client = await prisma.client.findUnique({
+            where: { accessKey }
+        });
+
+        if (!client) {
+            return res.status(404).json({ error: 'Portal não encontrado ou link expirado' });
+        }
+
+        // Se o portal possuir pin e ele for incorreto/ausente, retorna locked
+        if (client.portalPin && client.portalPin !== pin) {
+            return res.json({ 
+                status: "locked", 
+                empresa: client.empresa 
+            });
+        }
+
+        const fullClient = await prisma.client.findUnique({
             where: { accessKey },
             include: {
                 metrics: { orderBy: { periodo: 'asc' } },
@@ -1458,11 +1534,10 @@ router.get('/client-portal/data/:accessKey', async (req, res) => {
             }
         });
 
-        if (!client) {
-            return res.status(404).json({ error: 'Portal não encontrado ou link expirado' });
-        }
-
-        res.json(client);
+        res.json({
+            status: "unlocked",
+            ...fullClient
+        });
     } catch (e) {
         console.error("Erro no Portal do Cliente:", e);
         res.status(500).json({ error: 'Erro ao carregar dados do portal do cliente' });
